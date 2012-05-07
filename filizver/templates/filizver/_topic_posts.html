@@ -1,0 +1,12 @@
+{% for post in object.post_set.select_related.all %}
+<div id="post_{{ post.id }}" class="post {{ post.content_type|lower }}">
+    {% if perms.topic.can_change or post.user == user or post.topic.user == user %}
+        <menu id="post_{{ post.id }}_commands" class="widget commands">
+            <a class="handle button" title="{% trans "Move" %}">{% trans "Move" %}</a>
+            <a class="update button" href="{{ post.content_object.get_update_url }}" title="{% trans "Update" %}">{% trans "Update" %}</a>
+            <a class="delete button" href="{{ post.content_object.get_delete_url }}" title="{% trans "Delete" %}">{% trans "Delete" %}</a>
+        </menu>
+    {% endif %}    
+    {% include post.detail_template %}
+</div>
+{% endfor %}

@@ -1,0 +1,79 @@
+{% extends "filizver/filizver_base.html" %}
+{% load tagging_tags %}
+
+{% block title %}{{ object.title }} - {{ block.super }}{% endblock title %}
+
+{% block main %}
+    <!--// Headline -->
+    <section id="breadcrumb" class="breadcrumb">
+            <a href="{% url filizver_homepage %}">{% trans "Home" %}</a> <span class="divider">/</span>
+            <a href="{% url profiles_profile_detail object.user %}">{{ object.user }}</a> <span class="divider">/</span>
+            {{ object|truncatewords:"5" }}
+    </section>
+
+    <!--// Main -->
+    <article id="main" role="main">
+        <header class="page-header">
+            <h1>{{ object.title }}</h1>
+        </header>
+        <nav>
+                    <form class="branch-form form form-inline" method="post" action="{% url filizver.views.branch_create %}">{% csrf_token %}
+                    	{% if form.errors %}
+                    	<p class="error">{% trans 'There were errors in form' %}</p>
+                    	{% endif %}
+                            <input type="hidden" name="source" id="id_source" value="{{ object.pk }}">
+                            <input type="hidden" name="user" id="id_user" value="{{ request.user.pk }}">
+                    				{{ branch_form.source }}
+                        			<button type="submit" class="btn btn-primary">{% trans "Branch out" %}</button>
+                                    {{ branch_form.media.css }}{{ branch_form.media.js }}
+                    </form>
+                    <ul class="nav nav-pills">
+                        {% with object as topic %}
+                        <li><a class="{% if module == 'passage' %}active {% endif %}passage" href="{% url filizver.views.post_create topic.id 'passage' %}">{% trans "Text" %}</a></li>
+                        <li><a class="{% if module == 'photo' %}active {% endif %}photo" href="{% url filizver.views.post_create topic.id 'photo' %}">{% trans "Photo" %}</a></li>
+                        {% endwith %}
+                    </ul>
+        </nav>
+    <!--// Posts -->
+        {% if perms.topic.can_change or object.user == user %}
+        <script type="text/javascript"> 
+        // When the document is ready set up our sortable with it's inherant function(s) 
+        $(document).ready(function() { 
+            $("#posts").sortable({
+                handle:  '.handle',
+                axis: 'y',
+                placeholder: 'sortable-placeholder',
+                forcePlaceholderSize: true,
+                //tolerance: 'pointer',
+                update : function () { 
+                    //$("#posts").load("process-sortable.php?"+order);
+                    $.ajax({
+                        url: '{% url filizver.views.post_sort object.id %}', 
+                        type: 'POST',
+                        data: $('#posts').sortable('serialize'),
+                        success: function(feedback){
+                            $('#posts').html(feedback);
+                        },
+                    });
+                }
+            }); 
+        }); 
+        </script>     
+        {% endif %}
+        <section id="posts" class="main">
+            {% include "filizver/_topic_posts.html" %}
+        </section>
+    <!--// Details -->    
+        {% if object.tag_list %}
+        <details id="tags" class="main">
+            <summary>{% trans 'Tags' %}:</summary>
+            {% for tag in object.tag_list %}<a class="tag" href="{% url filizver.views.topic_tagged tag.name|urlencode %}">{{tag}}</a> &nbsp; {% endfor %}
+        </details>
+        {% endif %}
+
+        <aside id="comments" class="main">
+            {% include 'comments/comments_block.html' %}
+        </aside>
+        
+    </article>
+{% endblock %}

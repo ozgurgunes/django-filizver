@@ -1,0 +1,12 @@
+<form method="post" action="{{ action }}" enctype="multipart/form-data">
+    {% csrf_token %}
+	{% if form.errors %}
+	<p class="error">{% trans 'There were errors in form' %}</p>
+	{% endif %}
+	<fieldset>
+  <legend>{% trans "Let it topic" %}</legend>
+  	  {{ form.as_p}}
+	<input type="hidden" name="next" value="{{ next }}" />
+</fieldset>
+	<p class="commands"><button type="submit">{% trans 'Submit form' %}</button>
+</form>

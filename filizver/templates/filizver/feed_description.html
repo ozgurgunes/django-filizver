@@ -1,0 +1,2 @@
+{% get_comment_count for obj as comment_count %}
+<p>{% ifequal comment_count 0 %}{% trans "no comment" %}{% else %}{% blocktrans count comment_count as counter %}<strong>1</strong> comment{% plural %}<strong>{{ counter }}</strong> comments{% endblocktrans %}{% endifequal %}</p>

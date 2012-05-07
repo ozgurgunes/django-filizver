@@ -1,0 +1,17 @@
+<form method="post" action="{% url filizver.contrib.passages.views.passage_create topic.id %}">
+    {% csrf_token %}
+    <fieldset>
+        <legend>{% trans "Create passage" %}</legend>
+    	{% if form.errors %}
+    	<p class="ui-state-error">{% trans 'There were errors in form' %}</p>
+    	{% endif %}
+	{{ form.user }}
+{{ form.topic }}
+    	{{ form.body }}
+        <input type="hidden" name="next" value="{{ next }}" />
+    </fieldset>
+    <p class="commands">
+        <button type="submit">{% trans 'Save' %}</button>
+        <button type="button" class="cancel">{% trans 'Cancel' %}</button>
+    </p>
+</form>

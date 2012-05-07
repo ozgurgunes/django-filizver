@@ -1,0 +1,25 @@
+{% extends "passages/base_passages.html" %}
+{% block title %}{% trans "Add passage" %}{% endblock %}
+
+{% block content %}
+    <heading>
+        <h2>{% trans 'Add passage' %}</h2>
+    </heading>
+    <p><a href="{{ topic.get_absolute_url }}">{{ topic.title }}</a></p>    
+    <form method="post" action="{% url filizver.contrib.passages.views.passage_create topic.id %}">
+        {% csrf_token %}
+        <fieldset>
+            <legend>{% trans "Create a passage" %}</legend>
+        	{% if form.errors %}
+        	<p class="ui-state-error">{% trans 'There were errors in form' %}</p>
+        	{% endif %}
+        	{{ form.as_p}}
+            <input type="hidden" name="next" value="{{ next }}" />
+        </fieldset>
+        <p class="commands">
+            <button type="submit">{% trans 'Submit' %}</button>
+            <a href="{{ topic.get_absolute_url }}" class="cancel button">{% trans 'Cancel' %}</a>
+        </p>
+    </form>
+
+{% endblock %}

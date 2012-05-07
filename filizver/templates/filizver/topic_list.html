@@ -1,0 +1,24 @@
+{% extends "filizver/filizver_base.html" %}
+{% load pagination_tags %}
+{% block title %}{% trans 'All topics' %} - {{ block.super }}{% endblock title %}
+{% block breadcrumb %}{{ block.super }} &ndash; <a href="{% url topic.views.topic_list %}">{% trans "Latest topics" %}</a>{% endblock %}
+
+{% block main %}
+    {% autopaginate object_list 10 %}
+    <header class="main">
+        <h2>{% trans "Latest Topics" %}</h2>
+        <p>{% trans "Page" %}: <strong>{{ page_obj.number }}</strong> / {{ paginator.num_pages }}</p>
+    </header>
+    <section class="main">
+    {% for object in object_list %}
+        <article class="section row {% cycle odd,even %}">
+            {% include "filizver/_topic_list.html" %}
+        </article>
+    {% empty %}
+        <p class="section empty">{% trans 'Not found any record.' %}</p>    
+    {% endfor %}
+    </section>
+    <footer class="main">
+        {% paginate %}
+    </footer>
+{% endblock %}

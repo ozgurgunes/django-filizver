@@ -1,0 +1,20 @@
+<form id="passage_create_form" class="passage create-form" method="post" action="{% url filizver.contrib.passages.views.passage_create topic.id %}">
+    {% csrf_token %}
+    {{ form.user }}
+    {{ form.topic }}
+    <h3>{% trans "Upload passages" %}</h3>
+    <ul>
+        <li>{% trans "Hold down Control (Windows) or Command (Mac) button to create multiple passages." %}</li>
+        <li>{% trans "Or just drag and drop files on to green button from your computer." %}</li>
+    </ul>
+    <div id="file_create_container">
+        <input type="file" name="image" id="id_image" multiple="true" />
+        <button>{% trans "Upload" %}</button>
+        <div>{% trans "Select files" %}</div>
+    </div>
+    <table id="file_create_table"></table>
+    <p class="commands">
+        <button type="submit" id="start_creates">{% trans "Start creates" %}</button>
+        <button type="button" id="cancel_creates">{% trans "Cancel creates" %}</button>
+    </p>
+</form>

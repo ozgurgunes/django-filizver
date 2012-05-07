@@ -1,0 +1,34 @@
+{% load tagging_tags %}
+    <p class="avatar span pull-left">
+        <a href="{% url profiles_profile_detail object.user %}" class="thumbnail">
+            {% thumbnail object.user.get_profile.avatar "48x48" as im %}
+            <img src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" alt="{{ object.user }}" />
+            {% endthumbnail %}                    
+        </a>                     
+    </p>
+    <h3><a href="{{ object.get_absolute_url }}" target="_top" title="{{ object.title }}">{{ object.title }}</a></h3>
+    <div class="meta">
+        <address class="user pull-left"><a href="{% url profiles_profile_detail object.user %}">{{ object.user }}</a></address>
+        <time datetime="{{ object.date_created|date:"c" }}">{{ object.date_created|timesince }} {% trans 'ago' %}</time>
+        <span class="comments-count"><a href="{{ object.get_absolute_url }}">
+      		{% get_comment_count for filizver.topic object.id as comment_count %}
+        	{% ifequal comment_count 0 %}{% trans "no comment" %}{% else %}{% blocktrans count comment_count as counter %}<i>1</i> comment{% plural %}<i>{{ counter }}</i> comments{% endblocktrans %}{% endifequal %}</a></span>
+    </div>
+    {% if object.post_set.select_related.all %}
+    <section id="{{ object.id }}_posts" class="posts">
+        {% for post in object.post_set.select_related.all %}
+        <div id="post_{{ post.id }}_list" class="{{ post.content_type|lower }} post">
+            {% include post.list_template %}
+        </div>
+        {% endfor %}
+    </section>            
+    {% endif %}
+    {% if object.branches.select_related.all %}
+    <section id="{{ object.id }}_branches" class="branches">
+        <ul>
+        {% for branch in object.branches.select_related.all %}
+            <li><a href="{{ branch.get_absolute_url }}" title="{{ branch }}">{{ branch }}</a></li>
+        {% endfor %}
+        </ul>
+    </section>    
+    {% endif %}

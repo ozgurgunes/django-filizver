@@ -1,0 +1,22 @@
+{% extends "photos/modal_photos.html" %}
+{% block title %}{% trans "Delete photo" %}{% endblock %}
+{% block content %}
+    <div id="photo_{{ object.id }}_delete" class="row">
+        <div class="image left">
+            {% thumbnail object.image "128" as im %}
+            <img src="{{ MEDIA_URL }}{{ im }}" width="{{ im.x }}" height="{{ im.y }}" alt="">   
+            {% endthumbnail %}
+            <p>{{ object.image.width }}x{{ object.image.height }} px <br />
+                {{ object.image.size|filesizeformat }}<br />
+            </p>
+        </div>
+        <div class="delete-photo col">
+            <h4>{% trans "Are you sure you want to delete this photo?" %}</h4>
+            <p>{% trans "This can not be undone." %}</p>
+            <p>
+                <a href="{% url filizver.contrib.photos.views.photo_delete object.id %}" class="delete button">{% trans "Delete photo" %}</a>
+                <a href="{{ object.topic.get_absolute_url }}" class="cancel button">{% trans "Cancel" %}</a>
+            </p>
+        </div>
+    </div>
+{% endblock %}

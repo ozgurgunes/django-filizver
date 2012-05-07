@@ -1,0 +1,24 @@
+{% extends "filizver/filizver_base.html" %}
+{% load pagination_tags %}
+{% block title %}{% trans 'Search results' %} - {{ block.super }}{% endblock title %}
+{% block breadcrumb %}{{ block.super }} &ndash; <a href="{% url topic.views.topic_search %}">{% trans "Search results" %}</a>{% endblock %}
+
+{% block content %}
+    {% autopaginate object_list 10 %}
+    <header class="content">
+        <h2>{% blocktrans %}"Search results for <strong>{{ keyword }}</strong>".{% endblocktrans %}</h2>
+        <p>{% trans "Page" %}: <strong>{{ page_obj.number }}</strong> / {{ paginator.num_pages }}</p>
+    </header>
+    <section class="content">
+    {% for object in object_list %}
+        <article class="section row {% cycle odd,even %}">
+            {% include "filizver/_topic_list.html" %}
+        </article>
+    {% empty %}
+        <p class="section empty">{% trans 'Not found any record.' %}</p>    
+    {% endfor %}
+    </section>
+    <footer class="content">
+        {% paginate %}
+    </footer>
+{% endblock %}

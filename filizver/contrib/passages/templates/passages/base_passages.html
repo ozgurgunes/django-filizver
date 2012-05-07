@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load tagging_tags %}
+{% block title %}{% trans "Passages" %} - {{ block.super }}{% endblock title %}
+{% block breadcrumb %}{{ block.super }} &ndash; <a href="{% url filizver.contrib.passages.views.passage_list %}">{% trans "Passages" %}</a>{% endblock %}
+
+{% block content %}
+    <section class="body">{% block passages %}{% endblock %}</section>
+    <article class="body">{% block article %}{% endblock %}</article>
+    <aside class="body">
+        {% block aside %}
+        {% with request.user as user %}{% include "profiles/_profile_panel.html" %}{% endwith %}
+        {% endblock %}
+    </aside>
+{% endblock %}

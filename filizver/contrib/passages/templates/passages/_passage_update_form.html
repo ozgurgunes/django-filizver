@@ -1,0 +1,18 @@
+<form id="passage_{{ object.id }}_update_form" class="passage update-form" action="{% url filizver.contrib.passages.views.passage_update object.id %}" method="post">
+    {% csrf_token %}
+    <fieldset>
+        <legend>{% trans "Passage information" %}</legend>
+    	{% if form.errors %}
+    	<p class="ui-state-error">{% trans 'There were errors in form' %}</p>
+    	{% endif %}
+    	{{ form.topic }}
+    	{{ form.user }}
+    	{{ form.body }}
+        <input type="hidden" name="next" value="{{ next }}" />
+    </fieldset>
+    <p class="commands">
+        <a href="{% url filizver.contrib.passages.views.passage_delete object.id %}" class="delete button">{% trans "Delete" %}</a>
+        <button type="submit">{% trans 'Save' %}</button>
+        <button type="reset">{% trans 'Cancel' %}</button>
+    </p>
+</form>
