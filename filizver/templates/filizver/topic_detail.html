@@ -7,7 +7,7 @@
     <!--// Headline -->
     <section id="breadcrumb" class="breadcrumb">
             <a href="{% url filizver_homepage %}">{% trans "Home" %}</a> <span class="divider">/</span>
-            <a href="{% url profiles_profile_detail object.user %}">{{ object.user }}</a> <span class="divider">/</span>
+            <a href="{% url accounts_profile_detail object.user %}">{{ object.user }}</a> <span class="divider">/</span>
             {{ object|truncatewords:"5" }}
     </section>
 
@@ -17,7 +17,7 @@
             <h1>{{ object.title }}</h1>
         </header>
         <nav>
-                    <form class="branch-form form form-inline" method="post" action="{% url filizver.views.branch_create %}">{% csrf_token %}
+                    <form class="branch-form form form-inline" method="post" action="{% url filizver_branch_create %}">{% csrf_token %}
                     	{% if form.errors %}
                     	<p class="error">{% trans 'There were errors in form' %}</p>
                     	{% endif %}
@@ -29,8 +29,8 @@
                     </form>
                     <ul class="nav nav-pills">
                         {% with object as topic %}
-                        <li><a class="{% if module == 'passage' %}active {% endif %}passage" href="{% url filizver.views.post_create topic.id 'passage' %}">{% trans "Text" %}</a></li>
-                        <li><a class="{% if module == 'photo' %}active {% endif %}photo" href="{% url filizver.views.post_create topic.id 'photo' %}">{% trans "Photo" %}</a></li>
+                        <li><a class="{% if module == 'passage' %}active {% endif %}passage" href="{% url filizver_post_create topic.id 'passage' %}">{% trans "Text" %}</a></li>
+                        <li><a class="{% if module == 'photo' %}active {% endif %}photo" href="{% url filizver_post_create topic.id 'photo' %}">{% trans "Photo" %}</a></li>
                         {% endwith %}
                     </ul>
         </nav>

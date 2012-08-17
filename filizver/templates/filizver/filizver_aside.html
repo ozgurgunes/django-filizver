@@ -7,12 +7,12 @@
 {% endif %}
 <div class="meta">
     <div class="avatar">
-        <a href="{% url profiles_profile_detail object.user %}">
+        <a href="{% url accounts_profile_detail object.user %}">
             {% thumbnail object.user.get_profile.avatar "32x32" as im %}
             <img src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" alt="{{ object.user }}" />
             {% endthumbnail %}                    
         </a>                     
     </div>
-    <address class="user"><a href="{% url profiles_profile_detail object.user %}">{{ object.user }}</a></address>
+    <address class="user"><a href="{% url accounts_profile_detail object.user %}">{{ object.user }}</a></address>
     <time datetime="{{ object.date_created|date:"c" }}">{{ object.date_created|timesince }} {% trans 'ago' %}</time>
 </div>

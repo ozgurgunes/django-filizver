@@ -4,7 +4,7 @@
     {% for branch in object.branch_set.select_related.all %}
     <article class="branch row {% cycle odd,even %}">
         <div class="avatar">
-            <a href="{% url profiles_profile_detail branch.user %}">
+            <a href="{% url accounts_profile_detail branch.user %}">
                 {% thumbnail branch.user.get_profile.avatar "48x48" as im %}
                 <img src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" alt="{{ branch.user }}" />
                 {% endthumbnail %}
@@ -12,7 +12,7 @@
         </div>
         <h4><a href="{{ branch.source.get_absolute_url }}" target="_top" title="{{ branch.source.title }}">{{ branch.source }}</a></h4>
         <div class="meta">
-            <address class="user">{% trans "Branch out by" %} <a href="{% url profiles_profile_detail branch.user %}">{{ branch.user }}</a></address>
+            <address class="user">{% trans "Branch out by" %} <a href="{% url accounts_profile_detail branch.user %}">{{ branch.user }}</a></address>
             <time datetime="{{ branch.date_created|date:"c" }}">{{ branch.date_created|timesince }} {% trans 'ago' %}</time>
         </div>
     </article>
