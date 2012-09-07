@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import settings
 from django.utils.translation import ugettext_lazy as _
 from django import forms

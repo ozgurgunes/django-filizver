@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.contrib.sites.models import Site
 from django.contrib.syndication.feeds import Feed
 from django.utils.feedgenerator import Atom1Feed

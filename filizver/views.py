@@ -1,7 +1,10 @@
-from django.views.generic import ListView, DetailView, FormView
+# -*- coding: utf-8 -*-
+from django.views.generic import (ListView, DetailView, FormView, CreateView,
+                                    UpdateView, DeleteView)
 from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ObjectDoesNotExist
 from manifest.core.decorators import owner_required
 from manifest.accounts.views import ExtraContextMixin, LoginRequiredMixin
 
@@ -15,10 +18,33 @@ class TopicList(ListView):
 class TopicDetail(DetailView):
     queryset = Topic.objects.select_related().all()
     template_name = "filizver/topic_detail.html"
+    extra_context = { 'branch_form': BranchForm() }
+
+    def get_context_data(self, **kwargs):
+        context = super(TopicDetail, self).get_context_data(**kwargs)
+        context.update(self.extra_context)
+        return context
     
-    @method_decorator(owner_required(Topic))
-    def dispatch(self, request, *args, **kwargs):
-        return super(TopicDetail, self).dispatch(request, *args, **kwargs)
+class TopicCreate(CreateView, LoginRequiredMixin):
+    form_class = TopicForm
+    template_name = "filizver/topic_create.html"
+    success_url = 'filizver_homepage'
+    
+    def form_valid(self, form):
+        instance = form.save(commit=False)
+        instance.user = self.request.user
+        instance.save()
+        return redirect(self.success_url)
+
+class TopicUpdate(UpdateView, LoginRequiredMixin):
+    form_class = TopicForm
+    template_name = "filizver/topic_update.html"
+    success_url = '/topics'
+    
+
+class TopicSort(TopicDetail, LoginRequiredMixin):
+    template_name = "filizver/_topic_posts.html"
+        
     
 class TopicFormView(FormView, LoginRequiredMixin):
     form_class = TopicForm
@@ -26,23 +52,11 @@ class TopicFormView(FormView, LoginRequiredMixin):
     success_url = '/topics'
     
     def form_valid(self, form):
-        form.save()
+        instance = form.save(commit=False)
+        try: 
+            instance.user
+        except ObjectDoesNotExist:
+            instance.user = self.request.user
+        instance.save()
         return redirect(self.success_url)
 
-class BranchFormView(FormView, LoginRequiredMixin):
-    form_class = BranchForm
-    template_name = "filizver/branch_form.html"
-    success_url = '/topics'
-    
-    def form_valid(self, form):
-        form.save()
-        return redirect(self.success_url)
-
-class PostFormView(FormView, LoginRequiredMixin):
-    form_class = BranchForm
-    template_name = "filizver/branch_form.html"
-    success_url = '/topics'
-    
-    def form_valid(self, form):
-        form.save()
-        return redirect(self.success_url)

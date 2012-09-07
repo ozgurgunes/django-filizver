@@ -6,9 +6,9 @@
 {% block main %}
     <!--// Headline -->
     <section id="breadcrumb" class="breadcrumb">
-            <a href="{% url filizver_homepage %}">{% trans "Home" %}</a> <span class="divider">/</span>
-            <a href="{% url accounts_profile_detail object.user %}">{{ object.user }}</a> <span class="divider">/</span>
-            {{ object|truncatewords:"5" }}
+        <a href="{% url filizver_homepage %}">{% trans "Home" %}</a> <span class="divider">/</span>
+        <a href="{% url accounts_profile_detail object.user %}">{{ object.user }}</a> <span class="divider">/</span>
+        {{ object|truncatewords:"5" }}
     </section>
 
     <!--// Main -->
@@ -17,22 +17,29 @@
             <h1>{{ object.title }}</h1>
         </header>
         <nav>
-                    <form class="branch-form form form-inline" method="post" action="{% url filizver_branch_create %}">{% csrf_token %}
-                    	{% if form.errors %}
-                    	<p class="error">{% trans 'There were errors in form' %}</p>
-                    	{% endif %}
-                            <input type="hidden" name="source" id="id_source" value="{{ object.pk }}">
-                            <input type="hidden" name="user" id="id_user" value="{{ request.user.pk }}">
-                    				{{ branch_form.source }}
-                        			<button type="submit" class="btn btn-primary">{% trans "Branch out" %}</button>
-                                    {{ branch_form.media.css }}{{ branch_form.media.js }}
-                    </form>
-                    <ul class="nav nav-pills">
-                        {% with object as topic %}
-                        <li><a class="{% if module == 'passage' %}active {% endif %}passage" href="{% url filizver_post_create topic.id 'passage' %}">{% trans "Text" %}</a></li>
-                        <li><a class="{% if module == 'photo' %}active {% endif %}photo" href="{% url filizver_post_create topic.id 'photo' %}">{% trans "Photo" %}</a></li>
-                        {% endwith %}
-                    </ul>
+            <form class="branch-form form form-inline" method="post" action="{% url filizver_branch_create %}">
+                {% csrf_token %}
+            	{% if form.errors %}
+            	<p class="error">{% trans 'There were errors in form' %}</p>
+            	{% endif %}
+                <input type="hidden" name="topic" id="id_topic" value="{{ object.pk }}">
+				{{ branch_form.source }}
+    			<button type="submit" class="btn btn-primary">{% trans "Branch out" %}</button>
+                {{ branch_form.media.css }}{{ branch_form.media.js }}
+                <script type="text/javascript">
+                    $(document).ready(function() {
+                        $(':input[name=source_0]').bind('autocompleteselect', function(event, ui) {
+                            $(this).parents("form").submit();
+                        });
+                    });
+                </script>
+            </form>
+            <ul class="nav nav-pills">
+                {% with object as topic %}
+                <li><a class="{% if module == 'passage' %}active {% endif %}passage" href="{% url filizver_post_create topic.id 'passage' %}">{% trans "Text" %}</a></li>
+                <li><a class="{% if module == 'photo' %}active {% endif %}photo" href="{% url filizver_post_create topic.id 'photo' %}">{% trans "Photo" %}</a></li>
+                {% endwith %}
+            </ul>
         </nav>
     <!--// Posts -->
         {% if perms.topic.can_change or object.user == user %}
@@ -48,7 +55,7 @@
                 update : function () { 
                     //$("#posts").load("process-sortable.php?"+order);
                     $.ajax({
-                        url: '{% url filizver.views.post_sort object.id %}', 
+                        url: '{% url filizver_post_sort object.id %}', 
                         type: 'POST',
                         data: $('#posts').sortable('serialize'),
                         success: function(feedback){

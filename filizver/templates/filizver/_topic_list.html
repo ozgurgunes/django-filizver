@@ -23,12 +23,3 @@
         {% endfor %}
     </section>            
     {% endif %}
-    {% if object.branches.select_related.all %}
-    <section id="{{ object.id }}_branches" class="branches">
-        <ul>
-        {% for branch in object.branches.select_related.all %}
-            <li><a href="{{ branch.get_absolute_url }}" title="{{ branch }}">{{ branch }}</a></li>
-        {% endfor %}
-        </ul>
-    </section>    
-    {% endif %}
