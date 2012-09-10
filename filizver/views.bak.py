@@ -84,27 +84,27 @@ def branch_create(request):
             extra_context = {'form': BranchForm(request.POST)}
     return render_to_response('filizver/branch_create.html', extra_context, context_instance=RequestContext(request))
     
-def branch_delete(request, post_id=None):
+def branch_delete(request, entry_id=None):
     pass
 
 @login_required
-def post_create(request, id=None, module=None):
+def entry_create(request, id=None, module=None):
     topic = get_object_or_404(Topic, pk=id)
     if not request.user in topic.user.relationships.following():
         return HttpResponseForbidden(_('User has no permission'))    
     extra_context = { 'module': module, 'topic': topic }
-    return render_to_response('filizver/post_create_ajax.html', extra_context, context_instance=RequestContext(request))
+    return render_to_response('filizver/entry_create_ajax.html', extra_context, context_instance=RequestContext(request))
 
 @login_required
-def post_sort(request, id=None):
+def entry_sort(request, id=None):
     topic = get_object_or_404(Topic, pk=id)
     if not request.user.has_perm('filizver.change_topic', topic):
         return HttpResponseForbidden(_('User has no permission'))
     if request.method == 'POST':
-        for position, pk in enumerate(request.POST.getlist('post[]')):
-            Post.objects.filter(pk=pk).update(position=position+1)
+        for position, pk in enumerate(request.POST.getlist('entry[]')):
+            Entry.objects.filter(pk=pk).update(position=position+1)
     extra_context = { 'object': topic }
-    return render_to_response('filizver/_topic_posts.html', extra_context, context_instance=RequestContext(request))
+    return render_to_response('filizver/_topic_entries.html', extra_context, context_instance=RequestContext(request))
         
 
 def topic_tagged(request, tag, template_name='filizver/topic_tagged.html', **kwargs):

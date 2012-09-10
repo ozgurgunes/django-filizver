@@ -1,0 +1,10 @@
+{% load i18n %}
+<form id="entry_form" action="{% url filizver_entry_create topic.id %}" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ entry_form.errors }}
+    {{ entry_form.branch }}{{ entry_form.text }}
+    {{ entry_form.source }}
+    <input type="submit" class="btn btn-primary" value="{% trans "Upload" %}">
+
+    {{ entry_form.media }}
+</form>

@@ -2,7 +2,6 @@
 import datetime, logging
 from django.contrib.contenttypes.models import ContentType
 from django.db.models.signals import post_save, post_delete
-from filizver.models import Post, Branch
 
 def add_post_signal(sender, instance, user=None, topic=None, date_created=None, **kwargs):
 	"""
@@ -18,7 +17,6 @@ def add_post_signal(sender, instance, user=None, topic=None, date_created=None, 
             'topic': instance.topic,
             'date_created': datetime.datetime.now()
             })
-post_save.connect(add_post_signal, sender=Branch)
 
 def delete_post_signal(sender, instance, **kwargs):
 	"""
@@ -35,7 +33,6 @@ def delete_post_signal(sender, instance, **kwargs):
 			post.delete()
 	except Post.DoesNotExist:
 		pass
-post_delete.connect(delete_post_signal, sender=Branch)
 
 def delete_post_object_signal(sender, instance, **kwargs):
 	"""
@@ -44,4 +41,3 @@ def delete_post_object_signal(sender, instance, **kwargs):
 	"""
 	if instance.content_object:
 	    instance.content_object.delete()
-post_delete.connect(delete_post_object_signal, sender=Post)

@@ -1,3 +1,0 @@
-    {% thumbnail post.content_object.image "x128" as im %}
-    <img src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" alt="{{ post.topic.title|truncatewords_html:5 }}" />
-    {% endthumbnail %}

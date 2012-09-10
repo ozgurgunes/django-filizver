@@ -3,10 +3,12 @@
 {% block title %}{% trans "Topics" %} - {{ block.super }}{% endblock title %}
 {% block breadcrumb %}{{ block.super }} &ndash; <a href="{% url topic.views.topic_list %}">{% trans "Topics" %}</a>{% endblock %}
 {% block script %}{{ block.super }}
-    <script type="text/javascript" src="{{ STATIC_URL }}wmd/jquery.wmd.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/filizver.js"></script>
 {% endblock %}
 {% block style %}{{ block.super }}
-    <link rel="stylesheet" type="text/css" media="screen" href="{{ STATIC_URL }}wmd/wmd.css" />
     <link rel="stylesheet" type="text/css" media="screen" href="{{ STATIC_URL }}css/filizver.css" />
+{% endblock %}
+{% block content %}
+    {% block main %}{% endblock %}
+    {% block side %}{% endblock %}
 {% endblock %}

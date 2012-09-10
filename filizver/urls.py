@@ -28,13 +28,14 @@ urlpatterns = patterns('',
         TemplateView.as_view(template_name='filizver/topic_delete.html'), 
         name='filizver_topic_delete_complete'),
         
-    url(r'^sort/posts/(?P<id>\d+)$', 
+    url(r'^sort/entries/(?P<id>\d+)$', 
         views.TopicSort.as_view(), 
-        name='filizver_post_sort'),    
+        name='filizver_entry_sort'),    
         
-    url(r'^create/post/(?P<id>\d+)/(?P<module>[-\w]+)$', 
-        views.TopicCreate.as_view(), 
-        name='filizver_post_create'),    
+    # url(r'^create/entry/(?P<id>\d+)/(?P<module>[-\w]+)$', 
+    url(r'^create/entry/(?P<id>\d+)$', 
+        'filizver.views.entry_create', 
+        name='filizver_entry_create'),    
         
     url(r'^create/branch$', 
         views.TopicCreate.as_view(

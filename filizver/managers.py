@@ -59,12 +59,12 @@ class TopicManager(models.Manager):
 #         return Topic.objects.filter(pk__in=ids).order_by('title','-date_created')
 # 
 
-# class PostManager(models.Manager):
+# class EntryManager(models.Manager):
 #     """
-#     Managers for the Filizver Post model
+#     Managers for the Filizver Entry model
 #     """
 #     def __init__(self):
-#         super(PostManager, self).__init__()
+#         super(EntryManager, self).__init__()
 #         self.models_by_name = {}
 # 
 #     def get_for_model(self, model):

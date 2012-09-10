@@ -3,7 +3,7 @@ from django import template
 from django.conf import settings
 from django.template.loader import select_template
 
-from filizver.models import Post
+from filizver.models import Entry
 
 register = template.Library()
 
@@ -12,8 +12,8 @@ def render_item(item, template_name=None):
 
     template_list = [template_name,] if template_name else []
     template_list.extend([
-        'tumblelog/_post_%(model)s.html' % {'model': model_name },
-        'tumblelog/_post_default.html'
+        'tumblelog/_entry_%(model)s.html' % {'model': model_name },
+        'tumblelog/_entry_default.html'
     ])
 
     t = select_template(template_list)
