@@ -1,0 +1,8 @@
+{% with entry.content_object.display as display %}
+    <figure class="entry{% if display == "L"  %} left{% else %}{% if display == "R"  %} right{% endif %}{% endif %}">
+        {% thumbnail entry.content_object.source "192" as im %}
+        <img src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" alt="{{ entry.content_object.description }}" />
+        {% endthumbnail %}
+    <figure>
+
+{% endwith %}

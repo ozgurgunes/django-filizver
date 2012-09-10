@@ -3,6 +3,7 @@ import settings
 from django.views.generic import (ListView, DetailView, FormView, CreateView,
                                     UpdateView, DeleteView)
 from django.shortcuts import redirect
+from django.utils import simplejson
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
@@ -23,10 +24,10 @@ def entry_create(request, id=None):
     topic = get_object_or_404(Topic, pk=id)
 
     if request.method == 'POST':
-        # POST = request.POST.copy()
-        # FILES = request.FILES.copy()
-        # POST['user'] = request.user.id
-        # POST['topic'] = topic.id
+        POST = request.POST.copy()
+        FILES = request.FILES.copy()
+        POST['user'] = request.user.id
+        POST['topic'] = topic.id
         # if POST['branch_1']:
         #     POST['source_1'] = POST['branch_1']
         #     form = BranchForm(POST)
@@ -43,21 +44,21 @@ def entry_create(request, id=None):
         #         if request.is_ajax():
         #             return HttpResponse('OK')
         #         return redirect(text.topic)        
-        form = ImageForm(request.POST, request.FILES)
+        form = ImageForm(POST, request.FILES)
         if form.is_valid():
             photo = form.save()
             if request.is_ajax():
-                image = request.FILES['image']
+                image = request.FILES['source']
                 data = {
                     'id'    : photo.id, 
                     'name'  : image.name, 
                     'type'  : image.content_type, 
                     'size'  : image.size
                 }
-                return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+                return HttpResponse('['+simplejson.dumps(data)+']', mimetype='application/json')
             return redirect(photo.topic)
-    
-    form = EntryForm(initial={'user': request.user, 'topic': topic})
+    else:
+        form = EntryForm(initial={'user': request.user, 'topic': topic})
     extra_context = { 'topic': topic, 'form': form }
     return render_to_response('filizver/entry_create.html', extra_context, context_instance=RequestContext(request))
 

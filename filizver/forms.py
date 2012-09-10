@@ -56,7 +56,7 @@ class ImageForm(forms.ModelForm):
     class Media:
         js          = (settings.STATIC_URL + 'js/image.upload.js',)
         
-    def clean_image(self):
+    def clean_source(self):
         from StringIO import StringIO  
         from PIL import Image
 
@@ -88,7 +88,7 @@ class ImageUpdateForm(forms.ModelForm):
     class Meta:
         model       = Image
         fields      = ['title', 'description']
-        exclude     = ['date_created', 'image', 'image_width', 'image_height']
+        exclude     = ['date_created', 'source', 'image_width', 'image_height']
 
 class TextForm(forms.ModelForm):
     source            = forms.CharField(required=True, widget=forms.Textarea(attrs={'class': 'textarea markup', 'rows': 8, 'required': 'required'}))
