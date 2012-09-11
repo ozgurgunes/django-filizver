@@ -10,38 +10,32 @@ urlpatterns = patterns('',
         views.TopicList.as_view(), 
         name='filizver_homepage'),
         
+    url(r'^update/topic/(?P<id>\d+)/$',
+        views.TopicUpdate.as_view(), 
+        name='filizver_topic_update'),
+        
+    # url(r'^create/entry/(?P<id>\d+)/(?P<module>[-\w]+)$', 
+    url(r'^create/entry/(?P<id>\d+)/$', 
+        'filizver.views.entry_create', 
+        name='filizver_entry_create'),    
+        
+    url(r'^sort/entries/(?P<id>\d+)/$', 
+        views.entry_sort, 
+        name='filizver_entry_sort'),    
+        
+    url(r'^delete/topic/(?P<pk>\d+)$', views.TopicDelete.as_view(), name='filizver_topic_delete'),
+
     url(r'^(?P<username>[-\w]+)/(?P<slug>[-\w]+)/(?P<id>\d+)/$', 
         views.TopicDetail.as_view(), 
         name='filizver_topic_detail'),
         
-    url(r'^create/topic$', 
-        views.TopicFormView.as_view(), 
+    url(r'^create/topic/$', 
+        views.TopicCreate.as_view(), 
         name='filizver_topic_create'),    
         
-    url(r'^update/topic/(?P<id>\d+)$', 
-        views.TopicFormView.as_view(), 
-        name='filizver_topic_update'),
-        
-#    url(r'^delete/topic/(?P<id>\d+)$', views.TopicDelete.as_view(), name='filizver_topic_delete'),
-
-    url(r'^delete/topic/complete$', 
+    url(r'^delete/topic/complete/$', 
         TemplateView.as_view(template_name='filizver/topic_delete.html'), 
         name='filizver_topic_delete_complete'),
-        
-    url(r'^sort/entries/(?P<id>\d+)$', 
-        views.TopicSort.as_view(), 
-        name='filizver_entry_sort'),    
-        
-    # url(r'^create/entry/(?P<id>\d+)/(?P<module>[-\w]+)$', 
-    url(r'^create/entry/(?P<id>\d+)$', 
-        'filizver.views.entry_create', 
-        name='filizver_entry_create'),    
-        
-    url(r'^create/branch$', 
-        views.TopicCreate.as_view(
-            form_class=BranchForm,
-            template_name='filizver/branch_create.html'), 
-        name='filizver_branch_create'),    
         
     url(r'^tags/$', 
         TemplateView.as_view(template_name='filizver/topic_tags.html'), 

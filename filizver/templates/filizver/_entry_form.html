@@ -2,9 +2,9 @@
 <form id="entry_form" action="{% url filizver_entry_create topic.id %}" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     {{ entry_form.errors }}
-    <p>{{ entry_form.branch }}</p><p>{{ entry_form.text }}</p>
+    <p>{{ entry_form.body }}</p>
     <p>{{ entry_form.source }}</p>
-    <input type="submit" class="btn btn-primary" value="{% trans "Upload" %}">
+    <input type="submit" class="btn btn-primary start" value="{% trans "Upload" %}">
 
 
     <!-- The loading indicator is shown during file processing -->
@@ -18,7 +18,16 @@
     <script src="{{ STATIC_URL }}js/jquery.fileupload-ui.js" type="text/javascript" charset="utf-8"></script>
     <script src="{{ STATIC_URL }}js/image.upload.js" type="text/javascript" charset="utf-8"></script>
     <link rel="stylesheet" href="{{ STATIC_URL }}css/jquery.fileupload-ui.css" type="text/css" media="screen" title="no title" charset="utf-8">
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/jquery.fileupload-ui.css" type="text/css" media="screen" title="no title" charset="utf-8">
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/jquery-ui-1.8.16.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
 
     {{ entry_form.media }}
-    
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $(':input[name=body_0]').bind('autocompleteselect', function(event, ui) {
+                $(this).parents("form").submit();
+            });
+        });
+    </script>    
 </form>

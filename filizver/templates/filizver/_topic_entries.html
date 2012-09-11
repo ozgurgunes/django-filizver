@@ -2,7 +2,7 @@
 <div id="entry_{{ entry.id }}" class="entry {{ entry.content_type|lower }}">
     {% if perms.topic.can_change or entry.user == user or entry.topic.user == user %}
         <menu id="entry_{{ entry.id }}_commands" class="entry btn-group" align="right">
-            <a class="btn" title="{% trans "Move" %}"><span class="icon-move"></span></a>
+            <a class="btn handle" title="{% trans "Move" %}"><span class="icon-move"></span></a>
             <a class="btn" href="{{ entry.content_object.get_update_url }}" title="{% trans "Update" %}"><span class="icon-edit"></span></a>
             <a class="btn" href="{{ entry.content_object.get_delete_url }}" title="{% trans "Delete" %}"><span class="icon-remove"></span></a>
         </menu>

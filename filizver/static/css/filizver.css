@@ -1,0 +1,25 @@
+.progress {
+    margin:0;
+}
+
+#entries .sortable-placeholder {
+    border: 2px dashed #999;
+}
+
+#entry_form input[type=text], #entry_form textarea {
+    width: 99%;
+}
+
+#entry_form input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    border: solid transparent;
+    border-width: 0 0 100px 200px;
+    opacity: 0;
+    filter: alpha(opacity=0);
+    -moz-transform: translate(-300px, 0) scale(4);
+    direction: ltr;
+    cursor: pointer;
+}

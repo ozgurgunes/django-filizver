@@ -14,6 +14,10 @@
     <article id="main" role="main">
         <header class="page-header">
             <h1>{{ object.title }}</h1>
+            <menu id="entry_{{ entry.id }}_commands" class="entry btn-group" align="right">
+                <a class="btn" href="{% url filizver_topic_update object.id %}" title="{% trans "Update" %}"><span class="icon-edit"></span></a>
+                <a class="btn" href="{% url filizver_topic_delete object.id %}" title="{% trans "Delete" %}"><span class="icon-remove"></span></a>
+            </menu>
         </header>
 
         
@@ -21,6 +25,29 @@
         {% if perms.topic.can_change or object.user == user %}
         {% include "filizver/_entry_form.html" %}
         {% endif %}
+        <script type="text/javascript"> 
+        // When the document is ready set up our sortable with it's inherant function(s) 
+        $(document).ready(function() { 
+            $("#entries").sortable({
+                handle:  '.handle',
+                axis: 'y',
+                placeholder: 'sortable-placeholder',
+                forcePlaceholderSize: true,
+                //tolerance: 'pointer',
+                update : function () { 
+                    //$("#leaves").load("process-sortable.php?"+order);
+                    $.ajax({
+                        url: '{% url filizver_entry_sort object.id %}', 
+                        type: 'POST',
+                        data: $('#entries').sortable('serialize'),
+                        success: function(feedback){
+                            $('#entries').html(feedback);
+                        },
+                    });
+                }
+            }); 
+        }); 
+        </script>     
         <section id="entries" class="main">
             {% include "filizver/_topic_entries.html" %}
         </section>
