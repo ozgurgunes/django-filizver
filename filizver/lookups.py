@@ -14,8 +14,8 @@ class BranchLookup(ModelLookup):
         Return a query set.  you also have access to request.user if needed
         
         """
-        topic_id = request.GET.get('topic_id', None)
-        branches_qs = Branch.objects.filter(topic__pk=topic_id).values('source')
+        topic_id = request.GET.get('topic', None)
+        branches_qs = Branch.objects.filter(topic__pk=topic_id).values_list('source')
         return Topic.objects.exclude(pk=topic_id).exclude(pk__in=branches_qs).filter(
                                 models.Q(title__istartswith=q) | models.Q(slug__istartswith=q))
 
@@ -25,6 +25,6 @@ class BranchLookup(ModelLookup):
 
     def get_item_label(self,item):
         # The value is shown in the input once the item has been selected. 
-        return mark_safe(u'<b>%s</b><br/>%s - %s' % (item.title, item.user, item.date_created))
+        return mark_safe(u'%s<br/><small>%s - %s</small>' % (item.title, item.user, item.date_created))
 
 registry.register(BranchLookup)

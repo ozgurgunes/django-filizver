@@ -113,6 +113,7 @@ class BranchForm(forms.ModelForm):
         model       = Branch
         exclude     = ['date_created']
 
+
 class ImageForm(forms.ModelForm):
     source          = forms.ImageField()
 

@@ -252,8 +252,10 @@ def delete_entry_object_signal(sender, instance, **kwargs):
 	This is a generic singal to delete related object when a Entry is deleted.
 
 	"""
-	if instance.content_object:
+	try:
 	    instance.content_object.delete()
+	except:
+	    pass
 
 
 post_save.connect(add_entry_signal, sender=Branch)

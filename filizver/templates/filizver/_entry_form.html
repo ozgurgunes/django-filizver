@@ -1,6 +1,7 @@
 {% load i18n %}
 <form id="entry_form" action="{% url filizver_entry_create topic.id %}" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
+    <input type="hidden" name="topic" id="id_topic" value="{{ object.pk }}" />
     {{ entry_form.errors }}
     <p>{{ entry_form.body }}</p>
     <p>{{ entry_form.source }}</p>
@@ -24,7 +25,12 @@
     {{ entry_form.media }}
 
     <script type="text/javascript">
+
         $(document).ready(function() {
+            function newParameters(query) {
+                query.topic = $('#id_topic').val();
+            }
+            $('#id_body_0').djselectable('option', 'prepareQuery', newParameters);
             $(':input[name=body_0]').bind('autocompleteselect', function(event, ui) {
                 $(this).parents("form").submit();
             });

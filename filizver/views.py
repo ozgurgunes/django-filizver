@@ -7,7 +7,7 @@ from django.utils import simplejson
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.urlresolvers import reverse, resolve
+from django.core.urlresolvers import reverse, resolve, reverse_lazy
 from manifest.core.decorators import owner_required
 from manifest.accounts.views import ExtraContextMixin, LoginRequiredMixin
 
@@ -20,16 +20,79 @@ from django.utils.translation import ugettext_lazy as _
 from django.template import RequestContext
 
 
-    
-    
-@login_required
-def entry_create(request, id=None):
-    topic = get_object_or_404(Topic, pk=id)
+class TopicList(ListView):
 
-    if request.method == 'POST':
+    queryset = Topic.objects.select_related().all()
+    template_name = "filizver/topic_list.html"
+    
+    # def get_queryset(self):
+    #     if self.request.user.is_authenticated():
+    #         return Topic.objects.for_user(self.request.user).select_related()
+    #     else:
+    #         return Topic.objects.select_related().all()
+
+            
+class TopicDetail(DetailView):
+
+    queryset = Topic.objects.select_related().all()
+    template_name = "filizver/topic_detail.html"
+    extra_context = { 'entry_form': EntryForm() }
+
+    def get_context_data(self, **kwargs):
+        context = super(TopicDetail, self).get_context_data(**kwargs)
+        context.update(self.extra_context)
+        return context
+    
+class TopicCreate(CreateView, LoginRequiredMixin):
+
+    form_class = TopicForm
+    template_name = "filizver/topic_create.html"
+    
+    def form_valid(self, form):
+        instance = form.save(commit=False)
+        instance.user = self.request.user
+        instance.save()
+        return redirect(instance.get_absolute_url())
+
+
+class TopicUpdate(UpdateView, LoginRequiredMixin):
+
+    model = Topic
+    form_class = TopicForm
+    template_name = "filizver/topic_update.html"
+
+    def get_success_url(self):
+        return self.object.get_absolute_url()
+
+
+class TopicDelete(DeleteView, LoginRequiredMixin):
+
+    model = Topic
+
+    def get_success_url(self):
+        return reverse('filizver_homepage')
+
+
+class EntryList(ListView):
+
+    queryset = Entry.objects.select_related().all()
+    template_name = "filizver/entry_list.html"
+
+
+class EntryDetail(ListView):
+
+    queryset = Entry.objects.select_related().all()
+    template_name = "filizver/entry_list.html"
+
+
+class EntryCreate(CreateView, LoginRequiredMixin):
+    
+    form_class = EntryForm
+    template_name = "filizver/entry_create.html"
+    
+    def post(self, request, *args, **kwargs):
         POST = request.POST.copy()
         POST['user'] = request.user.id
-        POST['topic'] = topic.id
         if POST['body_1']:
             POST['source_1'] = POST['body_1']
             form = BranchForm(POST)
@@ -38,6 +101,7 @@ def entry_create(request, id=None):
                 if request.is_ajax():
                     return HttpResponse('OK')
                 return redirect(text.topic)        
+        if POST['body_0']:
             POST['source'] = POST['body_0']
             form = TextForm(POST)
             if form.is_valid():
@@ -59,58 +123,23 @@ def entry_create(request, id=None):
                     }
                     return HttpResponse('['+simplejson.dumps(data)+']', mimetype='application/json')
                 return redirect(photo.topic)
-        form = EntryForm(initial={'user': request.user, 'topic': topic})
-    else:
-        form = EntryForm(initial={'user': request.user, 'topic': topic})
-    extra_context = { 'topic': topic, 'form': form }
-    return render_to_response('filizver/entry_create.html', extra_context, context_instance=RequestContext(request))
+        return HttpResponse('FAIL')
 
-class TopicList(ListView):
-    queryset = Topic.objects.select_related().all()
-    template_name = "filizver/topic_list.html"
-            
-class TopicDetail(DetailView):
-    queryset = Topic.objects.select_related().all()
-    template_name = "filizver/topic_detail.html"
-    extra_context = { 'entry_form': EntryForm() }
+class EntryDelete(DeleteView, LoginRequiredMixin):
 
-    def get_context_data(self, **kwargs):
-        context = super(TopicDetail, self).get_context_data(**kwargs)
-        context.update(self.extra_context)
-        return context
-    
-class TopicCreate(CreateView, LoginRequiredMixin):
-    form_class = TopicForm
-    template_name = "filizver/topic_create.html"
-    success_url = 'filizver_homepage'
-    
-    def form_valid(self, form):
-        instance = form.save(commit=False)
-        instance.user = self.request.user
-        instance.save()
-        return redirect(self.success_url)
+    model = Entry
 
-class TopicUpdate(UpdateView, LoginRequiredMixin):
+    def get_success_url(self):
+        return self.object.topic.get_absolute_url()
+
+
+class EntrySort(DetailView, UpdateView, LoginRequiredMixin):
+
     model = Topic
-    form_class = TopicForm
-    template_name = "filizver/topic_update.html"
-    success_url = '/topics'
-    slug_field = 'id'
-    slug_url_kwarg = 'id'
-    
+    template_name = 'filizver/_topic_entries.html'
+    context = {}
 
-class TopicDelete(DeleteView, LoginRequiredMixin):
-    model = Topic
-    #template_name = "filizver/topic_update.html"
-    success_url = '/'
-    #slug_field = 'id'
-    #slug_url_kwarg = 'id'
-
-@login_required
-def entry_sort(request, id=None):
-    topic = get_object_or_404(Topic, pk=id)
-    if request.method == 'POST':
+    def post(self, request, *args, **kwargs):
         for position, pk in enumerate(request.POST.getlist('entry[]')):
             Entry.objects.filter(pk=pk).update(position=position+1)
-    extra_context = { 'object': topic }
-    return render_to_response('filizver/_topic_entries.html', extra_context, context_instance=RequestContext(request))
+        return super(EntrySort, self).post(request, *args, **kwargs)

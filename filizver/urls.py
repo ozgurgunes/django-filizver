@@ -7,20 +7,29 @@ from filizver import views
 
 urlpatterns = patterns('',
     url(r'^$', 
-        views.TopicList.as_view(), 
+        views.EntryList.as_view(), 
         name='filizver_homepage'),
+
+    url(r'^$', 
+        views.TopicList.as_view(), 
+        name='filizver_topic_list'),
         
-    url(r'^update/topic/(?P<id>\d+)/$',
+    url(r'^update/topic/(?P<pk>\d+)/$',
         views.TopicUpdate.as_view(), 
         name='filizver_topic_update'),
         
     # url(r'^create/entry/(?P<id>\d+)/(?P<module>[-\w]+)$', 
-    url(r'^create/entry/(?P<id>\d+)/$', 
-        'filizver.views.entry_create', 
+
+    url(r'^create/entry/(?P<pk>\d+)/$', 
+        views.EntryCreate.as_view(),
         name='filizver_entry_create'),    
         
-    url(r'^sort/entries/(?P<id>\d+)/$', 
-        views.entry_sort, 
+    url(r'^delete/entry/(?P<pk>\d+)/$', 
+        views.EntryDelete.as_view(),
+        name='filizver_entry_delete'),    
+
+    url(r'^sort/entries/(?P<pk>\d+)/$', 
+        views.EntrySort.as_view(), 
         name='filizver_entry_sort'),    
         
     url(r'^delete/topic/(?P<pk>\d+)$', views.TopicDelete.as_view(), name='filizver_topic_delete'),

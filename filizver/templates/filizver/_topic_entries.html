@@ -4,7 +4,7 @@
         <menu id="entry_{{ entry.id }}_commands" class="entry btn-group" align="right">
             <a class="btn handle" title="{% trans "Move" %}"><span class="icon-move"></span></a>
             <a class="btn" href="{{ entry.content_object.get_update_url }}" title="{% trans "Update" %}"><span class="icon-edit"></span></a>
-            <a class="btn" href="{{ entry.content_object.get_delete_url }}" title="{% trans "Delete" %}"><span class="icon-remove"></span></a>
+            <a class="btn" href="{% url filizver_entry_delete entry.id %}" title="{% trans "Delete" %}"><span class="icon-remove"></span></a>
         </menu>
     {% endif %}    
     {% include entry.detail_template %}
