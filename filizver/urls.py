@@ -4,13 +4,13 @@ from django.views.generic import TemplateView
 from filizver.models import Topic
 from filizver.forms import BranchForm
 from filizver import views
-
+from manifest.accounts import views as accounts_views
 urlpatterns = patterns('',
     url(r'^$', 
-        views.EntryList.as_view(), 
+        views.TopicList.as_view(template_name='filizver/timeline.html'), 
         name='filizver_homepage'),
 
-    url(r'^$', 
+    url(r'^topics/$', 
         views.TopicList.as_view(), 
         name='filizver_topic_list'),
         
@@ -52,4 +52,13 @@ urlpatterns = patterns('',
         
 #    url(r'^tags/(?P<tag>.*)/$', views.topic_tagged, None, name='filizver_topic_tagged'),
 #    url(r'^search/$', views.topic_search, None, name='filizver_topic_search'),
+
+    # View profiles
+    url(r'^profiles/(?P<username>(?!logout|register|login|password|account|profile)\w+)/$', 
+        accounts_views.ProfileDetail.as_view(template_name='filizver/profile.html'),
+        name='accounts_profile_detail'),
+
+    url(r'^profiles/$', 
+        accounts_views.ProfileList.as_view(),
+        name='accounts_profile_list'),
 )

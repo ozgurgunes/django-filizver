@@ -14,26 +14,32 @@ from tagging.fields import TagField
 from tagging.models import Tag
 from manifest.core.models import SlugifyUniquely
 from filizver.managers import TopicManager
+from djangoplugins.fields import PluginField, ManyPluginField
+from filizver.points import EntryType
+from manifest.accounts.models import ProfileBase
+from pybb.models import PybbProfile
 
-
-def get_upload_to(instance, filename):
-    return '%s/%s/%s' % (str(instance._meta.app_label), str(instance._meta.module_name), re.sub('[^\.0-9a-zA-Z()_-]', '_', filename))
-
+class Profile(ProfileBase, PybbProfile):
+    pass
 
 class Topic(models.Model):
     """
     Topic class for Filizver application
     """
-    user                    = models.ForeignKey(User)
+    user                    = models.ForeignKey(User, related_name='filizver_topics')
     title                   = models.CharField(max_length=216)
     slug                    = models.SlugField(max_length=216, blank=True, null=False)
     date_created            = models.DateTimeField(blank=False, null=False, auto_now_add=True)
     is_public               = models.BooleanField(default=True)
 
-    branches                = models.ManyToManyField('self', blank=True, null=True, symmetrical=False, through='Branch', related_name='sources')
+    # branches                = models.ManyToManyField('self', blank=True, null=True, 
+    #                                     symmetrical=False, through='Branch', 
+    #                                     related_name='sources')
 
     tags                    = TagField()
     objects                 = TopicManager()
+    
+    plugins                 = PluginField(EntryType, blank=True, null=True)
     
     class Meta:
         ordering                = ('-date_created', 'title')
@@ -65,9 +71,9 @@ class Topic(models.Model):
         return Tag.objects.get_for_object(self)
 
     def _set_tags(self, tags):
-        Tag.objects.update_tags(self, tag_list)
+        Tag.objects.update_tags(self, tags)
 
-    tag_list = property(_get_tags, _set_tags)
+    tag_list = property(_get_tags, _set_tags)    
 
 
 class Entry(models.Model):
@@ -83,6 +89,8 @@ class Entry(models.Model):
     topic                  = models.ForeignKey(Topic)
     date_created            = models.DateTimeField(blank=False, null=False, auto_now_add=True)
     
+    plugins                 = ManyPluginField(EntryType)
+
     position                = models.PositiveSmallIntegerField(blank=True, null=False, default=0, editable=False);
     
     class Meta:
@@ -169,51 +177,6 @@ class Branch(EntryBase):
 
 
 
-class Text(EntryBase):
-    """Passage model"""
-
-    source            = models.TextField(blank=False, null=False)
-
-    class Meta:
-        verbose_name            = _('Text')
-        verbose_name_plural     = _('Texts')
-
-    def __unicode__(self):
-        return u"%s" % self.source
-        
-
-class Image(EntryBase):
-    """Photo model"""
-
-    DISPLAY_CHOICES = (
-        ('L', _('Left')),
-        ('N', _('None')),
-        ('R', _('Right')),
-    )
-    
-    source          = models.ImageField(upload_to=get_upload_to, blank=False, null=False, 
-                            width_field='image_width', height_field='image_height')
-    title           = models.CharField(max_length=128, blank=True, null=True)
-    description     = models.TextField(blank=True, null=True)
-
-    display         = models.CharField(max_length=1, blank=True, null=True,
-                            choices=DISPLAY_CHOICES, default='N')
-
-    image_width     = models.IntegerField(editable=False, null=True)
-    image_height    = models.IntegerField(editable=False, null=True)
-
-    class Meta:
-        verbose_name            = _('Photo')
-        verbose_name_plural     = _('Photos')
-
-    def __unicode__(self):
-        return u"%s" % self.source
-
-    def delete(self):
-        delete(self.source)
-        super(Photo, self).delete()
-
-
 def add_entry_signal(sender, instance, user=None, topic=None, date_created=None, **kwargs):
 	"""
 	This is a generic singal for adding an object to the Topic.
@@ -259,9 +222,5 @@ def delete_entry_object_signal(sender, instance, **kwargs):
 
 
 post_save.connect(add_entry_signal, sender=Branch)
-post_save.connect(add_entry_signal, sender=Text)
-post_save.connect(add_entry_signal, sender=Image)
 post_delete.connect(delete_entry_signal, sender=Branch)
-post_delete.connect(delete_entry_signal, sender=Text)        
-post_delete.connect(delete_entry_signal, sender=Image)
 post_delete.connect(delete_entry_object_signal, sender=Entry)

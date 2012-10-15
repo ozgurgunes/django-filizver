@@ -27,19 +27,3 @@ class EntryAdmin(admin.ModelAdmin):
 admin.site.register(Topic, TopicAdmin)
 admin.site.register(Branch, BranchAdmin)
 admin.site.register(Entry, EntryAdmin)
-
-class TextAdmin(admin.ModelAdmin):
-    list_display    = ('user', 'topic', 'date_created')
-    list_filter     = ['date_created']
-    search_fields   = ['source']
-    date_hierarchy  = 'date_created'
-
-admin.site.register(Text, TextAdmin)
-
-class ImageAdmin(admin.ModelAdmin):
-    list_display    = ('user', 'topic', 'date_created')
-    list_filter     = ['date_created']
-    search_fields   = ['caption']
-    date_hierarchy  = 'date_created'
-
-admin.site.register(Image, ImageAdmin)

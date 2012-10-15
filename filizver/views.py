@@ -12,7 +12,7 @@ from manifest.core.decorators import owner_required
 from manifest.accounts.views import ExtraContextMixin, LoginRequiredMixin
 
 from filizver.models import Topic, Entry
-from filizver.forms import TopicForm, BranchForm, EntryForm, ImageForm, TextForm
+from filizver.forms import TopicForm, BranchForm, EntryForm
 
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
@@ -20,10 +20,37 @@ from django.utils.translation import ugettext_lazy as _
 from django.template import RequestContext
 
 
-class TopicList(ListView):
+class ExtraContextMixin(View):
+    """
+    A mixin that passes ``extra_context`` dictionary as template context.
+    
+    """
+    
+    extra_context = {}
+
+    def get_context_data(self, **kwargs):
+        context = super(ExtraContextMixin, self).get_context_data(**kwargs)
+        context.update(self.extra_context)
+        return context
+
+
+class Timeline(ListView, ExtraContextMixin):
+
+    template_name = "filizver/topic_list.html"
+    extra_context = { 'topic_form': TopicForm() }
+    
+    def get_queryset(self):
+        if self.request.user.is_authenticated():
+            return Topic.objects.timeline(self.request.user).select_related()
+        else:
+            return Topic.objects.select_related().all()
+
+
+class TopicList(ListView, ExtraContextMixin):
 
     queryset = Topic.objects.select_related().all()
     template_name = "filizver/topic_list.html"
+    extra_context = { 'topic_form': TopicForm() }
     
     # def get_queryset(self):
     #     if self.request.user.is_authenticated():
@@ -101,28 +128,6 @@ class EntryCreate(CreateView, LoginRequiredMixin):
                 if request.is_ajax():
                     return HttpResponse('OK')
                 return redirect(text.topic)        
-        if POST['body_0']:
-            POST['source'] = POST['body_0']
-            form = TextForm(POST)
-            if form.is_valid():
-                text = form.save()
-                if request.is_ajax():
-                    return HttpResponse('OK')
-                return redirect(text.topic)        
-        if request.FILES:
-            form = ImageForm(POST, request.FILES)
-            if form.is_valid():
-                photo = form.save()
-                if request.is_ajax():
-                    image = request.FILES['source']
-                    data = {
-                        'id'    : photo.id, 
-                        'name'  : image.name, 
-                        'type'  : image.content_type, 
-                        'size'  : image.size
-                    }
-                    return HttpResponse('['+simplejson.dumps(data)+']', mimetype='application/json')
-                return redirect(photo.topic)
         return HttpResponse('FAIL')
 
 class EntryDelete(DeleteView, LoginRequiredMixin):

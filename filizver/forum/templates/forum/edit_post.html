@@ -1,0 +1,22 @@
+{% extends 'forum/base.html' %}
+{% load forum_tags i18n %}
+
+{% block title %}{% trans "Editing the post" %}{% endblock title %}
+
+{% block extra_script %}
+    {{ block.super }}
+    {% include "forum/_markitup.html" %}
+    <script type="text/javascript" src="{{ STATIC_URL }}forum/js/jquery.formset.min.js"></script>
+{% endblock %}
+
+{% block content %}
+    <h1>{% trans "Editing the post" %}</h1>
+    {% include "forum/post_form.html" %}
+{% endblock content %}
+
+{% block breadcrumb %}
+    {% with extra_crumb="Edit post" %}
+        {% include "forum/breadcrumb.html" %}
+    {% endwith %}
+    
+{% endblock %}

@@ -11,3 +11,4 @@ def createTopic(sender, user, **kwargs):
     """
     topic, created = Topic.objects.get_or_create(user=user, title=user.username)    
 activation_complete.connect(createTopic)
+

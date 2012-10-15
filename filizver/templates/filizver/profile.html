@@ -1,0 +1,88 @@
+{% extends 'filizver/filizver_base.html' %}
+{% block title %}{% blocktrans with profile.user.username as username %}{{ username }}'s profile.{% endblocktrans %}{% endblock %}
+{% load relationship_tags %}
+
+{% block main %}
+  <div class="white-box">
+    <div id="details">
+      {% block profile_details %}
+      {% thumbnail profile.get_picture_url "128x128" as im %}
+      <img src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" alt="{{ user }}" />
+      {% endthumbnail %}
+      <ul>
+      <li>{{ profile.user.topic_set.count }} {% trans "Topics" %}</li>
+      <li>{{ profile.user.entry_set.count }} {% trans "Entries" %}</li>
+      <li>{{ profile.user.relationships.following.count }} {% trans "Following" %}</li>
+      <li>{{ profile.user.relationships.followers.count }} {% trans "Followers" %}</li>
+      </ul>
+
+      {% if request.user != profile.user %}
+
+        {# decide whether or not the current user is following this user #}
+<p>
+        {% if_relationship request.user profile.user "following" %}
+
+          {# they are following them, so show a "remove" url #}
+          <a id="following" href="{{ profile.user|remove_relationship_url:"following" }}" class="btn">Unfollow</a>
+
+        {% else %}
+
+          {# they are not following them, so show a link to start following #}
+          <a id="following" href="{{ profile.user|add_relationship_url:"following" }}" class="btn">Follow</a>
+
+        {% endif_relationship %}
+<script type="text/javascript" charset="utf-8">
+    $('#following').click(function(event, xhr, settings){        
+        event.preventDefault();
+        $.ajax({
+            url: this.href, 
+            type: 'POST',
+            success: function(feedback){
+                $('#following')
+                .prop('href', $('#following').href == '{{ profile.user|remove_relationship_url:"following" }}' ? '{{ profile.user|add_relationship_url:"following" }}' : '{{ profile.user|remove_relationship_url:"following" }}')
+                .text($('#following').text() == '{% trans "Unfollow" %}' ? '{% trans "Follow" %}' : '{% trans "Unfollow" %}');
+            },
+            error: function(feedback){alert(feedback.responseText);}
+        }); 
+
+    });    
+</script>
+</p>
+      {% else %}
+        <p>This is you!</p>
+      {% endif %}
+
+      <ul>
+      {% for topic in profile.user.topic_set.all %}
+        <li><h3><a href="{{ topic.get_absolute_url }}" title="{{ topic }}">{{ topic }}</a></h3></li>
+      {% endfor %}
+      </ul>
+      
+        <dl>
+          {% block profile_definition_list %}
+            {% if profile.user.get_full_name %}
+              <dt>{% trans "Name" %}</dt>
+              <dd>{{ profile.user.get_full_name }}</dd>
+            {% endif %}
+            {% if profile.age %}          
+              <dt>{% trans "Age" %}</dt>
+              <dd>{{ profile.age }}</dd>
+            {% endif %}
+            {% if profile.website %}
+              <dt>{% trans "website" %}</dt>
+              <dd>{{ profile.website|urlize }}</dd>
+            {% endif %}
+            {% if profile.location %}
+              <dt>{% trans "Location" %}</dt>
+              <dd>{{ profile.location }}</dd>
+            {% endif %}
+            {% if profile.about_me %}
+              <dt>{% trans "About me" %}</dt>
+              <dd>{{ profile.about_me }}</dd>
+            {% endif %}
+          {% endblock %}
+        </dl>
+      {% endblock %}
+    </div>
+  </div>
+{% endblock %}

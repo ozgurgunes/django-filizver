@@ -15,7 +15,7 @@ class TopicManager(models.Manager):
 
     """        
 
-    def for_user(self, user):
+    def timeline(self, user):
         user_list = User.objects.filter(username=user.username) | user.relationships.following()
         return positive_filter(super(TopicManager, self).all(), user_list)
 
