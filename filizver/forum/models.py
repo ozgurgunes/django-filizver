@@ -32,7 +32,7 @@ try:
 except ImportError:
     pass
 
-from filizver.models import Topic as FilizverTopic
+from filizver.models import Topic as FilizverTopic, EntryBase
 from filizver.forum import defaults
 from filizver.contrib.texts.models import Text
 
@@ -72,7 +72,7 @@ class Category(models.Model):
         verbose_name_plural = _('Categories')
 
     def __unicode__(self):
-        return self.name
+        return self.topic.title
 
     def forum_count(self):
         return self.forums.all().count()
@@ -108,7 +108,7 @@ class Forum(models.Model):
         verbose_name_plural = _('Forums')
 
     def __unicode__(self):
-        return self.name
+        return self.topic.title
 
     def update_counters(self):
         self.post_count = Post.objects.filter(topic__forum=self).count()
@@ -153,30 +153,27 @@ class Topic(FilizverTopic):
         (POLL_TYPE_MULTIPLE, _('Multiple answers')),
     )
 
-    # forum = models.ForeignKey(Forum, related_name='topics', verbose_name=_('Forum'))
-    # name = models.CharField(_('Subject'), max_length=255)
-    # created = models.DateTimeField(_('Created'), null=True)
-    # updated = models.DateTimeField(_('Updated'), null=True)
-    # user = models.ForeignKey(User, verbose_name=_('User'))
-    # views = models.IntegerField(_('Views count'), blank=True, default=0)
-    # sticky = models.BooleanField(_('Sticky'), blank=True, default=False)
-    # closed = models.BooleanField(_('Closed'), blank=True, default=False)
-    # subscribers = models.ManyToManyField(User, related_name='subscriptions', verbose_name=_('Subscribers'),
-    #     blank=True)
-    # post_count = models.IntegerField(_('Post count'), blank=True, default=0)
-    # readed_by = models.ManyToManyField(User, through='TopicReadTracker', related_name='readed_topics')
-    # on_moderation = models.BooleanField(_('On moderation'), default=False)
-    # poll_type = models.IntegerField(_('Poll type'), choices=POLL_TYPE_CHOICES, default=POLL_TYPE_NONE)
-    # poll_question = models.TextField(_('Poll question'), blank=True, null=True)
+    forum = models.ForeignKey(Forum, related_name='topics', verbose_name=_('Forum'))
+    topic = models.OneToOneField(FilizverTopic)
+    created = models.DateTimeField(_('Created'), null=True)
+    updated = models.DateTimeField(_('Updated'), null=True)
+    #user = models.ForeignKey(User, related_name='forum_topics')
+    views = models.IntegerField(_('Views count'), blank=True, default=0)
+    sticky = models.BooleanField(_('Sticky'), blank=True, default=False)
+    closed = models.BooleanField(_('Closed'), blank=True, default=False)
+    subscribers = models.ManyToManyField(User, related_name='subscriptions', verbose_name=_('Subscribers'),
+        blank=True)
+    post_count = models.IntegerField(_('Post count'), blank=True, default=0)
+    readed_by = models.ManyToManyField(User, through='TopicReadTracker', related_name='readed_topics')
+    on_moderation = models.BooleanField(_('On moderation'), default=False)
 
     class Meta(object):
-        proxy = True
         ordering = ['-date_created']
         verbose_name = _('Topic')
         verbose_name_plural = _('Topics')
 
     def __unicode__(self):
-        return self.name
+        return self.topic.title
 
     @property
     def head(self):
@@ -237,16 +234,15 @@ class RenderableItem(models.Model):
         self.body_text = unescape(text)
 
 
-class Post(Text):
-    # topic = models.ForeignKey(Topic, related_name='posts', verbose_name=_('Topic'))
-    # user = models.ForeignKey(User, related_name='posts', verbose_name=_('User'))
-    # created = models.DateTimeField(_('Created'), blank=True)
-    # updated = models.DateTimeField(_('Updated'), blank=True, null=True)
-    # user_ip = models.IPAddressField(_('User IP'), blank=True, default='0.0.0.0')
-    # on_moderation = models.BooleanField(_('On moderation'), default=False)
-    # 
+class Post(RenderableItem, EntryBase):
+    #topic = models.ForeignKey(Topic, related_name='posts')
+    #user = models.ForeignKey(User, related_name='posts')
+    created = models.DateTimeField(_('Created'), blank=True)
+    updated = models.DateTimeField(_('Updated'), blank=True, null=True)
+    user_ip = models.IPAddressField(_('User IP'), blank=True, default='0.0.0.0')
+    on_moderation = models.BooleanField(_('On moderation'), default=False)
+    
     class Meta(object):
-        proxy = True
         ordering = ['date_created']
         verbose_name = _('Post')
         verbose_name_plural = _('Posts')

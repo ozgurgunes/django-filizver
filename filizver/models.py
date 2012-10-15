@@ -17,10 +17,6 @@ from filizver.managers import TopicManager
 from djangoplugins.fields import PluginField, ManyPluginField
 from filizver.points import EntryType
 from manifest.accounts.models import ProfileBase
-from pybb.models import PybbProfile
-
-class Profile(ProfileBase, PybbProfile):
-    pass
 
 class Topic(models.Model):
     """
@@ -39,7 +35,7 @@ class Topic(models.Model):
     tags                    = TagField()
     objects                 = TopicManager()
     
-    plugins                 = PluginField(EntryType, blank=True, null=True)
+    plugins                 = PluginField(EntryType, blank=True, null=True,)
     
     class Meta:
         ordering                = ('-date_created', 'title')

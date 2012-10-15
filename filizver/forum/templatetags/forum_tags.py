@@ -24,7 +24,7 @@ try:
 except ImportError:
     pytils_enabled = False
 
-from filizver.forum.models import TopicReadTracker, ForumReadTracker, PollAnswerUser
+from filizver.forum.models import TopicReadTracker, ForumReadTracker
 from filizver.forum import defaults
 
 
@@ -187,6 +187,3 @@ def forum_topic_inline_pagination(topic):
         return range(1, page_count+1)
     return range(1, 5) + ['...', page_count]
 
-@register.filter
-def forum_topic_poll_not_voted(topic, user):
-    return not PollAnswerUser.objects.filter(poll_answer__topic=topic, user=user).exists()

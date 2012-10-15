@@ -142,10 +142,10 @@ except (AttributeError, ValueError, ObjectDoesNotExist):
 class EditProfileForm(forms.ModelForm):
     class Meta(object):
         model = profile_model
-        fields = ['signature', 'time_zone', 'language',
-                  'show_signatures', 'avatar']
+        #fields = ['signature', 'time_zone', 'language',
+        #          'show_signatures', 'avatar']
 
-    signature = forms.CharField(widget=forms.Textarea(attrs={'rows': 2, 'cols:': 60}), required=False)
+    #signature = forms.CharField(widget=forms.Textarea(attrs={'rows': 2, 'cols:': 60}), required=False)
 
     def clean_avatar(self):
         if self.cleaned_data['avatar'] and (self.cleaned_data['avatar'].size > defaults.PYBB_MAX_AVATAR_SIZE):
@@ -172,25 +172,3 @@ class UserSearchForm(forms.Form):
             return qs
 
 
-class PollForm(forms.Form):
-    def __init__(self, topic,  *args, **kwargs):
-        self.topic = topic
-
-        super(PollForm, self).__init__(*args, **kwargs)
-
-        qs = PollAnswer.objects.filter(topic=topic)
-        if topic.poll_type == Topic.POLL_TYPE_SINGLE:
-            self.fields['answers'] = forms.ModelChoiceField(
-                label='', queryset=qs, empty_label=None,
-                widget=forms.RadioSelect())
-        elif topic.poll_type == Topic.POLL_TYPE_MULTIPLE:
-            self.fields['answers'] = forms.ModelMultipleChoiceField(
-                label='', queryset=qs,
-                widget=forms.CheckboxSelectMultiple())
-
-    def clean_answers(self):
-        answers = self.cleaned_data['answers']
-        if self.topic.poll_type == Topic.POLL_TYPE_SINGLE:
-            return [answers]
-        else:
-            return answers

@@ -22,11 +22,11 @@ class PybbMiddleware(object):
 
             language = translation.get_language_from_request(request)
 
-            if not profile.language:
-                profile.language = language
+            if not profile.locale:
+                profile.locale = language
                 profile.save()
 
-            if profile.language and profile.language != language:
-                request.session['django_language'] = profile.language
-                translation.activate(profile.language)
+            if profile.locale and profile.locale != language:
+                request.session['django_language'] = profile.locale
+                translation.activate(profile.locale)
                 request.LANGUAGE_CODE = translation.get_language()

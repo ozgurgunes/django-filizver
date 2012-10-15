@@ -28,7 +28,7 @@ from pure_pagination import Paginator
 
 from filizver.forum.models import Category, Forum, Topic, Post, TopicReadTracker, ForumReadTracker
 from filizver.forum.forms import  PostForm, AdminPostForm, EditProfileForm
-from filizver.forum.templatetags.forum_tags import forum_editable_by, forum_topic_poll_not_voted
+from filizver.forum.templatetags.forum_tags import forum_editable_by
 from filizver.forum.templatetags.forum_tags import forum_topic_moderated_by
 from filizver.forum import defaults
 
