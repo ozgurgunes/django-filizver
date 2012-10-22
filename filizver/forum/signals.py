@@ -14,7 +14,7 @@ def reply_saved(instance, **kwargs):
     if created:
         thread.last_reply = reply
         thread.reply_count = thread.replies.count()
-        thread.updated_date = datetime.now()
+        thread.last_update = datetime.now()
         profile = reply.user.forum_profile
         profile.reply_count = reply.user.replies.count()
         profile.save(force_update=True)
@@ -26,7 +26,7 @@ def thread_saved(instance, **kwargs):
     thread = instance
     forum = thread.forum
     forum.thread_count = forum.threads.count()
-    forum.updated_date = thread.updated_date
+    forum.last_update = thread.last_update
     forum.reply_count = forum.replies.count()
     forum.last_reply_id = thread.last_reply_id
     forum.save(force_update=True)

@@ -1,338 +1,366 @@
 [{
-    "pk": 1,
-    "model": "auth.group",
-    "fields": {
-        "title": "secret_group",
-        "permissions": []
+    "pk": 1, 
+    "model": "sites.site", 
+    "fields": 
+    {
+        "domain": "localhost:8000", 
+        "name": "Filizver"
     }
-}, {
-    "pk": 1,
-    "model": "auth.user",
-    "fields": {
-        "username": "djangobb",
-        "first_name": "",
-        "last_name": "",
-        "is_active": true,
-        "is_superuser": true,
-        "is_staff": true,
-        "last_login": "2011-05-17 10:54:40",
-        "groups": [],
-        "user_permissions": [],
-        "password": "sha1$1c9f3$a7684d8297cec9f1254edb3f072a249969b7914f",
-        "email": "alafin@ukr.net",
-        "date_joined": "2010-11-27 16:19:37"
+}, 
+{
+    "pk": 1, 
+    "model": "auth.group", 
+    "fields": 
+    {
+        "name": "Filizver"
     }
-}, {
-    "pk": 2,
-    "model": "auth.user",
-    "fields": {
-        "username": "alafin",
-        "first_name": "",
-        "last_name": "",
-        "is_active": true,
-        "is_superuser": false,
-        "is_staff": false,
-        "last_login": "2010-11-27 16:33:47",
-        "groups": [],
-        "user_permissions": [],
-        "password": "sha1$db3a7$b6a47b44fabf6e266a2aaac0871edb70ff512e1b",
-        "email": "alafin@python.su",
-        "date_joined": "2010-11-27 16:33:47"
+}, 
+{
+    "pk": 1, 
+    "model": "auth.user", 
+    "fields": 
+    {
+        "username": "admin", 
+        "first_name": "Admin", 
+        "last_name": "User", 
+        "is_active": true, 
+        "is_superuser": true, 
+        "is_staff": true, 
+        "last_login": "2012-01-01 00:00:00", 
+        "groups": [], 
+        "user_permissions": [], 
+        "password": "sha1$e467e$508942f1c9be858fd46dc976c2496ba133ba4122", 
+        "email": "admin@example.com", 
+        "date_joined": "2012-01-01 00:00:00"
     }
-}, {
-    "pk": 3,
-    "model": "auth.user",
-    "fields": {
-        "username": "slav0nic",
-        "first_name": "",
-        "last_name": "",
-        "is_active": true,
-        "is_superuser": false,
-        "is_staff": false,
-        "last_login": "2011-05-17 10:56:43",
-        "groups": [1],
-        "user_permissions": [],
-        "password": "sha1$b6ae5$a0e988b85a3bcf6957b70ade2b34e2883968d647",
-        "email": "slav0nic0@gmail.com",
-        "date_joined": "2010-11-27 16:35:05"
-    }
-}, {
-    "pk": 4,
-    "model": "auth.user",
-    "fields": {
-        "username": "test",
-        "first_name": "",
-        "last_name": "",
-        "is_active": false,
-        "is_superuser": false,
-        "is_staff": false,
-        "last_login": "2010-11-27 16:35:40",
-        "groups": [],
-        "user_permissions": [],
-        "password": "sha1$499ca$a5d3b46cc97e9336217508c6189fa9d3f73ccd9b",
+}, 
+{
+    "pk": 2, 
+    "model": "auth.user", 
+    "fields": 
+    {
+        "username": "test", 
+        "first_name": "Test", 
+        "last_name": "User", 
+        "is_active": true, 
+        "is_superuser": true, 
+        "is_staff": false, 
+        "last_login": "2012-01-01 00:00:00", 
+        "groups": [], 
+        "user_permissions": [], 
+        "password": "sha1$3cb32$046d34b6eee347cb4ce099b266f1b9b3d066553a", 
         "email": "test@example.com",
-        "date_joined": "2010-11-27 16:35:40"
+        "date_joined": "2012-01-01 00:00:00"
+    }
+}, 
+{
+    "pk": 3, 
+    "model": "auth.user", 
+    "fields": 
+    {
+        "username": "demo", 
+        "first_name": "Demo", 
+        "last_name": "User", 
+        "is_active": true, 
+        "is_superuser": false, 
+        "is_staff": false, 
+        "last_login": "2012-01-01 00:00:00", 
+        "groups": [], 
+        "user_permissions": [], 
+        "password": "sha1$1e2d3$0fd3f38117e48024ad68058252c42e9b9d69ca43", 
+        "email": "demo@example.com",
+        "date_joined": "2012-01-01 00:00:00"
+    }
+}, 
+{
+    "pk": 1,
+    "model": "accounts.account",
+    "fields": 
+    {
+        "user": 1,
+        "activation_key": "ALREADY_ACTIVATED"
+    }
+},
+{
+    "pk": 2,
+    "model": "accounts.account",
+    "fields": 
+    {
+        "user": 2,
+         "activation_key": "ALREADY_ACTIVATED"
+    }
+},
+{
+    "pk": 3,
+    "model": "accounts.account",
+    "fields": 
+    {
+        "user": 3,
+         "activation_key": "ALREADY_ACTIVATED"
+     }
+},
+{
+    "pk": 1,
+    "model": "filizver.topic",
+    "fields": {
+        "title": "Admin",
+        "user": 1,
+        "created_date": "2012-01-01T00:00:00"
+    }
+}, {
+    "pk": 2,
+    "model": "filizver.topic",
+    "fields": {
+        "title": "Test",
+        "user": 2,
+        "created_date": "2012-01-01T00:00:00"
     }
 }, {
     "pk": 3,
-    "model": "forums.category",
+    "model": "filizver.topic",
     "fields": {
-        "position": 0,
-        "title": "Secret",
-        "groups": [1]
+        "title": "Demo",
+        "user": 3,
+        "created_date": "2012-01-01T00:00:00"
+    }
+}, 
+{
+    "pk": 1,
+    "model": "filizver.profile",
+    "fields": 
+    {
+        "user": 1,
+        "topic": 1
+    }
+},
+{
+    "pk": 2,
+    "model": "filizver.profile",
+    "fields": 
+    {
+        "user": 2,
+        "topic": 2
+    }
+},
+{
+    "pk": 3,
+    "model": "filizver.profile",
+    "fields": 
+    {
+        "user": 3,
+        "topic": 3
+    }
+},
+{
+    "pk": 101,
+    "model": "filizver.topic",
+    "fields": {
+        "title": "Category 1",
+        "user": 2,
+        "created_date": "2012-01-01T00:00:00"
+    }
+}, {
+    "pk": 102,
+    "model": "filizver.topic",
+    "fields": {
+        "title": "Category 2",
+        "user": 2,
+        "created_date": "2012-01-01T00:00:00"
+    }
+}, {
+    "pk": 103,
+    "model": "filizver.topic",
+    "fields": {
+        "title": "Forum 1",
+        "user": 2,
+        "created_date": "2012-01-01T00:00:00"
+    }
+}, {
+    "pk": 104,
+    "model": "filizver.topic",
+    "fields": {
+        "title": "Forum 2",
+        "user": 2,
+        "created_date": "2012-01-01T00:00:00"
+    }
+}, {
+    "pk": 105,
+    "model": "filizver.topic",
+    "fields": {
+        "title": "Forum 3",
+        "user": 2,
+        "created_date": "2012-01-01T00:00:00"
+    }
+}, {
+    "pk": 106,
+    "model": "filizver.topic",
+    "fields": {
+        "title": "Forum Thread 1",
+        "user": 2,
+        "created_date": "2012-01-01T00:00:00"
+    }
+}, {
+    "pk": 107,
+    "model": "filizver.topic",
+    "fields": {
+        "title": "Forum Thread 2",
+        "user": 2,
+        "created_date": "2012-01-01T00:00:00"
+    }
+}, {
+    "pk": 108,
+    "model": "filizver.topic",
+    "fields": {
+        "title": "Forum Thread 3",
+        "user": 2,
+        "created_date": "2012-01-01T00:00:00"
+    }
+}, {
+    "pk": 109,
+    "model": "filizver.topic",
+    "fields": {
+        "title": "Forum Thread 4",
+        "user": 2,
+        "created_date": "2012-01-01T00:00:00"
+    }
+}, {
+    "pk": 110,
+    "model": "filizver.topic",
+    "fields": {
+        "title": "Forum Thread 5",
+        "user": 2,
+        "created_date": "2012-01-01T00:00:00"
+    }
+}, {
+    "pk": 111,
+    "model": "filizver.topic",
+    "fields": {
+        "title": "Forum Thread 6",
+        "user": 2,
+        "created_date": "2012-01-01T00:00:00"
+    }
+}, {
+    "pk": 112,
+    "model": "filizver.topic",
+    "fields": {
+        "title": "Forum Thread 7",
+        "user": 2,
+        "created_date": "2012-01-01T00:00:00"
+    }
+}, {
+    "pk": 113,
+    "model": "filizver.topic",
+    "fields": {
+        "title": "Forum Thread 8",
+        "user": 2,
+        "created_date": "2012-01-01T00:00:00"
+    }
+}, {
+    "pk": 114,
+    "model": "filizver.topic",
+    "fields": {
+        "title": "Forum Thread 9",
+        "user": 2,
+        "created_date": "2012-01-01T00:00:00"
     }
 }, {
     "pk": 1,
-    "model": "forums.category",
+    "model": "forum.category",
     "fields": {
-        "position": 1,
-        "title": "General",
+        "topic": 101,
+        "position": 0,
         "groups": []
     }
 }, {
     "pk": 2,
-    "model": "forums.category",
+    "model": "forum.category",
     "fields": {
-        "position": 2,
-        "title": "Other",
+        "topic": 102,
+        "position": 0,
         "groups": []
     }
 }, {
+    "pk": 1,
+    "model": "forum.forum",
+    "fields": {
+        "category": 1,
+        "topic": 103
+    }
+}, {
+    "pk": 2,
+    "model": "forum.forum",
+    "fields": {
+        "category": 1,
+        "topic": 104
+    }
+}, {
     "pk": 3,
-    "model": "forums.forum",
+    "model": "forum.forum",
     "fields": {
         "category": 2,
-        "updated": "2010-11-27 18:08:16",
-        "title": "Jython",
-        "reply_count": 0,
-        "thread_count": 0,
-        "moderators": [],
-        "position": 0,
-        "last_reply": null,
-        "description": "Jython questions"
-    }
-}, {
-    "pk": 4,
-    "model": "forums.forum",
-    "fields": {
-        "category": 3,
-        "updated": "2011-05-17 10:55:44",
-        "title": "Secret Forum",
-        "reply_count": 0,
-        "thread_count": 0,
-        "moderators": [],
-        "position": 0,
-        "last_reply": null,
-        "description": "forum for `secret` group"
+        "topic": 105
     }
 }, {
     "pk": 1,
-    "model": "forums.forum",
+    "model": "forum.thread",
     "fields": {
-        "category": 1,
-        "updated": "2011-05-17 10:54:16",
-        "title": "Python",
-        "reply_count": 6,
-        "thread_count": 2,
-        "moderators": [],
-        "position": 1,
-        "last_reply": 6,
-        "description": "Python questions"
-    }
-}, {
-    "pk": 2,
-    "model": "forums.forum",
-    "fields": {
-        "category": 1,
-        "updated": "2010-11-27 18:08:40",
-        "title": "Django",
-        "reply_count": 0,
-        "thread_count": 0,
-        "moderators": [],
-        "position": 2,
-        "last_reply": null,
-        "description": "Django questions"
-    }
-}, {
-    "pk": 2,
-    "model": "forums.thread",
-    "fields": {
-        "updated": "2011-05-17 10:54:16",
-        "title": "Test title2",
         "forum": 1,
-        "views": 2,
-        "reply_count": 2,
-        "created_date": "2011-05-17 10:54:09",
-        "subscribers": [],
-        "sticky": false,
-        "user": 3,
-        "closed": false,
-        "last_reply": 6
-    }
-}, {
-    "pk": 1,
-    "model": "forums.thread",
-    "fields": {
-        "updated": "2011-05-17 10:53:52",
-        "title": "Test Title",
-        "forum": 1,
-        "views": 7,
-        "reply_count": 4,
-        "created_date": "2010-11-27 19:58:38",
-        "subscribers": [],
-        "sticky": false,
-        "user": 1,
-        "closed": false,
-        "last_reply": 4
-    }
-}, {
-    "pk": 1,
-    "model": "forums.reply",
-    "fields": {
-        "body": "Test Body",
-        "user_ip": "127.0.0.1",
-        "updated": null,
-        "updated_by": null,
-        "created_date": "2010-11-27 19:58:38",
-        "markup": "bbcode",
-        "body_html": "Test Body",
-        "thread": 1,
-        "user": 1
+        "topic": 106
     }
 }, {
     "pk": 2,
-    "model": "forums.reply",
+    "model": "forum.thread",
     "fields": {
-        "body": "Test body 2",
-        "user_ip": "127.0.0.1",
-        "updated": null,
-        "updated_by": null,
-        "created_date": "2011-05-17 10:53:24",
-        "markup": "bbcode",
-        "body_html": "Test body 2",
-        "thread": 1,
-        "user": 1
+        "forum": 1,
+        "topic": 107
     }
 }, {
     "pk": 3,
-    "model": "forums.reply",
+    "model": "forum.thread",
     "fields": {
-        "body": "Test body 3",
-        "user_ip": "127.0.0.1",
-        "updated": null,
-        "updated_by": null,
-        "created_date": "2011-05-17 10:53:29",
-        "markup": "bbcode",
-        "body_html": "Test body 3",
-        "thread": 1,
-        "user": 1
+        "forum": 1,
+        "topic": 108
     }
 }, {
     "pk": 4,
-    "model": "forums.reply",
+    "model": "forum.thread",
     "fields": {
-        "body": "Test body 4",
-        "user_ip": "127.0.0.1",
-        "updated": null,
-        "updated_by": null,
-        "created_date": "2011-05-17 10:53:51",
-        "markup": "bbcode",
-        "body_html": "Test body 4",
-        "thread": 1,
-        "user": 3
+        "forum": 2,
+        "topic": 109
     }
 }, {
     "pk": 5,
-    "model": "forums.reply",
+    "model": "forum.thread",
     "fields": {
-        "body": "Test body",
-        "user_ip": "127.0.0.1",
-        "updated": null,
-        "updated_by": null,
-        "created_date": "2011-05-17 10:54:09",
-        "markup": "bbcode",
-        "body_html": "Test body",
-        "thread": 2,
-        "user": 3
+        "forum": 2,
+        "topic": 110
     }
 }, {
     "pk": 6,
-    "model": "forums.reply",
+    "model": "forum.thread",
     "fields": {
-        "body": "Test body 2",
-        "user_ip": "127.0.0.1",
-        "updated": null,
-        "updated_by": null,
-        "created_date": "2011-05-17 10:54:16",
-        "markup": "bbcode",
-        "body_html": "Test body 2",
-        "thread": 2,
-        "user": 3
+        "forum": 3,
+        "topic": 111
     }
 }, {
-    "pk": 1,
-    "model": "forums.profile",
+    "pk": 7,
+    "model": "forum.thread",
     "fields": {
-        "status": "",
-        "markup": "bbcode",
-        "show_signatures": true,
-        "avatar": "",
-        "language": "",
-        "reply_count": 3,
-        "privacy_permission": 1,
-        "show_smilies": true,
-        "site": "",
-        "yahoo": "",
-        "aim": "",
-        "msn": "",
-        "theme": "default",
-        "time_zone": 3.0,
-        "user": 1,
-        "signature": "",
-        "icq": "",
-        "jabber": "",
-        "show_avatar": true,
-        "location": ""
+        "forum": 3,
+        "topic": 112
     }
 }, {
-    "pk": 2,
-    "model": "forums.profile",
+    "pk": 8,
+    "model": "forum.thread",
     "fields": {
-        "status": "",
-        "markup": "bbcode",
-        "show_signatures": true,
-        "avatar": "",
-        "language": "",
-        "reply_count": 3,
-        "privacy_permission": 1,
-        "show_smilies": true,
-        "site": "",
-        "yahoo": "",
-        "aim": "",
-        "msn": "",
-        "theme": "default",
-        "time_zone": 3.0,
-        "user": 3,
-        "signature": "",
-        "icq": "",
-        "jabber": "",
-        "show_avatar": true,
-        "location": ""
+        "forum": 3,
+        "topic": 113
     }
 }, {
-    "pk": 1,
-    "model": "forums.replytracking",
+    "pk": 9,
+    "model": "forum.thread",
     "fields": {
-        "threads": "{u'1': 3}",
-        "user": 1,
-        "last_read": null
-    }
-}, {
-    "pk": 2,
-    "model": "forums.replytracking",
-    "fields": {
-        "threads": "{u'1': 4, u'2': 6}",
-        "user": 3,
-        "last_read": null
+        "forum": 3,
+        "topic": 114
     }
 }]

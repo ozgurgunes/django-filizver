@@ -51,9 +51,9 @@ class ThreadAdmin(BaseModelAdmin):
     raw_id_fields = ['subscribers', 'last_reply']
 
 class ReplyAdmin(BaseModelAdmin):
-    list_display = ['thread', 'user', 'created_date', 'updated_date', 'summary']
+    list_display = ['topic', 'user', 'created_date', 'updated_date', 'summary']
     search_fields = ['body']
-    raw_id_fields = ['thread', 'user', 'updated_by']
+    raw_id_fields = ['topic', 'user']
 
 class ReplyTrackingAdmin(BaseModelAdmin):
     list_display = ['user', 'last_read', 'threads']

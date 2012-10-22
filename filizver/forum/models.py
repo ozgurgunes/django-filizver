@@ -7,6 +7,8 @@ from django.db.models.signals import post_save
 from filizver.topic.models import Topic
 from filizver.topic.fields import AutoOneToOneField, JSONField
 
+from filizver.text.models import Text
+
 import defaults
 
 
@@ -56,7 +58,7 @@ class Forum(models.Model):
     position        = models.IntegerField(_('Position'), blank=True, default=0)
     description     = models.TextField(_('Description'), blank=True, default='')
     moderators      = models.ManyToManyField(User, blank=True, null=True, verbose_name=_('Moderators'))
-    last_update     = models.DateTimeField(_('Last update'), auto_now=True)
+    last_update     = models.DateTimeField(_('Last update'), auto_now=True, blank=True, null=True)
     reply_count     = models.IntegerField(_('Reply count'), blank=True, default=0)
     thread_count    = models.IntegerField(_('Thread count'), blank=True, default=0)
     last_reply      = models.ForeignKey('Reply', related_name='last_forum_reply', blank=True, null=True)
@@ -67,11 +69,14 @@ class Forum(models.Model):
         verbose_name_plural = _('Forums')
 
     def __unicode__(self):
-        return self.title
+        return self.topic.title
+        
+    def title(self):
+        return self.topic.title
 
     @models.permalink
     def get_absolute_url(self):
-        return ('forums:forum', [self.id])
+        return ('forum:forum', [self.id])
 
     @property
     def replies(self):
@@ -86,6 +91,7 @@ class Thread(models.Model):
     subscribers     = models.ManyToManyField(User, related_name='forum_subscriptions', verbose_name=_('Subscribers'), blank=True)
     view_count      = models.IntegerField(_('Views count'), blank=True, default=0)
     reply_count     = models.IntegerField(_('Reply count'), blank=True, default=0)
+    last_update     = models.DateTimeField(_('Last update'), null=True)
     last_reply      = models.ForeignKey('Reply', related_name='last_thread_reply', blank=True, null=True)
 
     class Meta:
@@ -122,9 +128,9 @@ class Thread(models.Model):
         except IndexError:
             return None
 
-    @property
-    def reply_count(self):
-        return self.reply_count - 1
+    # @property
+    # def reply_count(self):
+    #     return self.reply_count
 
     @models.permalink
     def get_absolute_url(self):
@@ -151,21 +157,9 @@ class Thread(models.Model):
             tracking.save()
     
 
-class Reply(models.Model):
+class Reply(Text):
+    text        = models.OneToOneField(Text, parent_link=True)
     thread      = models.ForeignKey(Thread, related_name='replies', verbose_name=_('Thread'))
-    user        = models.ForeignKey(User, related_name='replies', verbose_name=_('User'))
-
-    created_date = models.DateTimeField(_('Created date'), auto_now_add=True)
-    updated_date = models.DateTimeField(_('Updated date'), blank=True, null=True)
-    updated_by = models.ForeignKey(User, verbose_name=_('Updated by'), blank=True, null=True)
-
-    markup = models.CharField(_('Markup'), max_length=15, default=defaults.DEFAULT_MARKUP, choices=MARKUP_CHOICES)
-
-    body = models.TextField(_('Message'))
-    body_html = models.TextField(_('HTML version'))
-
-    ip = models.IPAddressField(_('IP Address'), blank=True, null=True)
-
 
     class Meta:
         ordering = ['created_date']
@@ -173,19 +167,12 @@ class Reply(models.Model):
         verbose_name = _('Reply')
         verbose_name_plural = _('Replies')
 
-    def save(self, *args, **kwargs):
-        self.body_html = convert_text_to_html(self.body, self.markup)
-        if defaults.SMILES_SUPPORT and self.user.forum_profile.show_smilies:
-            self.body_html = smiles(self.body_html)
-        super(Reply, self).save(*args, **kwargs)
-
-
     def delete(self, *args, **kwargs):
         self_id = self.id
         head_id = self.thread.replies.order_by('created_date')[0].id
         forum = self.thread.forum
         thread = self.thread
-        profile = self.user.forum_profile
+        profile = self.user.get_profile()
         self.last_thread_reply.clear()
         self.last_forum_reply.clear()
         super(Reply, self).delete(*args, **kwargs)
@@ -212,7 +199,7 @@ class Reply(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
-        return ('forums:reply', [self.id])
+        return ('forum:reply', [self.id])
 
     def summary(self):
         LIMIT = 50

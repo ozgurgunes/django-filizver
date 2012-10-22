@@ -11,7 +11,7 @@ class ForumFeed(Feed):
     feed_type = Atom1Feed
 
     def link(self):
-        return reverse('forums:index')
+        return reverse('forum:index')
 
     def item_guid(self, obj):
         return str(obj.id)

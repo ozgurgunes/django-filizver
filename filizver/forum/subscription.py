@@ -49,7 +49,7 @@ def notify_thread_subscribers(reply):
                         'username': reply.user.username,
                         'message': reply_body_text,
                         'reply_url': absolute_url(reply.get_absolute_url()),
-                        'unsubscribe_url': absolute_url(reverse('forums:forum_delete_subscription', args=[reply.thread.id])),
+                        'unsubscribe_url': absolute_url(reverse('forum:forum_delete_subscription', args=[reply.thread.id])),
                     }
                 #html_content = html_version(reply)
                 send_mail(subject, text_content, settings.DEFAULT_FROM_EMAIL, [to_email])

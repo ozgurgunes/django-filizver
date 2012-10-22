@@ -24,7 +24,7 @@ register = template.Library()
 @register.filter
 def profile_link(user):
     data = u'<a href="%s">%s</a>' % (\
-        reverse('forums:forum_profile', args=[user.username]), user.username)
+        reverse('forum:forum_profile', args=[user.username]), user.username)
     return mark_safe(data)
 
 
@@ -181,7 +181,7 @@ def forum_editable_by(post, user):
 
 
 @register.filter
-def forum_posted_by(post, user):
+def forum_replied_by(post, user):
     """
     Check if the post is writed by the user.
     """

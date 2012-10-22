@@ -3,6 +3,8 @@ import re
 from HTMLParser import HTMLParser, HTMLParseError
 import defaults 
 
+from django.template.defaultfilters import urlize as django_urlize
+
 try:
     import markdown
 except ImportError:

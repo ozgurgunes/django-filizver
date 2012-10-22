@@ -8,8 +8,8 @@
 <div class="linkst">
 	<div class="inbox">
 		<div class="pagelink conl">{% paginate %}</div>
-				<ul><li><a href="{% url forums:index %}">{% trans "Root" %} </a></li><li>&raquo; {% link thread.forum %} </li><li>&raquo; {{ thread }} 
-				<a href="{% url forums:forum_thread_feed thread.id %}"><img src="{{ STATIC_URL }}forums/img/feed-icon-small.png" alt="[RSS Feed]" title="[RSS Feed]" style="vertical-align:middle;" /></a>
+				<ul><li><a href="{% url forum:index %}">{% trans "Root" %} </a></li><li>&raquo; {% link thread.forum %} </li><li>&raquo; {{ thread }} 
+				<a href="{% url forum:forum_thread_feed thread.id %}"><img src="{{ STATIC_URL }}forums/img/feed-icon-small.png" alt="[RSS Feed]" title="[RSS Feed]" style="vertical-align:middle;" /></a>
 				</li></ul>
 		<div class="clearer"></div>
 	</div>
@@ -25,7 +25,7 @@
 		<div class="inbox">
 			<div class="replyleft">
 				<dl>
-					<dt><strong><a href="{% url forums:forum_profile reply.user.username %}">{{ reply.user.username }}</a></strong></dt>
+					<dt><strong><a href="{% url forum:forum_profile reply.user.username %}">{{ reply.user.username }}</a></strong></dt>
 					<dd class="usertitle"><strong>{{ reply.user.forum_profile.status }}</strong></dd>
 				</dl>
 			</div>

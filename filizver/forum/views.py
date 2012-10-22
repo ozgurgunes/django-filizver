@@ -88,17 +88,17 @@ def moderate(request, forum_id):
                 thread = get_object_or_404(Thread, pk=thread_id)
                 thread.delete()
             messages.success(request, _("Threads deleted"))
-            return HttpResponseRedirect(reverse('forums:index'))
+            return HttpResponseRedirect(reverse('forum:index'))
         elif 'open_threads' in request.POST:
             for thread_id in thread_ids:
                 open_close_thread(request, thread_id, 'o')
             messages.success(request, _("Threads opened"))
-            return HttpResponseRedirect(reverse('forums:index'))
+            return HttpResponseRedirect(reverse('forum:index'))
         elif 'close_threads' in request.POST:
             for thread_id in thread_ids:
                 open_close_thread(request, thread_id, 'c')
             messages.success(request, _("Threads closed"))
-            return HttpResponseRedirect(reverse('forums:index'))
+            return HttpResponseRedirect(reverse('forum:index'))
 
         return render(request, 'forums/moderate.html', {'forum': forum,
                 'threads': threads,
@@ -280,7 +280,7 @@ def misc(request):
             user = request.user
             ReplyTracking.objects.filter(user__id=user.id).update(last_read=datetime.now(), threads=None)
             messages.info(request, _("All threads marked as read."))
-            return HttpResponseRedirect(reverse('forums:index'))
+            return HttpResponseRedirect(reverse('forum:index'))
 
         elif action == 'report':
             if request.GET.get('reply_id', ''):
@@ -306,7 +306,7 @@ def misc(request):
                 messages.success(request, _("Email send."))
             except Exception:
                 messages.error(request, _("Email could not be sent."))
-            return HttpResponseRedirect(reverse('forums:index'))
+            return HttpResponseRedirect(reverse('forum:index'))
 
     elif 'mail_to' in request.GET:
         mailto = get_object_or_404(User, username=request.GET['mail_to'])
@@ -320,7 +320,7 @@ def show_forum(request, forum_id, full=True):
     forum = get_object_or_404(Forum, pk=forum_id)
     if not forum.category.has_access(request.user):
         return HttpResponseForbidden()
-    threads = forum.threads.order_by('-sticky', '-updated_date').select_related()
+    threads = forum.threads.order_by('-sticky', '-last_update').select_related()
     moderator = request.user.is_superuser or\
         request.user in forum.moderators.all()
     to_return = {'categories': Category.objects.all(),
@@ -353,7 +353,7 @@ def show_thread(request, thread_id, full=True):
     thread = get_object_or_404(Thread.objects.select_related(), pk=thread_id)
     if not thread.forum.category.has_access(request.user):
         return HttpResponseForbidden()
-    Thread.objects.filter(pk=thread.id).update(views=F('views') + 1)
+    Thread.objects.filter(pk=thread.id).update(view_count=F('view_count') + 1)
 
     last_reply = thread.last_reply
 
@@ -391,37 +391,6 @@ def show_thread(request, thread_id, full=True):
                 **reply_form_kwargs
             )
 
-    # handle poll, if exists
-    poll_form = None
-    polls = thread.poll_set.all()
-    if not polls:
-        poll = None
-    else:
-        poll = polls[0]
-        if user_is_authenticated: # Only logged in users can vote
-            poll.auto_deactivate()
-            has_voted = request.user in poll.users.all()
-            if not reply_request or not VotePollForm.FORM_NAME in request.POST:
-                # It's not a POST request or: The reply form was send and not a poll vote
-                if poll.active and not has_voted:
-                    poll_form = VotePollForm(poll)
-            else:
-                if not poll.active:
-                    messages.error(request, _("This poll is not active!"))
-                    return HttpResponseRedirect(thread.get_absolute_url())
-                elif has_voted:
-                    messages.error(request, _("You have already vote to this poll in the past!"))
-                    return HttpResponseRedirect(thread.get_absolute_url())
-
-                poll_form = VotePollForm(poll, request.POST)
-                if poll_form.is_valid():
-                    ids = poll_form.cleaned_data["choice"]
-                    queryset = poll.choices.filter(id__in=ids)
-                    queryset.update(votes=F('votes') + 1)
-                    poll.users.add(request.user) # save that this user has vote
-                    messages.success(request, _("Your votes are saved."))
-                    return HttpResponseRedirect(thread.get_absolute_url())
-
     highlight_word = request.GET.get('hl', '')
     if full:
         return render(request, 'forums/thread.html', {'categories': Category.objects.all(),
@@ -434,15 +403,11 @@ def show_thread(request, thread_id, full=True):
                 'subscribed': subscribed,
                 'replies': replies,
                 'highlight_word': highlight_word,
-                'poll': poll,
-                'poll_form': poll_form,
                 })
     else:
         return render(request, 'forums/lofi/thread.html', {'categories': Category.objects.all(),
                 'thread': thread,
                 'replies': replies,
-                'poll': poll,
-                'poll_form': poll_form,
                 })
 
 
@@ -508,7 +473,7 @@ def show_reply(request, reply_id):
     reply = get_object_or_404(Reply, pk=reply_id)
     count = reply.thread.replies.filter(created_date__lt=reply.created_date).count() + 1
     page = math.ceil(count / float(defaults.TOPIC_PAGE_SIZE))
-    url = '%s?page=%d#reply-%d' % (reverse('forums:thread', args=[reply.thread.id]), page, reply.id)
+    url = '%s?page=%d#reply-%d' % (reverse('forum:thread', args=[reply.thread.id]), page, reply.id)
     return HttpResponseRedirect(url)
 
 
@@ -682,9 +647,9 @@ def delete_subscription(request, thread_id):
     thread.subscribers.remove(request.user)
     messages.info(request, _("Thread subscription removed."))
     if 'from_thread' in request.GET:
-        return HttpResponseRedirect(reverse('forums:thread', args=[thread.id]))
+        return HttpResponseRedirect(reverse('forum:thread', args=[thread.id]))
     else:
-        return HttpResponseRedirect(reverse('forums:forum_profile', args=[request.user.username]))
+        return HttpResponseRedirect(reverse('forum:forum_profile', args=[request.user.username]))
 
 
 @login_required
@@ -693,7 +658,7 @@ def add_subscription(request, thread_id):
     thread = get_object_or_404(Thread, pk=thread_id)
     thread.subscribers.add(request.user)
     messages.success(request, _("Thread subscribed."))
-    return HttpResponseRedirect(reverse('forums:thread', args=[thread.id]))
+    return HttpResponseRedirect(reverse('forum:thread', args=[thread.id]))
 
 
 @login_required

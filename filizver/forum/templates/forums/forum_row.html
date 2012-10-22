@@ -13,7 +13,7 @@
 				<div class="nosize"><!-- --></div>
 			</div>
 			<div class="tclcon">
-				<h3>{% link forum %} <a href="{% url forums:forum_forum_feed forum.id %}"><img src="{{ STATIC_URL }}forums/img/feed-icon-small.png"  alt="[RSS Feed]" title="[RSS Feed]" class="rss" /></a></h3>
+				<h3>{% link forum %} <a href="{% url forum:forum_forum_feed forum.id %}"><img src="{{ STATIC_URL }}forums/img/feed-icon-small.png"  alt="[RSS Feed]" title="[RSS Feed]" class="rss" /></a></h3>
 				{{ forum.description|safe }}
 				<p>
 				{% cache 6000 moderators forum.id %}
@@ -30,7 +30,7 @@
 	<td class="tc2">{{ forum.thread_count }}</td>
 	<td class="tc3">{{ forum.reply_count }}</td>
 	<td class="tcr">
-		{% if forum.updated_date %}
+		{% if forum.last_update %}
 			{% if forum.last_reply.thread %}
 				<a href="{{ forum.last_reply.get_absolute_url }}">{% forum_time forum.last_reply.created %}</a>
 				<span class="byuser">{% trans "by" %} {{ forum.last_reply.user.username }}</span>

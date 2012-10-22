@@ -70,7 +70,7 @@ class Topic(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
-        return ('filizver_topic_detail', None, {
+        return ('filizver:topic_detail', None, {
             'username': self.user.username,
             'slug': self.slug,
             'id': self.pk
