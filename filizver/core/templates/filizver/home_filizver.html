@@ -1,0 +1,45 @@
+{% extends "banner_base.html" %}
+{% load pagination_tags %}
+{% block title %}{% trans "Latest topics" %} - {{ block.super }}{% endblock title %}
+{% block breadcrumb %}{{ block.super }} &ndash; <a href="{% url topic.views.topic_list %}">{% trans "Latest filizver" %}</a>{% endblock %}
+
+{% block banner %}
+    {% if form %}
+    <form class="form form-horizontal" method="post" action="{% url filizver.views.topic_create %}">{% csrf_token %}
+    	{% if form.errors %}
+    	<p class="error dialogue">{% trans 'There were errors in form' %}</p>
+    	{% endif %}
+    	<fieldset>
+            <legend>{% trans "What is on your mind?" %}</legend>
+            <div class="control-group">
+                {{ form.title }}{{ form.user }}{{ form.parent }}
+        	    <input type="hidden" name="next" value="{{ next }}" />
+        	    <button type="submit" class="btn btn-primary">{% trans 'Topic' %}</button>
+            </div>
+        </fieldset>
+    </form>
+    {% endif %}
+{% endblock %}
+
+{% block main %}
+    {% autopaginate object_list 10 %}
+    <header class="main page-header">
+        <h2>{% trans "Latest topics" %}</h2>
+    </header>
+    <section class="main">
+    {% for object in object_list %}
+        <article class="section row {% cycle odd,even %}">
+        {% include "topic/_topic_list.html" %}
+        </article>
+    {% empty %}
+        <p class="section empty">{% trans "No topic yet" %}</p>    
+    {% endfor %}
+    </section>
+    <footer class="main">
+    {% paginate %}
+    </footer>
+{% endblock %}
+
+{% block aside %}
+{% with request.user as user %}{% include "profiles/_profile_panel.html" %}{% endwith %}
+{% endblock %}

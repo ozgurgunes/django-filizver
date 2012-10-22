@@ -1,0 +1,17 @@
+{% extends 'forums/base.html' %}
+{% load forum_tags %}
+{% load i18n %}
+
+{% block content %}
+<div class="linkst">
+	<div class="inbox">
+		{% if forum %}
+		<ul class="start"><li><a href="{% url forums:index %}">{% trans "Root" %}</a> </li><li>&raquo; {% link forum %}</li></ul>
+		{% else %}
+			<ul><li><a href="{% url forums:index %}">{% trans "Root" %}</a> </li><li>&raquo; {% link thread.forum %}</li><li>&raquo; {{ thread }}</li></ul>
+		{% endif %}
+		<div class="clearer"></div>
+	</div>
+</div>
+{% include "forums/includes/reply_form.html" %}
+{% endblock %}

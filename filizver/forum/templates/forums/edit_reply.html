@@ -1,0 +1,38 @@
+{% extends 'forums/base.html' %}
+{% load forum_tags %}
+{% load i18n %}
+
+{% block content %}
+<div class="linkst">
+	<div class="inbox">
+		<ul><li><a href="{% url forums:index %}">{% trans "Root" %}</a> </li><li>&raquo; {% link reply.thread.forum %}</li><li>&raquo; {{ reply.thread }}</li></ul>
+		<div class="clearer"></div>
+	</div>
+</div>
+
+<div class="blockform">
+	<h2>{% trans "Edit reply" %}</h2>
+
+	<div class="box">
+		<form method="reply">
+			{% csrf_token %}
+			<div class="inform">
+				<fieldset>
+					<legend>{% trans "Edit the reply and submit changes" %}</legend>
+					<div class="infldset txtarea">
+						{% if reply.id == reply.thread.head.id %}
+						<label>{% trans "Subject" %}<br />
+						{{ form.name }}<br /></label>
+						{% endif %}
+						<label>{% trans "Message" %}<br />
+						{{ form.body }}
+						<br /></label>
+					</div>
+				</fieldset>
+			</div>
+
+			<p><input type="submit" value="{% trans "Save" %}" /><a href="javascript:history.go(-1)">{% trans "Go back" %}</a></p>
+		</form>
+	</div>
+</div>
+{% endblock %}

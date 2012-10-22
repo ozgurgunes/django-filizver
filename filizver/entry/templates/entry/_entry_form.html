@@ -1,0 +1,69 @@
+{% load i18n plugins %}
+<form id="entry_form" action="{% url filizver:entry_create topic.id %}" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="hidden" name="topic" id="id_topic" value="{{ object.pk }}" />
+
+    {% get_plugins filizver.points.EntryType as plugins %}
+    <ul class="nav nav-tabs" id="myTab">
+        {% for plugin in plugins %}
+        <li><a href="#{{ plugin.name }}">{{ plugin.title }}</a></li>
+        {% endfor %}
+    </ul>
+
+    {% get_plugins filizver.points.EntryType as plugins %}
+    <div class="tab-content">
+      {% for plugin in plugins %}
+      <div class="tab-pane" id="{{ plugin.name }}">{{ plugin.form_class|as_bootstrap }}</div>
+      {% endfor %}
+    </div>
+    <script>
+      $(function () {
+          $('#myTab a').click(function (e) {
+            e.preventDefault();
+            $(this).tab('show');
+          })
+          $('#myTab a:first').tab('show').addClass('active');
+      })
+    </script>
+    {{ entry_form.errors }}
+    <p>{{ entry_form.body }}</p>
+    <p>{{ entry_form.source }}</p>
+    <div align="right" class="fileupload-buttonbar">
+        <button type="submit" class="btn start">{% trans "Start upload" %}</button>
+        <input type="submit" class="btn start" value="{% trans "Save" %}">
+    </div>
+
+    <!-- The loading indicator is shown during file processing -->
+    <div class="fileupload-loading"></div>
+    <br>
+    <!-- The table listing the files available for upload/download -->
+    <table role="presentation" class="table table-striped"><tbody class="files" data-toggle="modal-gallery" data-target="#modal-gallery"></tbody></table>
+    <script src="{{ STATIC_URL }}js/jquery.iframe-transport.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ STATIC_URL }}js/jquery.fileupload.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ STATIC_URL }}js/jquery.fileupload-fp.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ STATIC_URL }}js/jquery.fileupload-ui.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ STATIC_URL }}js/image.upload.js" type="text/javascript" charset="utf-8"></script>
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/jquery.fileupload-ui.css" type="text/css" media="screen" title="no title" charset="utf-8">
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/jquery.fileupload-ui.css" type="text/css" media="screen" title="no title" charset="utf-8">
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/jquery-ui-1.8.16.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
+
+    {{ entry_form.media }}
+
+    <script type="text/javascript">
+
+        $(document).ready(function() {
+            $('#entry_form button.start').click($('#entry_form').fileupload('send'));
+            
+            function newParameters(query) {
+                query.topic = $('#id_topic').val();
+            }
+            $('#id_body_0').djselectable('option', 'prepareQuery', newParameters);
+            $(':input[name=body_0]').bind('autocompleteselect', function(event, ui) {
+                $(this).parents("form").submit();
+            });
+        });
+    </script>
+
+
+
+</form>

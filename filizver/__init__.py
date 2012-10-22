@@ -2,7 +2,7 @@
 from django.db import transaction
 from django.contrib.auth.models import User
 from manifest.accounts.signals import activation_complete
-from filizver.models import Topic
+from filizver.topic.models import Topic
 
 @transaction.commit_on_success()
 def createTopic(sender, user, **kwargs):

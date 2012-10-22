@@ -1,0 +1,40 @@
+{% load forum_tags %}
+{% load cache %}
+{% load i18n %}
+
+{% if forum.last_reply.thread %}
+	<tr {% if forum|forum_unreads:user %}class="inew"{% endif %}>
+{% else %}
+	<tr>
+{% endif %}
+	<td class="tcl">
+		<div class="intd">
+			<div class="icon">
+				<div class="nosize"><!-- --></div>
+			</div>
+			<div class="tclcon">
+				<h3>{% link forum %} <a href="{% url forums:forum_forum_feed forum.id %}"><img src="{{ STATIC_URL }}forums/img/feed-icon-small.png"  alt="[RSS Feed]" title="[RSS Feed]" class="rss" /></a></h3>
+				{{ forum.description|safe }}
+				<p>
+				{% cache 6000 moderators forum.id %}
+					{% with forum.moderators.all as moderators %}
+						{% if moderators %}
+							{% include 'forums/moderators.html' %}
+						{% endif %}
+					{% endwith %}
+				{% endcache %}
+				</p>
+			</div>
+		</div>
+	</td>
+	<td class="tc2">{{ forum.thread_count }}</td>
+	<td class="tc3">{{ forum.reply_count }}</td>
+	<td class="tcr">
+		{% if forum.updated_date %}
+			{% if forum.last_reply.thread %}
+				<a href="{{ forum.last_reply.get_absolute_url }}">{% forum_time forum.last_reply.created %}</a>
+				<span class="byuser">{% trans "by" %} {{ forum.last_reply.user.username }}</span>
+			{% endif %}
+		{% endif %}
+	</td>
+</tr>
