@@ -504,30 +504,6 @@ def add_thread(request, forum_id):
     return render(request, 'forums/add_thread.html', context)
 
 
-@transaction.commit_on_success
-def upload_avatar(request, username, template=None, form_class=None):
-    user = get_object_or_404(User, username=username)
-    if request.user.is_authenticated() and user == request.user or request.user.is_superuser:
-        form = build_form(form_class, request, instance=user.forum_profile)
-        if request.method == 'POST' and form.is_valid():
-            form.save()
-            messages.success(request, _("Your avatar uploaded."))
-            return HttpResponseRedirect(reverse('forums:forum_profile', args=[user.username]))
-        return render(request, template, {'form': form,
-                'avatar_width': defaults.AVATAR_WIDTH,
-                'avatar_height': defaults.AVATAR_HEIGHT,
-               })
-    else:
-        thread_count = Thread.objects.filter(user__id=user.id).count()
-        if user.forum_profile.reply_count < defaults.POST_USER_SEARCH and not request.user.is_authenticated():
-            messages.error(request, _("Please sign in."))
-            return HttpResponseRedirect(reverse('user_signin') + '?next=%s' % request.path)
-        return render(request, template, {'profile': user,
-                'thread_count': thread_count,
-               })
-
-
-
 def show_reply(request, reply_id):
     reply = get_object_or_404(Reply, pk=reply_id)
     count = reply.thread.replies.filter(created_date__lt=reply.created_date).count() + 1
@@ -699,15 +675,6 @@ def open_close_thread(request, thread_id, action):
     return HttpResponseRedirect(thread.get_absolute_url())
 
 
-def users(request):
-    users = User.objects.filter(forum_profile__reply_count__gte=defaults.POST_USER_SEARCH).order_by('username')
-    form = UserSearchForm(request.GET)
-    users = form.filter(users)
-    return render(request, 'forums/users.html', {'users': users,
-            'form': form,
-            })
-
-
 @login_required
 @transaction.commit_on_success
 def delete_subscription(request, thread_id):
@@ -727,15 +694,6 @@ def add_subscription(request, thread_id):
     thread.subscribers.add(request.user)
     messages.success(request, _("Thread subscribed."))
     return HttpResponseRedirect(reverse('forums:thread', args=[thread.id]))
-
-
-@login_required
-def show_attachment(request, hash):
-    attachment = get_object_or_404(Attachment, hash=hash)
-    file_data = file(attachment.get_absolute_path(), 'rb').read()
-    response = HttpResponse(file_data, mimetype=attachment.content_type)
-    response['Content-Disposition'] = 'attachment; filename="%s"' % smart_str(attachment.name)
-    return response
 
 
 @login_required

@@ -19,19 +19,19 @@ from filizver.branch.forms import BranchForm
 class EntryList(ListView):
 
     queryset = Entry.objects.select_related().all()
-    template_name = "entry/_tntry_list.html"
+    template_name = "entry/_entry_list.html"
 
 
 class EntryDetail(ListView):
 
     queryset = Entry.objects.select_related().all()
-    template_name = "entry/_tntry_list.html"
+    template_name = "entry/_entry_list.html"
 
 
 class EntryCreate(CreateView, LoginRequiredMixin):
     
     form_class = EntryForm
-    template_name = "entry/_tntry_create.html"
+    template_name = "entry/_entry_create.html"
     
     def post(self, request, *args, **kwargs):
         POST = request.POST.copy()

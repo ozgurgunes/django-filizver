@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from filizver.entry.models import EntryType
+from filizver.entry.plugins import EntryType
 from filizver.branch.forms import BranchForm
 
 

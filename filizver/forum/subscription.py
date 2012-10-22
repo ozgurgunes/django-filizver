@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse
 from django.utils.html import strip_tags
 
 from filizver.forum import defaults
-from filizver.topic.utils import absolute_url
+from filizver.core.utils import absolute_url
 
 if "mailer" in settings.INSTALLED_APPS:
     from mailer import send_mail
