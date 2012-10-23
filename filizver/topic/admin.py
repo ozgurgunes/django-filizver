@@ -7,7 +7,7 @@ from .plugins import TopicInline
 TOPIC_INLINES = [plugin.admin() for plugin in TopicInline.get_plugins()]
 
 class TopicAdmin(admin.ModelAdmin):
-    fields = ('title', 'slug', 'plugins', ('user', 'moderators'), ('active', 'deleted', 'deleted_date'))
+    fields = ('title', 'slug', 'plugins', 'user', ('active', 'deleted'))
     read_only_fields = ('created_date', 'updated_date', 'deleted_date')
     raw_id_fields = ('user', 'moderators')
     inlines = TOPIC_INLINES

@@ -8,6 +8,7 @@ from timezones.fields import TimeZoneField
 #from manifest.profiles.models import ProfileBase
 from filizver.topic.models import Topic
 from filizver.core.utils import get_upload_to
+from filizver.core.fields import AutoOneToOneField
 
 from manifest.accounts.managers import ProfileBaseManager
 
@@ -24,7 +25,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User, unique=True, verbose_name=_(u'User'), 
                 related_name='profile')
     
-    topic = models.OneToOneField(Topic, parent_link=True, related_name='profile')
+    topic = AutoOneToOneField(Topic, parent_link=True, related_name='profile')
 
     birth_date = models.DateField(_(u'Birth date'), blank=True, null=True)
 

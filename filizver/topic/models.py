@@ -11,34 +11,37 @@ from tagging.fields import TagField
 from tagging.models import Tag
 from django.template.defaultfilters import slugify
 from filizver.topic.plugins import TopicInline
+from filizver.core.models import DateMixin, DeleteMixin
+
 from djangoplugins.fields import ManyPluginField
 
-class Topic(models.Model):
+class Topic(DateMixin, DeleteMixin):
     """
     Topic class for Filizver application
     """
     user                    = models.ForeignKey(User, related_name='topics')
+    
     title                   = models.CharField(_('Title'), max_length=216)
     slug                    = models.SlugField(_('Slug'), max_length=216, blank=True, null=False)
 
-    created_date            = models.DateTimeField(_('Created date'), auto_now_add=True, 
-                                        blank=False, null=False)
-    updated_date            = models.DateTimeField(_('Updated date'), auto_now=True, 
-                                        blank=True, null=True)
-    deleted_date            = models.DateTimeField(_('Deleted date'), blank=True, null=True)
-
     active                  = models.BooleanField(_('Active'), default=True)
-    deleted                 = models.BooleanField(_('Deleted'), default=False)
     
-    moderators              = models.ManyToManyField(User, blank=True, null=True, verbose_name=_('Moderators'))
+    branches                = models.ManyToManyField('self', blank=True, null=True, 
+                                        symmetrical=False, through='Branch', 
+                                        related_name='sources')
+
+    followers               = models.ManyToManyField(User, verbose_name=_('Followers'), 
+                                        through='Follower', related_name='following',
+                                        blank=True, null=True)
+    moderators              = models.ManyToManyField(User, verbose_name=_('Moderators'), 
+                                        through='Moderator', related_name='moderating',
+                                        blank=True, null=True)
     
 
-    # ip                      = models.IPAddressField(_('IP Address'), blank=False, null=False, editable=False)
-    # api                     = models.IPAddressField(_('API Gateway'), blank=False, null=False editable=False)
-
-    # branches                = models.ManyToManyField('self', blank=True, null=True, 
-    #                                     symmetrical=False, through='Branch', 
-    #                                     related_name='sources')
+    ip_address              = models.IPAddressField(_('IP Address'), editable=False, 
+                                        blank=False, null=False)
+    api_gateway             = models.IPAddressField(_('API Gateway'), editable=False, 
+                                        blank=True, null=True)
 
     tags                    = TagField()
     #objects                 = TopicManager()
@@ -59,14 +62,7 @@ class Topic(models.Model):
         # Populate slug field
         if not self.id:
             self.slug   = str(slugify(self.title))
-        super(Topic, self).save(*args, **kwargs) 
-        
-    def delete(self, commit=False, *args, **kwargs):
-        if commit:
-            super(Topic, self).delete(*args, **kwargs)
-        else:
-            self.deleted = True
-            self.save()
+        super(Topic, self).save(*args, **kwargs)         
 
     @models.permalink
     def get_absolute_url(self):

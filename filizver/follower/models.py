@@ -7,8 +7,9 @@ from filizver.topic.models import Topic
 
 class Follower(models.Model):
     
-    user            = models.ForeignKey(User, related_name='following')
-    topic           = models.ForeignKey(Topic, related_name='followers')
+    user            = models.ForeignKey(User)
+    topic           = models.ForeignKey(Topic)
     
-    objects                 = managers.FavoriteManager()
-
+    class Meta:
+        app_label           = 'filizver'
+        unique_together     = (('user', 'topic'),)

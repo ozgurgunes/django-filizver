@@ -7,8 +7,9 @@ from filizver.topic.models import Topic
 
 class Moderator(models.Model):
     
-    user            = models.ForeignKey(User, related_name='moderators')
-    topic           = models.ForeignKey(Topic, related_name='moderators')
+    user            = models.ForeignKey(User)
+    topic           = models.ForeignKey(Topic)
     
-    objects                 = managers.FavoriteManager()
-
+    class Meta:
+        app_label               = 'filizver'
+        unique_together = (('user', 'topic'),)

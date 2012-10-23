@@ -7,6 +7,7 @@ from django.db.models.signals import post_save, post_delete
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
+from filizver.core.models import DateMixin, DeleteMixin
 from filizver.topic.models import Topic
 
 
@@ -67,19 +68,12 @@ class Entry(models.Model):
 
 
 
-class EntryBase(models.Model):
+class EntryBase(DateMixin, DeleteMixin):
     """Abstract base class for entry contents"""
 
     user            = models.ForeignKey(User, related_name='%(class)s_set', blank=False, null=False)
     topic           = models.ForeignKey(Topic, related_name='%(class)s_set', blank=False, null=False)
     
-    created_date             = models.DateTimeField(_('Created date'), auto_now_add=True, 
-                                        blank=False, null=False)
-    updated_date             = models.DateTimeField(_('Updated date'), auto_now=True, 
-                                        blank=True, null=True)
-    deleted_date             = models.DateTimeField(_('Deleted date'), blank=True, null=True)
-
-
     class Meta:
         abstract        = True
         ordering        = ('-created_date',)

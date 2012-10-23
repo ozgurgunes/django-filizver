@@ -5,14 +5,11 @@ from django.contrib.auth.models import User, Group
 from django.db.models.signals import post_save
 
 from filizver.topic.models import Topic
-from filizver.topic.fields import AutoOneToOneField, JSONField
+from filizver.core.fields import AutoOneToOneField, JSONField
 
 from filizver.text.models import Text
 
 import defaults
-
-
-MARKUP_CHOICES = [('bbcode', 'bbcode')]
 
 
 class Category(models.Model):

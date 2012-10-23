@@ -15,8 +15,9 @@ class TopicFormBase(forms.ModelForm):
     class Meta:
         model = Topic
         
-    def __init__(self, *args, **kw):
-        super(TopicFormBase, self).__init__(*args, **kw)
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super(TopicFormBase, self).__init__(*args, **kwargs)
         new_order = self.fields.keyOrder[:-1]
         new_order.insert(0, 'title')
         self.fields.keyOrder = new_order
@@ -24,17 +25,25 @@ class TopicFormBase(forms.ModelForm):
             self.fields['title'].initial = self.instance.topic.title
         except:
             pass
+    
+    def get_ip_address(self):
+        x_forwarded_for = self.request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            ip = x_forwarded_for.split(',')[0]
+        else:
+            ip = self.request.META.get('REMOTE_ADDR')
+        return ip
 
-    def save(self, force_insert=False, force_update=False, commit=False):
-        instance = super(TopicFormBase, self).save(commit=commit)
+    def save(self, commit=True, *args, **kwargs):
+        instance = super(TopicFormBase, self).save(commit=False)
         if instance.id:
             topic = instance.topic
         else:
-            topic = Topic(user=instance.user)
+            topic = Topic(user=self.instance.user, ip_address=self.get_ip_address)
         topic.title = self.cleaned_data['title']
         topic.save()
         instance.topic = topic
-        instance.save()
+        instance.save(commit=commit)
         return instance
 
 
