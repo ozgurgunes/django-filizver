@@ -8,9 +8,6 @@
     <div class="meta offset1">
         <address class="user pull-left"><a href="{% url accounts_profile_detail object.user %}">{{ object.user }}</a></address>
         <time datetime="{{ object.created_date|date:"c" }}">{{ object.created_date|timesince }} {% trans 'ago' %}</time>
-        <span class="comments-count"><a href="{{ object.get_absolute_url }}">
-      		{% get_comment_count for filizver.topic object.id as comment_count %}
-        	{% ifequal comment_count 0 %}{% trans "no comment" %}{% else %}{% blocktrans count comment_count as counter %}<i>1</i> comment{% plural %}<i>{{ counter }}</i> comments{% endblocktrans %}{% endifequal %}</a></span>
     </div>
     {% if object.entry_set.select_related.all %}
     <section id="{{ object.id }}_entries" class="entries">

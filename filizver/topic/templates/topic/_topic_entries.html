@@ -1,4 +1,6 @@
-{% for entry in object.entry_set.select_related.all %}
+{% load i18n entry_tags %}
+{% get_entries object as entries %}
+{% for entry in entries %}
 <div id="entry_{{ entry.id }}" class="entry {{ entry.content_type|lower }}">
     {% if perms.topic.can_change or entry.user == user or entry.topic.user == user %}
         <menu id="entry_{{ entry.id }}_commands" class="entry btn-group" align="right">

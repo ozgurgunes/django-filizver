@@ -51,9 +51,15 @@ class ThreadAdmin(BaseModelAdmin):
     raw_id_fields = ['subscribers', 'last_reply']
 
 class ReplyAdmin(BaseModelAdmin):
-    list_display = ['topic', 'user', 'created_date', 'updated_date', 'summary']
+    list_display = ['topic', 'user', 'created_date', 'updated_date', 'active', 'summary']
     search_fields = ['body']
-    raw_id_fields = ['topic', 'user']
+    raw_id_fields = ['thread', 'user', 'updated_user', 'deleted_user']
+    read_only_fields = ['thread', 'updated_date', 'deleted_date']
+    fields = ['thread', 'user', 'body', 'html', 'markup', 'updated_user', ('deleted', 'deleted_user')]
+    
+    def active(self, obj):
+        return not obj.deleted
+    active.boolean=True
 
 class ReplyTrackingAdmin(BaseModelAdmin):
     list_display = ['user', 'last_read', 'threads']

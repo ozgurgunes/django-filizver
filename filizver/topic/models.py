@@ -39,7 +39,7 @@ class Topic(DateMixin, DeleteMixin):
     
 
     ip_address              = models.IPAddressField(_('IP Address'), editable=False, 
-                                        blank=False, null=False)
+                                        blank=True, null=True)
     api_gateway             = models.IPAddressField(_('API Gateway'), editable=False, 
                                         blank=True, null=True)
 

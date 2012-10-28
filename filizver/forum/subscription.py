@@ -39,11 +39,11 @@ Unsubscribe %(unsubscribe_url)s""")
 
 def notify_thread_subscribers(reply):
     thread = reply.thread
-    reply_body_text = strip_tags(reply.body_html)
+    reply_body_text = strip_tags(reply.text.html)
     if reply != thread.head:
         for user in thread.subscribers.all():
             if user != reply.user:
-                subject = u'RE: %s' % thread.name
+                subject = u'RE: %s' % thread.topic.title
                 to_email = user.email
                 text_content = TOPIC_SUBSCRIPTION_TEXT_TEMPLATE % {
                         'username': reply.user.username,

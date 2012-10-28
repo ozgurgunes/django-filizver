@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
-from models import Picture
+from models import Image
 
-class PictureAdmin(admin.ModelAdmin):
+class ImageAdmin(admin.ModelAdmin):
     pass
     
     
-admin.site.register(Picture, PictureAdmin)
+admin.site.register(Image, ImageAdmin)

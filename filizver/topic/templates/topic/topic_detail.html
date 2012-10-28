@@ -5,7 +5,7 @@
 {% block main %}
     <!--// Headline -->
     <section id="breadcrumb" class="breadcrumb">
-        <a href="{% url filizver:homepage %}">{% trans "Home" %}</a> <span class="divider">/</span>
+        <a href="/">{% trans "Home" %}</a> <span class="divider">/</span>
         <a href="{% url accounts_profile_detail object.user %}">{{ object.user }}</a> <span class="divider">/</span>
         {{ object|truncatewords:"5" }}
     </section>
@@ -23,7 +23,7 @@
         
     <!--// Entries -->
         {% if perms.topic.can_change or object.user == user %}
-        {% include "topic/_entry_form.html" %}
+        {% include "entry/_entry_form.html" %}
         {% endif %}
         <script type="text/javascript"> 
         // When the document is ready set up our sortable with it's inherant function(s) 

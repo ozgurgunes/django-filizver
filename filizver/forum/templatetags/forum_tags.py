@@ -24,7 +24,7 @@ register = template.Library()
 @register.filter
 def profile_link(user):
     data = u'<a href="%s">%s</a>' % (\
-        reverse('forum:forum_profile', args=[user.username]), user.username)
+        reverse('filizver:profile_detail', args=[user.username]), user.username)
     return mark_safe(data)
 
 
@@ -50,7 +50,7 @@ class ForumTimeNode(template.Node):
 
 
 # TODO: this old code requires refactoring
-@register.inclusion_tag('djangobb_forum/pagination.html', takes_context=True)
+@register.inclusion_tag('forum/pagination.html', takes_context=True)
 def pagination(context, adjacent_pages=1):
     """
     Return the list of A tags with links to pages.
@@ -95,7 +95,7 @@ def pagination(context, adjacent_pages=1):
         }
 
 
-@register.inclusion_tag('djangobb_forum/lofi/pagination.html', takes_context=True)
+@register.inclusion_tag('forum/lofi/pagination.html', takes_context=True)
 def lofi_pagination(context):
     return paginate(context)
 
@@ -127,12 +127,12 @@ def has_unreads(topic, user):
     Check if topic has messages which user didn't read.
     """
     if not user.is_authenticated() or\
-        (user.posttracking.last_read is not None and\
-         user.posttracking.last_read > topic.updated_date):
+        (user.replytracking.last_read is not None and\
+         user.replytracking.last_read > topic.updated_date):
             return False
     else:
-        if isinstance(user.posttracking.topics, dict):
-            if topic.last_post_id > user.posttracking.topics.get(str(topic.id), 0):
+        if isinstance(user.replytracking.threads, dict):
+            if topic.last_reply_id > user.replytracking.threads.get(str(topic.id), 0):
                 return True
             else:
                 return False
@@ -146,12 +146,12 @@ def forum_unreads(forum, user):
     if not user.is_authenticated():
         return False
     else:
-        if isinstance(user.posttracking.topics, dict):
-            topics = forum.topics.all().only('last_post')
-            if user.posttracking.last_read:
-                topics = topics.filter(updated__gte=user.posttracking.last_read)
+        if isinstance(user.replytracking.threads, dict):
+            topics = forum.threads.all().only('last_reply')
+            if user.replytracking.last_read:
+                topics = topics.filter(updated__gte=user.replytracking.last_read)
             for topic in topics:
-                if topic.last_post_id > user.posttracking.topics.get(str(topic.id), 0):
+                if topic.last_reply_id > user.replytracking.threads.get(str(topic.id), 0):
                     return True
         return False
 
@@ -200,29 +200,30 @@ def forum_equal_to(obj1, obj2):
 
 @register.filter
 def forum_authority(user):
-    posts = user.forum_profile.post_count
-    if posts >= defaults.AUTHORITY_STEP_10:
-        return mark_safe('<img src="%sdjangobb_forum/img/authority/vote10.gif" alt="" />' % (settings.STATIC_URL))
-    elif posts >= defaults.AUTHORITY_STEP_9:
-        return mark_safe('<img src="%sdjangobb_forum/img/authority/vote9.gif" alt="" />' % (settings.STATIC_URL))
-    elif posts >= defaults.AUTHORITY_STEP_8:
-        return mark_safe('<img src="%sdjangobb_forum/img/authority/vote8.gif" alt="" />' % (settings.STATIC_URL))
-    elif posts >= defaults.AUTHORITY_STEP_7:
-        return mark_safe('<img src="%sdjangobb_forum/img/authority/vote7.gif" alt="" />' % (settings.STATIC_URL))
-    elif posts >= defaults.AUTHORITY_STEP_6:
-        return mark_safe('<img src="%sdjangobb_forum/img/authority/vote6.gif" alt="" />' % (settings.STATIC_URL))
-    elif posts >= defaults.AUTHORITY_STEP_5:
-        return mark_safe('<img src="%sdjangobb_forum/img/authority/vote5.gif" alt="" />' % (settings.STATIC_URL))
-    elif posts >= defaults.AUTHORITY_STEP_4:
-        return mark_safe('<img src="%sdjangobb_forum/img/authority/vote4.gif" alt="" />' % (settings.STATIC_URL))
-    elif posts >= defaults.AUTHORITY_STEP_3:
-        return mark_safe('<img src="%sdjangobb_forum/img/authority/vote3.gif" alt="" />' % (settings.STATIC_URL))
-    elif posts >= defaults.AUTHORITY_STEP_2:
-        return mark_safe('<img src="%sdjangobb_forum/img/authority/vote2.gif" alt="" />' % (settings.STATIC_URL))
-    elif posts >= defaults.AUTHORITY_STEP_1:
-        return mark_safe('<img src="%sdjangobb_forum/img/authority/vote1.gif" alt="" />' % (settings.STATIC_URL))
-    else:
-        return mark_safe('<img src="%sdjangobb_forum/img/authority/vote0.gif" alt="" />' % (settings.STATIC_URL))
+    pass
+    #posts = user.profile.reply_count
+    #if posts >= defaults.AUTHORITY_STEP_10:
+    #    return mark_safe('<img src="%sforum/img/authority/vote10.gif" alt="" />' % (settings.STATIC_URL))
+    #elif posts >= defaults.AUTHORITY_STEP_9:
+    #    return mark_safe('<img src="%sforum/img/authority/vote9.gif" alt="" />' % (settings.STATIC_URL))
+    #elif posts >= defaults.AUTHORITY_STEP_8:
+    #    return mark_safe('<img src="%sforum/img/authority/vote8.gif" alt="" />' % (settings.STATIC_URL))
+    #elif posts >= defaults.AUTHORITY_STEP_7:
+    #    return mark_safe('<img src="%sforum/img/authority/vote7.gif" alt="" />' % (settings.STATIC_URL))
+    #elif posts >= defaults.AUTHORITY_STEP_6:
+    #    return mark_safe('<img src="%sforum/img/authority/vote6.gif" alt="" />' % (settings.STATIC_URL))
+    #elif posts >= defaults.AUTHORITY_STEP_5:
+    #    return mark_safe('<img src="%sforum/img/authority/vote5.gif" alt="" />' % (settings.STATIC_URL))
+    #elif posts >= defaults.AUTHORITY_STEP_4:
+    #    return mark_safe('<img src="%sforum/img/authority/vote4.gif" alt="" />' % (settings.STATIC_URL))
+    #elif posts >= defaults.AUTHORITY_STEP_3:
+    #    return mark_safe('<img src="%sforum/img/authority/vote3.gif" alt="" />' % (settings.STATIC_URL))
+    #elif posts >= defaults.AUTHORITY_STEP_2:
+    #    return mark_safe('<img src="%sforum/img/authority/vote2.gif" alt="" />' % (settings.STATIC_URL))
+    #elif posts >= defaults.AUTHORITY_STEP_1:
+    #    return mark_safe('<img src="%sforum/img/authority/vote1.gif" alt="" />' % (settings.STATIC_URL))
+    #else:
+    #    return mark_safe('<img src="%sforum/img/authority/vote0.gif" alt="" />' % (settings.STATIC_URL))
 
 
 @register.filter
@@ -233,16 +234,16 @@ def online(user):
 def attachment_link(attach):
     from django.template.defaultfilters import filesizeformat
     if attach.content_type in ['image/png', 'image/gif', 'image/jpeg']:
-        img = '<img src="%sdjangobb_forum/img/attachment/image.png" alt="attachment" />' % (settings.STATIC_URL)
+        img = '<img src="%sforum/img/attachment/image.png" alt="attachment" />' % (settings.STATIC_URL)
     elif attach.content_type in ['application/x-tar', 'application/zip']:
-        img = '<img src="%sdjangobb_forum/img/attachment/compress.png" alt="attachment" />' % (settings.STATIC_URL)
+        img = '<img src="%sforum/img/attachment/compress.png" alt="attachment" />' % (settings.STATIC_URL)
     elif attach.content_type in ['text/plain']:
-        img = '<img src="%sdjangobb_forum/img/attachment/text.png" alt="attachment" />' % (settings.STATIC_URL)
+        img = '<img src="%sforum/img/attachment/text.png" alt="attachment" />' % (settings.STATIC_URL)
     elif attach.content_type in ['application/msword']:
-        img = '<img src="%sdjangobb_forum/img/attachment/doc.png" alt="attachment" />' % (settings.STATIC_URL)
+        img = '<img src="%sforum/img/attachment/doc.png" alt="attachment" />' % (settings.STATIC_URL)
     else:
-        img = '<img src="%sdjangobb_forum/img/attachment/unknown.png" alt="attachment" />' % (settings.STATIC_URL)
-    attachment = '%s <a href="%s">%s</a> (%s)' % (img, attach.get_absolute_url(), attach.name, filesizeformat(attach.size))
+        img = '<img src="%sforum/img/attachment/unknown.png" alt="attachment" />' % (settings.STATIC_URL)
+    attachment = '%s <a href="%s">%s</a> (%s)' % (img, attach.get_absolute_url(), attach.topic.title, filesizeformat(attach.size))
     return mark_safe(attachment)
 
 
@@ -275,10 +276,10 @@ def set_theme_style(user):
     theme_style = ''
     selected_theme = ''
     if user.is_authenticated():
-        selected_theme = user.forum_profile.theme
-        theme_style = '<link rel="stylesheet" type="text/css" href="%(static_url)sdjangobb_forum/themes/%(theme)s/style.css" />'
+        selected_theme = user.profile.theme
+        theme_style = '<link rel="stylesheet" type="text/css" href="%(static_url)sforum/themes/%(theme)s/style.css" />'
     else:
-        theme_style = '<link rel="stylesheet" type="text/css" href="%(static_url)sdjangobb_forum/themes/default/style.css" />'
+        theme_style = '<link rel="stylesheet" type="text/css" href="%(static_url)sforum/themes/default/style.css" />'
 
     return theme_style % dict(
         static_url=settings.STATIC_URL,

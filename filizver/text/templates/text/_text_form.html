@@ -1,0 +1,6 @@
+{% load i18n %}
+    {% csrf_token %}
+    {{ form|as_bootstrap}}
+    <div class="form-actions">
+        <input type="submit" class="btn" value="{% trans "Submit" %}">
+    </div>

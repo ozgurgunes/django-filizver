@@ -8,10 +8,12 @@ class ForumInlinePlugin(TopicInline):
     title = 'Forum Inline'
     inline = ForumInline
 
+
 class CategoryInlinePlugin(TopicInline):
     name = 'category-inline'
     title = 'Category Inline'
     inline = CategoryInline
+
 
 class ThreadInlinePlugin(TopicInline):
     name = 'thread-inline'

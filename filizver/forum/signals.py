@@ -15,8 +15,8 @@ def reply_saved(instance, **kwargs):
         thread.last_reply = reply
         thread.reply_count = thread.replies.count()
         thread.last_update = datetime.now()
-        profile = reply.user.forum_profile
-        profile.reply_count = reply.user.replies.count()
+        profile = reply.text.user.get_profile()
+        #profile.reply_count = reply.text.user.replies.count()
         profile.save(force_update=True)
         notify_thread_subscribers(reply)
     thread.save(force_update=True)

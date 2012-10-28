@@ -98,7 +98,7 @@ class Thread(models.Model):
         verbose_name_plural = _('Threads')
 
     def __unicode__(self):
-        return '%s - %s' % (self.topic, self.forum)
+        return '%s' % self.topic
 
     def delete(self, *args, **kwargs):
         try:
@@ -222,7 +222,6 @@ class ReplyTracking(models.Model):
 
     def __unicode__(self):
         return self.user.username
-
 
 
 from .signals import reply_saved, thread_saved

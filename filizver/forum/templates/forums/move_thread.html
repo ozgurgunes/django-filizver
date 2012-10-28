@@ -1,0 +1,31 @@
+{% extends 'forums/base.html' %}
+{% load i18n forum_tags %}
+
+{% block content %}
+	<h2>{% trans "Move topic" %}</h2>
+		<form class="form" method="post" action="{% url forum:move_thread %}">
+			{% csrf_token %}
+				{% for thread_id in thread_ids %}
+					<input type="hidden" value="{{ thread_id }}" name="thread_id"/>
+				{% endfor %}
+				<fieldset>
+					<legend>{% trans "Select destination of move" %}</legend>
+					<div class="control-group">
+						<label>{% trans "Move to" %}</label>
+						<select name="to_forum">
+						{% for category in categories %}
+							<optgroup label="{{ category }}">
+							{% for forum in category.forums.all %}
+								{% if forum != exclude_forum %}
+									<option value="{{ forum.id }}">{{ forum.topic.title }}</option>
+								{% endif %}
+							{% endfor %}
+							</optgroup>
+						{% endfor %}
+						</select>
+				</fieldset>
+				<p class="form-actions">
+					<input class="btn btn-primary" type="submit" value="{% trans "Move" %}" />
+					<a class="btn" href="javascript:history.go(-1)">{% trans "Go back" %}</a></p>
+		</form>
+{% endblock %}

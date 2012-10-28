@@ -12,8 +12,8 @@ from django.utils.translation import ugettext_lazy as _
 from filizver.forum.models import Thread, Reply
 from filizver.forum import defaults
 from filizver.text.utils import text_to_html
-from filizver.forum.utils import set_language
-
+from filizver.core.utils import set_language
+from filizver.topic.models import Topic
 
 SORT_USER_BY_CHOICES = (
     ('username', _(u'Username')),
@@ -48,9 +48,8 @@ SEARCH_IN_CHOICES = (
 class AddReplyForm(forms.ModelForm):
     FORM_NAME = "AddReplyForm" # used in view and template submit button
 
-    name = forms.CharField(label=_('Subject'), max_length=255,
+    title = forms.CharField(label=_('Subject'), max_length=255,
                            widget=forms.TextInput(attrs={'size':'115'}))
-    attachment = forms.FileField(label=_('Attachment'), required=False)
     subscribe = forms.BooleanField(label=_('Subscribe'), help_text=_("Subscribe this thread."), required=False)
 
     class Meta:
@@ -65,14 +64,10 @@ class AddReplyForm(forms.ModelForm):
         super(AddReplyForm, self).__init__(*args, **kwargs)
 
         if self.thread:
-            self.fields['name'].widget = forms.HiddenInput()
-            self.fields['name'].required = False
+            self.fields['title'].widget = forms.HiddenInput()
+            self.fields['title'].required = False
 
-        self.fields['body'].widget = forms.Textarea(attrs={'class':'markup', 'rows':'20', 'cols':'95'})
-
-        if not defaults.ATTACHMENT_SUPPORT:
-            self.fields['attachment'].widget = forms.HiddenInput()
-            self.fields['attachment'].required = False
+        self.fields['body'].widget = forms.Textarea(attrs={'class':'markup'})
 
     def clean(self):
         '''
@@ -81,29 +76,22 @@ class AddReplyForm(forms.ModelForm):
         errmsg = _('Can\'t be empty nor contain only whitespace characters')
         cleaned_data = self.cleaned_data
         body = cleaned_data.get('body')
-        subject = cleaned_data.get('name')
+        subject = cleaned_data.get('title')
         if subject:
             if not subject.strip():
-                self._errors['name'] = self.error_class([errmsg])
-                del cleaned_data['name']
+                self._errors['title'] = self.error_class([errmsg])
+                del cleaned_data['title']
         if body:
             if not body.strip():
                 self._errors['body'] = self.error_class([errmsg])
                 del cleaned_data['body']
         return cleaned_data
 
-    def clean_attachment(self):
-        if self.cleaned_data['attachment']:
-            memfile = self.cleaned_data['attachment']
-            if memfile.size > defaults.ATTACHMENT_SIZE_LIMIT:
-                raise forms.ValidationError(_('Attachment is too big'))
-            return self.cleaned_data['attachment']
-
     def save(self):
         if self.forum:
-            thread = Thread(forum=self.forum,
-                          user=self.user,
-                          name=self.cleaned_data['name'])
+            topic = Topic(title=self.cleaned_data['title'], user=self.user)
+            topic.save()
+            thread = Thread(forum=self.forum, topic=topic)
             thread.save()
         else:
             thread = self.thread
@@ -112,20 +100,17 @@ class AddReplyForm(forms.ModelForm):
             # User would like to subscripe to this thread
             thread.subscribers.add(self.user)
 
-        reply = Reply(thread=thread, user=self.user, user_ip=self.ip,
-                    markup=self.user.forum_profile.markup,
+        reply = Reply(thread=thread, topic=thread.topic, user=self.user,
                     body=self.cleaned_data['body'])
 
         reply.save()
-        if defaults.ATTACHMENT_SUPPORT:
-            self.save_attachment(reply, self.cleaned_data['attachment'])
         return reply
 
 
     def save_attachment(self, reply, memfile):
         if memfile:
             obj = Attachment(size=memfile.size, content_type=memfile.content_type,
-                             name=memfile.name, reply=reply)
+                             name=memfile.topic.title, reply=reply)
             dir = os.path.join(settings.MEDIA_ROOT, defaults.ATTACHMENT_UPLOAD_TO)
             fname = '%d.0' % reply.id
             path = os.path.join(dir, fname)
@@ -135,7 +120,7 @@ class AddReplyForm(forms.ModelForm):
 
 
 class EditReplyForm(forms.ModelForm):
-    name = forms.CharField(required=False, label=_('Subject'),
+    title = forms.CharField(required=False, label=_('Subject'),
                            widget=forms.TextInput(attrs={'size':'115'}))
 
     class Meta:
@@ -145,17 +130,17 @@ class EditReplyForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.thread = kwargs.pop('thread', None)
         super(EditReplyForm, self).__init__(*args, **kwargs)
-        self.fields['name'].initial = self.thread
+        self.fields['title'].initial = self.thread.topic.title
         self.fields['body'].widget = forms.Textarea(attrs={'class':'markup'})
 
     def save(self, commit=True):
         reply = super(EditReplyForm, self).save(commit=False)
         reply.updated_date = datetime.now()
-        thread_name = self.cleaned_data['name']
+        thread_name = self.cleaned_data['title']
         if thread_name:
-            reply.thread.name = thread_name
+            reply.thread.topic.title = thread_name
         if commit:
-            reply.thread.save()
+            reply.thread.topic.save()
             reply.save()
         return reply
 

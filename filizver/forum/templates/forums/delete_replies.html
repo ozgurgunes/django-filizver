@@ -20,19 +20,19 @@
 {% for reply in replies %}
 <div id="p{{ reply.id }}" class="blockreply roweven firstreply">
 	<a name="reply-{{ reply.id }}"></a>
-	<h2><span><span class="conr">#{{ forloop.counter }}&nbsp;</span><a href="{{ reply.get_absolute_url }}">{% forum_time reply.created %}</a></span></h2>
+	<h2><span><span class="conr">#{{ forloop.counter }}&nbsp;</span><a href="{{ reply.get_absolute_url }}">{% forum_time reply.created_date %}</a></span></h2>
 	<div class="box">
 		<div class="inbox">
 			<div class="replyleft">
 				<dl>
-					<dt><strong><a href="{% url forum:forum_profile reply.user.username %}">{{ reply.user.username }}</a></strong></dt>
-					<dd class="usertitle"><strong>{{ reply.user.forum_profile.status }}</strong></dd>
+					<dt><strong><a href="{% url filizver:profile_detail reply.user.username %}">{{ reply.user.username }}</a></strong></dt>
+					<dd class="usertitle"><strong>{{ reply.user.profile.status }}</strong></dd>
 				</dl>
 			</div>
 			<div class="replyright">
-				<h3>{{ reply.thread.name }}</h3>
+				<h3>{{ reply.thread.topic.title }}</h3>
 				<div class="replymsg">
-					{{ reply.body_html|safe }}
+					{{ reply.text.html|safe }}
 			{% if reply.updated_date %}
 				<p class="replyedit"><em>{% trans "Edited" %} {{ reply.user.username }} ({% forum_time reply.updated_date %})</em></p>
 			{% endif %}

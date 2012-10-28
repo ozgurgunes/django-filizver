@@ -8,64 +8,30 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse, resolve, reverse_lazy
+from django.db.models import Count
 
-from manifest.accounts.views import ExtraContextMixin, LoginRequiredMixin
+from manifest.accounts.views import LoginRequiredMixin
+from filizver.core.views import ExtraContextMixin
 
 from filizver.topic.models import Topic
 from filizver.topic.forms import TopicForm
-from filizver.entry.forms import EntryForm
-
-
-class ExtraContextMixin(View):
-    """
-    A mixin that passes ``extra_context`` dictionary as template context.
-    
-    """
-    
-    extra_context = {}
-
-    def get_context_data(self, **kwargs):
-        context = super(ExtraContextMixin, self).get_context_data(**kwargs)
-        context.update(self.extra_context)
-        return context
-
-
-class Timeline(ListView, ExtraContextMixin):
-
-    template_name = "topic/topic_list.html"
-    extra_context = { 'topic_form': TopicForm() }
-    
-    def get_queryset(self):
-        if self.request.user.is_authenticated():
-            return Topic.objects.timeline(self.request.user).select_related()
-        else:
-            return Topic.objects.select_related().all()
-
+from filizver.entry.plugins import EntryType
 
 class TopicList(ListView, ExtraContextMixin):
 
-    queryset = Topic.objects.select_related().all()
+    queryset = Topic.objects.select_related(
+                    'user__profile'
+                ).all()
     template_name = "topic/topic_list.html"
     extra_context = { 'topic_form': TopicForm() }
     
-    # def get_queryset(self):
-    #     if self.request.user.is_authenticated():
-    #         return Topic.objects.for_user(self.request.user).select_related()
-    #     else:
-    #         return Topic.objects.select_related().all()
 
-            
-class TopicDetail(DetailView):
+class TopicDetail(DetailView, ExtraContextMixin):
 
     queryset = Topic.objects.select_related().all()
     template_name = "topic/topic_detail.html"
-    extra_context = { 'entry_form': EntryForm() }
-
-    def get_context_data(self, **kwargs):
-        context = super(TopicDetail, self).get_context_data(**kwargs)
-        context.update(self.extra_context)
-        return context
     
+
 class TopicCreate(CreateView, LoginRequiredMixin):
 
     form_class = TopicForm
@@ -93,5 +59,4 @@ class TopicDelete(DeleteView, LoginRequiredMixin):
     model = Topic
 
     def get_success_url(self):
-        return reverse('filizver_homepage')
-
+        return reverse('filizver:topic_list')

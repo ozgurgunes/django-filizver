@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.conf.urls import patterns, include, url
 from django.views.generic import TemplateView
-from filizver.topic.models import Topic
-from manifest.accounts import views as accounts_views
 import views
 
 urlpatterns = patterns('',
@@ -31,9 +29,9 @@ urlpatterns = patterns('',
         TemplateView.as_view(template_name='topic/topic_delete.html'), 
         name='topic_delete_complete'),
         
-    url(r'^tags/$', 
-        TemplateView.as_view(template_name='topic/topic_tags.html'), 
-        name='topic_tags'),
+    # url(r'^tags/$', 
+    #     TemplateView.as_view(template_name='topic/topic_tags.html'), 
+    #     name='topic_tags'),
         
     # url(r'^tags/(?P<tag>.*)/$', views.topic_tagged, None, name='filizver_topic_tagged'),
 

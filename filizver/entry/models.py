@@ -27,8 +27,10 @@ class Entry(models.Model):
     
     #plugins                 = ManyPluginField(EntryType)
 
-    ip                      = models.IPAddressField(_('IP Address'), blank=False, null=False, editable=False)
-    #api                     = models.IPAddressField(_('API Gateway'), blank=False, null=False editable=False)
+    ip_address              = models.IPAddressField(_('IP Address'), editable=False, 
+                                        blank=True, null=True)
+    api_gateway             = models.IPAddressField(_('API Gateway'), editable=False, 
+                                        blank=True, null=True)
 
     class Meta:
         app_label                = 'filizver'
@@ -64,7 +66,7 @@ class Entry(models.Model):
         try:
             return self.content_object.entry_template('detail')
         except AttributeError:
-            return u"%s/_%s_entry_detail.html" % (self.content_type.app_label, self.content_type.name.lower())
+            return u"%s/_entry_detail.html" % self.content_type.name.lower()
 
 
 
@@ -91,11 +93,11 @@ class EntryBase(DateMixin, DeleteMixin):
 
     def entry_template(self, template=None):
         if template == 'list':
-            return u"%s/_%s_entry_list.html" % (self._meta.app_label, self._meta.module_name.lower())
+            return u"%s/_entry_list.html" % self._meta.module_name.lower()
         elif template == 'detail':
-            return u"%s/_%s_entry_detail.html" % (self._meta.app_label, self._meta.module_name.lower())
+            return u"%s/_entry_detail.html" % self._meta.module_name.lower()
         else:    
-            return u"%s/_%s_entry.html" % (self._meta.app_label, self._meta.module_name.lower())
+            return u"%s/_entry.html" % self._meta.module_name.lower()
 
 
 

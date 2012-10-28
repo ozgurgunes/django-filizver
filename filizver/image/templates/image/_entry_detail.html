@@ -1,0 +1,35 @@
+{% with entry.content_object.display as display %}
+
+    {% if perms.sprout.can_change or entry.user == user or entry.sprout.user == user %}
+    <form class="entry widget btn-group" action="" method="post">
+            {% csrf_token %}            
+            <label class="btn">
+                <input type="radio" id="{{ entry.content_object.id }}_display_L" 
+                name="display" value="L" {% if display == "L" %}checked{% endif %} />{% trans "Left" %}</label>            
+            
+            <label class="btn">
+                <input type="radio" id="{{ entry.content_object.id }}_display_N" 
+                name="display" value="N" {% if display == "N" %}checked{% endif %} />{% trans "None" %}</label>            
+            
+            <label class="btn">
+                <input type="radio" id="{{ entry.content_object.id }}_display_R" 
+                name="display" value="R" {% if display == "R" %}checked{% endif %} />{% trans "Right" %}</label>
+    </form>
+    {% endif %}
+
+    <figure class="entry{% if display == "L"  %} left{% else %}{% if display == "R"  %} right{% endif %}{% endif %}">
+    {% if display == "L" or display == "R"  %}
+        {% thumbnail entry.content_object.source "192" as im %}
+        <img src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" alt="{{ entry.content_object.description }}" />
+        {% endthumbnail %}
+    {% else %}
+        {% thumbnail entry.content_object.source "640" as im %}
+        <img src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" alt="{{ entry.content_object.description }}" />
+        {% endthumbnail %}
+        {% if entry.content_object.title %}
+        <figcaption>{{ entry.content_object.title }}</figcaption>
+        {% endif %}
+    {% endif %}
+    <figure>
+
+{% endwith %}

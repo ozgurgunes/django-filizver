@@ -70,6 +70,12 @@ class Profile(models.Model):
     @property
     def avatar(self):
         return self.get_picture_url()
+        
+    # Forum attrs
+    def markup(self):
+        pass
+    def auto_subscribe(self):
+        pass
 
     @property
     def age(self):

@@ -26,8 +26,8 @@ class ForumFeed(Feed):
 class LastReplies(ForumFeed):
     title = _('Latest posts on forum')
     description = _('Latest posts on forum')
-    title_template = 'djangobb_forum/feeds/posts_title.html'
-    description_template = 'djangobb_forum/feeds/posts_description.html'
+    title_template = 'forum/feeds/posts_title.html'
+    description_template = 'forum/feeds/posts_description.html'
 
     def get_object(self, request):
         user_groups = request.user.groups.all()
@@ -45,8 +45,8 @@ class LastReplies(ForumFeed):
 class LastThreads(ForumFeed):
     title = _('Latest topics on forum')
     description = _('Latest topics on forum')
-    title_template = 'djangobb_forum/feeds/topics_title.html'
-    description_template = 'djangobb_forum/feeds/topics_description.html'
+    title_template = 'forum/feeds/topics_title.html'
+    description_template = 'forum/feeds/topics_description.html'
 
     def get_object(self, request):
         user_groups = request.user.groups.all()
@@ -62,8 +62,8 @@ class LastThreads(ForumFeed):
 
 
 class LastRepliesOnThread(ForumFeed):
-    title_template = 'djangobb_forum/feeds/posts_title.html'
-    description_template = 'djangobb_forum/feeds/posts_description.html'
+    title_template = 'forum/feeds/posts_title.html'
+    description_template = 'forum/feeds/posts_description.html'
     
     def get_object(self, request, topic_id):
         topic = Thread.objects.get(id=topic_id)
@@ -72,7 +72,7 @@ class LastRepliesOnThread(ForumFeed):
         return topic
 
     def title(self, obj):
-        return _('Latest posts on %s topic' % obj.name)
+        return _('Latest posts on %s thread' % obj.topic.title)
 
     def link(self, obj):
         if not obj:
@@ -80,15 +80,15 @@ class LastRepliesOnThread(ForumFeed):
         return obj.get_absolute_url()
 
     def description(self, obj):
-        return _('Latest posts on %s topic' % obj.name)
+        return _('Latest posts on %s thread' % obj.topic.title)
 
     def items(self, obj):
         return Reply.objects.filter(topic__id=obj.id).order_by('-created')[:15]
 
 
 class LastRepliesOnForum(ForumFeed):
-    title_template = 'djangobb_forum/feeds/posts_title.html'
-    description_template = 'djangobb_forum/feeds/posts_description.html'
+    title_template = 'forum/feeds/posts_title.html'
+    description_template = 'forum/feeds/posts_description.html'
 
     def get_object(self, request, forum_id):
         forum = Forum.objects.get(id=forum_id)
@@ -97,7 +97,7 @@ class LastRepliesOnForum(ForumFeed):
         return forum
 
     def title(self, obj):
-        return _('Latest posts on %s forum' % obj.name)
+        return _('Latest posts on %s forum' % obj.topic.title)
 
     def link(self, obj):
         if not obj:
@@ -105,15 +105,15 @@ class LastRepliesOnForum(ForumFeed):
         return obj.get_absolute_url()
 
     def description(self, obj):
-        return _('Latest posts on %s forum' % obj.name)
+        return _('Latest posts on %s forum' % obj.topic.title)
 
     def items(self, obj):
         return Reply.objects.filter(topic__forum__id=obj.id).order_by('-created')[:15]
 
 
 class LastRepliesOnCategory(ForumFeed):
-    title_template = 'djangobb_forum/feeds/posts_title.html'
-    description_template = 'djangobb_forum/feeds/posts_description.html'
+    title_template = 'forum/feeds/posts_title.html'
+    description_template = 'forum/feeds/posts_description.html'
     
     def get_object(self, request, category_id):
         category = Category.objects.get(id=category_id)
@@ -122,10 +122,10 @@ class LastRepliesOnCategory(ForumFeed):
         return category
 
     def title(self, obj):
-        return _('Latest posts on %s category' % obj.name)
+        return _('Latest posts on %s category' % obj.topic.title)
 
     def description(self, obj):
-        return _('Latest posts on %s category' % obj.name)
+        return _('Latest posts on %s category' % obj.topic.title)
 
     def items(self, obj):
         return Reply.objects.filter(topic__forum__category__id=obj.id).order_by('-created')[:15]

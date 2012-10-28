@@ -24,16 +24,17 @@ from filizver.forum.forms import AddReplyForm, EditReplyForm, ReplySearchForm, M
 from filizver.forum.models import Category, Forum, Thread, Reply, ReplyTracking
 from filizver.forum.templatetags import forum_tags
 from filizver.forum.templatetags.forum_tags import forum_moderated_by
-from filizver.topic.utils import build_form, paginate, set_language
+from filizver.core.utils import set_language
+from filizver.forum.utils import  build_form, paginate
 from filizver.text.utils import smileys, text_to_html
 
 
 
 
 def index(request, full=True):
-    users_cached = cache.get('forums_users_online', {})
+    users_cached = cache.get('forum_users_online', {})
     users_online = users_cached and User.objects.filter(id__in=users_cached.keys()) or []
-    guests_cached = cache.get('forums_guests_online', {})
+    guests_cached = cache.get('forum_guests_online', {})
     guest_count = len(guests_cached)
     users_count = len(users_online)
 
@@ -43,7 +44,12 @@ def index(request, full=True):
         user_groups = user.groups.all() or [] # need 'or []' for anonymous user otherwise: 'EmptyManager' object is not iterable
         _forums = _forums.filter(Q(category__groups__in=user_groups) | Q(category__groups__isnull=True))
 
-    _forums = _forums.select_related('last_reply__thread', 'last_reply__user', 'category')
+    _forums = _forums.select_related(
+                    'topic', 
+                    'category__topic',
+                    'last_reply__thread', 
+                    'last_reply__user', 
+                    )
 
     cats = {}
     forums = {}
@@ -74,7 +80,7 @@ def index(request, full=True):
 @transaction.commit_on_success
 def moderate(request, forum_id):
     forum = get_object_or_404(Forum, pk=forum_id)
-    threads = forum.threads.order_by('-sticky', '-updated_date').select_related()
+    threads = forum.threads.order_by('-sticky', '-last_update').select_related()
     if request.user.is_superuser or request.user in forum.moderators.all():
         thread_ids = request.POST.getlist('thread_id')
         if 'move_threads' in request.POST:
@@ -320,7 +326,10 @@ def show_forum(request, forum_id, full=True):
     forum = get_object_or_404(Forum, pk=forum_id)
     if not forum.category.has_access(request.user):
         return HttpResponseForbidden()
-    threads = forum.threads.order_by('-sticky', '-last_update').select_related()
+    #threads = forum.threads.order_by('-sticky', '-last_update').select_related()
+    threads = forum.threads.order_by('-sticky', '-last_update').select_related(
+        'forum__topic','topic__user','last_reply__user' 
+        )
     moderator = request.user.is_superuser or\
         request.user in forum.moderators.all()
     to_return = {'categories': Category.objects.all(),
@@ -359,7 +368,7 @@ def show_thread(request, thread_id, full=True):
 
     if request.user.is_authenticated():
         thread.update_read(request.user)
-    replies = thread.replies.all().select_related()
+    replies = thread.replies.filter(deleted=False).select_related('user__profile')
 
     moderator = request.user.is_superuser or request.user in thread.forum.moderators.all()
     if user_is_authenticated and request.user in thread.subscribers.all():
@@ -385,8 +394,8 @@ def show_thread(request, thread_id, full=True):
         else:
             reply_form = AddReplyForm(
                 initial={
-                    'markup': request.user.forum_profile.markup,
-                    'subscribe': request.user.forum_profile.auto_subscribe,
+                    'markup': request.user.profile.markup,
+                    'subscribe': request.user.profile.auto_subscribe,
                 },
                 **reply_form_kwargs
             )
@@ -431,37 +440,21 @@ def add_thread(request, forum_id):
         else:
             all_valid = False
 
-        poll_form = PollForm(request.POST)
-        create_poll = poll_form.create_poll()
-        if not create_poll:
-            # All poll fields are empty: User didn't want to create a poll
-            # Don't run validation and remove all form error messages
-            poll_form = PollForm() # create clean form without form errors
-        elif not poll_form.is_valid():
-            all_valid = False
-
         if all_valid:
             reply = form.save()
-            if create_poll:
-                poll_form.save(reply)
-                messages.success(request, _("Thread with poll saved."))
-            else:
-                messages.success(request, _("Thread saved."))
+            messages.success(request, _("Thread saved."))
             return HttpResponseRedirect(reply.get_absolute_url())
     else:
         form = AddReplyForm(
             initial={
-                'markup': request.user.forum_profile.markup,
-                'subscribe': request.user.forum_profile.auto_subscribe,
+                'markup': request.user.profile.markup,
+                'subscribe': request.user.profile.auto_subscribe,
             },
             **reply_form_kwargs
         )
-        if forum_id: # Create a new thread
-            poll_form = PollForm()
 
     context = {
         'forum': forum,
-        'create_poll_form': poll_form,
         'form': form,
         'form_url': request.path,
         'back_url': forum.get_absolute_url(),
@@ -480,7 +473,7 @@ def show_reply(request, reply_id):
 @login_required
 @transaction.commit_on_success
 def edit_reply(request, reply_id):
-    from filizver.forum.templatetags.forum_extras import forum_editable_by
+    from filizver.forum.templatetags.forum_tags import forum_editable_by
 
     reply = get_object_or_404(Reply, pk=reply_id)
     thread = reply.thread
@@ -491,6 +484,10 @@ def edit_reply(request, reply_id):
     if form.is_valid():
         reply = form.save(commit=False)
         reply.updated_by = request.user
+        thread_name = form.cleaned_data['title']
+        if thread_name:
+            reply.thread.topic.title = thread_name
+            reply.thread.topic.save()
         reply.save()
         messages.success(request, _("Reply updated."))
         return HttpResponseRedirect(reply.get_absolute_url())
@@ -526,7 +523,7 @@ def delete_replies(request, thread_id):
 
     initial = {}
     if request.user.is_authenticated():
-        initial = {'markup': request.user.forum_profile.markup}
+        initial = {'markup': request.user.profile.markup}
     form = AddReplyForm(thread=thread, initial=initial)
 
     moderator = request.user.is_superuser or\
@@ -649,7 +646,7 @@ def delete_subscription(request, thread_id):
     if 'from_thread' in request.GET:
         return HttpResponseRedirect(reverse('forum:thread', args=[thread.id]))
     else:
-        return HttpResponseRedirect(reverse('forum:forum_profile', args=[request.user.username]))
+        return HttpResponseRedirect(reverse('filizver:profile_detail', args=[request.user.username]))
 
 
 @login_required
@@ -665,7 +662,7 @@ def add_subscription(request, thread_id):
 @csrf_exempt
 def reply_preview(request):
     '''Preview for markitup'''
-    markup = request.user.forum_profile.markup
+    markup = request.user.profile.markup
     data = request.POST.get('data', '')
 
     data = convert_text_to_html(data, markup)

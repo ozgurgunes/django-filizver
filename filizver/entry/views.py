@@ -13,7 +13,7 @@ from filizver.entry.models import Entry
 from filizver.topic.forms import TopicForm
 from filizver.entry.forms import EntryForm
 from filizver.branch.forms import BranchForm
-
+from filizver.entry.plugins import EntryType
 
 
 class EntryList(ListView):
@@ -34,17 +34,11 @@ class EntryCreate(CreateView, LoginRequiredMixin):
     template_name = "entry/_entry_create.html"
     
     def post(self, request, *args, **kwargs):
-        POST = request.POST.copy()
-        POST['user'] = request.user.id
-        if POST['body_1']:
-            POST['source_1'] = POST['body_1']
-            form = BranchForm(POST)
-            if form.is_valid():
-                text = form.save()
-                if request.is_ajax():
-                    return HttpResponse('OK')
-                return redirect(text.topic)        
-        return HttpResponse('FAIL')
+        #for plugin in EntryType.get_plugins():
+        #    plugin.create(request)
+        plugin = EntryType.get_model(request.POST.get('plugin')).get_plugin()
+        entry = plugin.create(request)
+        return redirect(entry.topic)
 
 class EntryDelete(DeleteView, LoginRequiredMixin):
 

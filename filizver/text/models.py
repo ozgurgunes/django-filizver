@@ -38,10 +38,10 @@ class Text(EntryBase):
         verbose_name_plural     = _('Texts')
 
     def __unicode__(self):
-        return u"%s" % self.body[:64] + '...' if self.body.lengt > 64 else ''
+        return u"%s" % self.body[:64] + '...' if len(self.body) > 64 else ''
 
     def save(self, *args, **kwargs):
-        self.body_html = utils.text_to_html(self.body, self.markup)
+        self.html = utils.text_to_html(self.body, self.markup)
         if defaults.SMILEYS_SUPPORT: #and self.user.profile.smileys:
             self.html = utils.smileys(self.html)
         super(Text, self).save(*args, **kwargs)

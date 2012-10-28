@@ -3,35 +3,33 @@
 {% load i18n %}
 
 {% block content %}
-<div class="linkst">
-	<div class="inbox">
-		<ul><li><a href="{% url forum:index %}">{% trans "Root" %}</a> </li><li>&raquo; {% link reply.thread.forum %}</li><li>&raquo; {{ reply.thread }}</li></ul>
-		<div class="clearer"></div>
-	</div>
-</div>
+		<ul class="breadcrumb">
+			<li><a href="{% url forum:index %}">{% trans "Forum" %}</a> <span class="divider">/</span></li>
+			<li>{% link reply.thread.forum %} <span class="divider">/</span></li>
+			<li>{{ reply.thread.topic }}</li>
+		</ul>
 
-<div class="blockform">
 	<h2>{% trans "Edit reply" %}</h2>
 
-	<div class="box">
-		<form method="reply">
+		<form method="post" class="form">
 			{% csrf_token %}
-			<div class="inform">
 				<fieldset>
 					<legend>{% trans "Edit the reply and submit changes" %}</legend>
-					<div class="infldset txtarea">
-						{% if reply.id == reply.thread.head.id %}
-						<label>{% trans "Subject" %}<br />
-						{{ form.name }}<br /></label>
-						{% endif %}
-						<label>{% trans "Message" %}<br />
-						{{ form.body }}
-						<br /></label>
+					{% if reply.id == reply.thread.head.id %}
+					<div class="control-group">
+					<label for="{{ form.title.auto_id }}">{% trans "Subject" %}</label>
+					<div class="controls">{{ form.title }}</div>
+					</div>
+					{% endif %}
+					<div class="control-group">
+						<label for="{{ form.body.auto_id }}">{% trans "Message" %}</label>
+						<div class="controls">{{ form.body }}</div>
 					</div>
 				</fieldset>
-			</div>
-
-			<p><input type="submit" value="{% trans "Save" %}" /><a href="javascript:history.go(-1)">{% trans "Go back" %}</a></p>
+				<p class="form-actions">
+					<input class="btn btn-primary" type="submit" value="{% trans "Save" %}" />
+					<a class="btn" href="javascript:history.go(-1)">{% trans "Go back" %}</a>
+				</p>
 		</form>
 	</div>
 </div>

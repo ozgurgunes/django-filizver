@@ -89,5 +89,5 @@ class BranchForm(forms.ModelForm):
 
     class Meta:
         model       = Branch
-        exclude     = ['created_date']
+        fields     = ['source']
 

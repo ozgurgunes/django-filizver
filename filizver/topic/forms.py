@@ -34,16 +34,16 @@ class TopicFormBase(forms.ModelForm):
             ip = self.request.META.get('REMOTE_ADDR')
         return ip
 
-    def save(self, commit=True, *args, **kwargs):
+    def save(self, *args, **kwargs):
         instance = super(TopicFormBase, self).save(commit=False)
         if instance.id:
             topic = instance.topic
         else:
-            topic = Topic(user=self.instance.user, ip_address=self.get_ip_address)
+            topic = Topic(user=self.instance.user)
         topic.title = self.cleaned_data['title']
         topic.save()
         instance.topic = topic
-        instance.save(commit=commit)
+        instance.save()
         return instance
 
 

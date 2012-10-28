@@ -1,36 +1,36 @@
 {% load i18n plugins %}
 <form id="entry_form" action="{% url filizver:entry_create topic.id %}" method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
     <input type="hidden" name="topic" id="id_topic" value="{{ object.pk }}" />
-
-    {% get_plugins filizver.points.EntryType as plugins %}
+    {% get_plugins filizver.entry.plugins.EntryType as plugins %}
     <ul class="nav nav-tabs" id="myTab">
         {% for plugin in plugins %}
-        <li><a href="#{{ plugin.name }}">{{ plugin.title }}</a></li>
+        <li><a data-target="#{{ plugin.name }}" data-toggle="tab" href="{{ plugin.link }}">{{ plugin.title }}</a></li>
         {% endfor %}
     </ul>
 
-    {% get_plugins filizver.points.EntryType as plugins %}
+    {% get_plugins filizver.entry.plugins.EntryType as plugins %}
     <div class="tab-content">
       {% for plugin in plugins %}
-      <div class="tab-pane" id="{{ plugin.name }}">{{ plugin.form_class|as_bootstrap }}</div>
+      <div class="tab-pane" id="{{ plugin.name }}">{{ plugin.title }}</div>
       {% endfor %}
     </div>
     <script>
-      $(function () {
-          $('#myTab a').click(function (e) {
-            e.preventDefault();
-            $(this).tab('show');
-          })
-          $('#myTab a:first').tab('show').addClass('active');
-      })
+	$(function() {
+		//$("#myTab").tab();
+		$("#myTab").bind("show", function(e) {    
+	    	var contentID  = $(e.target).attr("data-target");
+	    	var contentURL = $(e.target).attr("href");
+	    	$(contentID).load(contentURL, function(){
+				$("#myTab").tab();
+			});
+		});
+		$('#myTab a:first').tab("show");
+	});
     </script>
     {{ entry_form.errors }}
-    <p>{{ entry_form.body }}</p>
-    <p>{{ entry_form.source }}</p>
     <div align="right" class="fileupload-buttonbar">
         <button type="submit" class="btn start">{% trans "Start upload" %}</button>
-        <input type="submit" class="btn start" value="{% trans "Save" %}">
+        <input type="submit" class="btn submit" value="{% trans "Save" %}" />
     </div>
 
     <!-- The loading indicator is shown during file processing -->
@@ -63,7 +63,4 @@
             });
         });
     </script>
-
-
-
 </form>

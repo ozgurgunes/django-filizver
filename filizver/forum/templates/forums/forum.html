@@ -3,27 +3,22 @@
 {% load pagination_tags %}
 {% load i18n %}
 
-{% block title %} / {{ forum.name }}{% endblock %}
+{% block title %}{{ block.super }} / {{ forum.topic.title }}{% endblock %}
 {% block content %}
 {% autopaginate threads defaults.FORUM_PAGE_SIZE %}
-<div class="linkst">
-	<div class="inbox">
-		<div class="pagelink conl">{% paginate %}</div>
+	{% paginate %}
 		{% if user.is_authenticated %}
-			<p class="replylink conr"><a href="{% url forum:add_thread forum.id %}">{% trans "New thread" %}</a></p>
+		<p><a class="btn" href="{% url forum:add_thread forum.id %}">{% trans "New thread" %}</a></p>
 		{% endif %}
-		<ul><li><a href="{% url forum:index %}">{% trans "Root" %}</a> </li><li>&raquo; {{ forum.name }}</li></ul>
-		<div class="clearer"></div>
-	</div>
-</div>
-<div id="vf" class="blocktable">
+		<ul class="breadcrumb">
+		    <li><a href="{% url forum:index %}">{% trans "Forum" %}</a> <span class="divider">/</span></li>
+		    <li>{{ forum.topic.title }}</li>
+		</ul>
 	<h2>
-		<a href="{% url forum:forum_forum_feed forum.id %}"><img src="{{ STATIC_URL }}forums/img/feed-icon-small.png"  alt="[RSS Feed]" title="[RSS Feed]" class="rss" /></a>
-		<b><span>{{ forum.name }}</span></b>
+		<a href="{% url forum:forum_forum_feed forum.id %}"><img src="{{ STATIC_URL }}img/feed-icon-small.png"  alt="[RSS Feed]" title="[RSS Feed]" class="rss" /></a>
+		{{ forum.topic.title }}
 	</h2>
-	<div class="box">
-		<div class="inbox">
-			<table cellspacing="0">
+			<table class="table">
 			<thead>
 				<tr>
 					<th class="tcl" scope="col">{% trans "Thread" %}</th>
@@ -43,16 +38,19 @@
 									{% if thread.sticky %}
 										{% trans "Sticky:" %}
 									{% endif %}
+									{% if thread.closed %}
+										{% trans "Closed:" %}
+									{% endif %}
 									{% if thread|has_unreads:user %}
-										<strong>{% link thread %} <span class="byuser">{% trans "by" %} {{ thread.user.username }}</span></strong>
+										<strong>{% link thread %} <span class="byuser">{% trans "by" %} {{ thread.topic.user.username }}</span></strong>
 									{% else %}
-										{% link thread %} <span class="byuser">{% trans "by" %} {{ thread.user.username }}</span>
+										{% link thread %} <span class="byuser">{% trans "by" %} {{ thread.topic.user.username }}</span>
 									{% endif %}
 								</div>
 							</div>
 						</td>
 						<td class="tc2">{{ thread.reply_count }}</td>
-						<td class="tc3">{{ thread.views }}</td>
+						<td class="tc3">{{ thread.view_count }}</td>
 						<td class="tcr"><a href="{{ thread.last_reply.get_absolute_url }}">
 						{% if thread.last_update %}
 						  {% forum_time thread.last_update %}
@@ -64,47 +62,29 @@
 			{% endif %}
 			</tbody>
 			</table>
-		</div>
-	</div>
-</div>
-<div class="linkst">
-	<div class="inbox">
-		<div class="pagelink conl">{% paginate %}</div>
+	{% paginate %}
 		{% if user.is_authenticated %}
-			<p class="replylink conr"><a href="{% url forum:add_thread forum.id %}">{% trans "New thread" %}</a></p>
+			<p><a class="btn" href="{% url forum:add_thread forum.id %}">{% trans "New thread" %}</a></p>
 		{% endif %}
-		<ul><li><a href="{% url forum:index %}">{% trans "Root" %}</a> </li><li>&raquo; {{ forum.name }}</li></ul>
-		<div class="clearer"></div>
-	</div>
-</div>
-{% endblock %}
-{% block controls %}
-<div class="conl">
-	<form id="qjump" method="get" action="forum">
-		<div><label>{% trans "Jump to" %}
-		<br />
+		<ul class="breadcrumb">
+		    <li><a href="{% url forum:index %}">{% trans "Forum" %}</a> <span class="divider">/</span></li>
+		    <li>{{ forum.topic.title }}</li>
+		</ul>
+
+	<form class="form form-inline" id="qjump" method="get" action="forum">
+		<label>{% trans "Jump to" %}</label>
 		<select name="id" id="forum_id" onchange="window.location=('{% url forum:index %}'+this.options[this.selectedIndex].value)">
 			{% for category in categories %}
 				<optgroup label="{{ category }}">
-					{% for forum in category.forums.all %}
-						<option value="{{ forum.id }}">{{ forum.name }}</option>
+					{% for f in category.forums.all %}
+						<option value="{{ f.id }}"{% if f.id == forum.id %} selected{% endif %}>{{ f.topic.title }}</option>
 					{% endfor %}
 				</optgroup>
 			{% endfor %}
 		</select>
-		<input type="button" onclick="window.location=('{% url forum:index %}'+getElementById('forum_id').value)" value=" {% trans "Go" %} " accesskey="g" />
-		</label></div>
+		<input class="btn" type="button" onclick="window.location=('{% url forum:index %}'+getElementById('forum_id').value)" value=" {% trans "Go" %} " accesskey="g" />
 	</form>
 	{% if moderator %}
 		<p id="modcontrols"><a href="{% url forum:moderate forum.id %}">{% trans "Moderate forum" %}</a></p>
 	{% endif %}
-</div>
-{% endblock %}
-
-{% block lofi %}
-{% if defaults.LOFI_SUPPORT %}
-    <p class="lofi">
-        <a href="{{ forum.get_absolute_url }}lofi/">Lo-Fi Version</a>
-    </p>
-{% endif %}
 {% endblock %}
