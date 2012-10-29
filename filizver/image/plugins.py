@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 from django.utils import simplejson as json
 from django.core.urlresolvers import reverse
-from filizver.entry.plugins import EntryType
+from filizver.entry.plugins import EntryPoint
 from forms import ImageForm
 from django.http import HttpResponse
 
-class ImageEntryPlugin(EntryType):
+class ImageEntryPlugin(EntryPoint):
     name = 'image'
     title = 'Image'
     form_class = ImageForm

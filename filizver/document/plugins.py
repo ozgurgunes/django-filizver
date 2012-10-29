@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from django.core.urlresolvers import reverse
-from filizver.entry.plugins import EntryType
+from filizver.entry.plugins import EntryPoint
 from forms import DocumentForm
 
-class DocumentEntryPlugin(EntryType):
+class DocumentEntryPlugin(EntryPoint):
     name = 'document'
     title = 'Document'
     form_class = DocumentForm

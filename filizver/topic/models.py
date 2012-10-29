@@ -11,11 +11,11 @@ from tagging.fields import TagField
 from tagging.models import Tag
 from django.template.defaultfilters import slugify
 from filizver.topic.plugins import TopicInline
-from filizver.core.models import DateMixin, DeleteMixin
+from filizver.core.models import UserMixin
 
 from djangoplugins.fields import ManyPluginField
 
-class Topic(DateMixin, DeleteMixin):
+class Topic(UserMixin):
     """
     Topic class for Filizver application
     """
@@ -37,12 +37,6 @@ class Topic(DateMixin, DeleteMixin):
                                         through='Moderator', related_name='moderating',
                                         blank=True, null=True)
     
-
-    ip_address              = models.IPAddressField(_('IP Address'), editable=False, 
-                                        blank=True, null=True)
-    api_gateway             = models.IPAddressField(_('API Gateway'), editable=False, 
-                                        blank=True, null=True)
-
     tags                    = TagField()
     #objects                 = TopicManager()
     

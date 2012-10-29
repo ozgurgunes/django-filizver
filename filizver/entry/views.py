@@ -13,7 +13,7 @@ from filizver.entry.models import Entry
 from filizver.topic.forms import TopicForm
 from filizver.entry.forms import EntryForm
 from filizver.branch.forms import BranchForm
-from filizver.entry.plugins import EntryType
+from filizver.entry.plugins import EntryPoint
 
 
 class EntryList(ListView):
@@ -30,13 +30,10 @@ class EntryDetail(ListView):
 
 class EntryCreate(CreateView, LoginRequiredMixin):
     
-    form_class = EntryForm
     template_name = "entry/_entry_create.html"
     
     def post(self, request, *args, **kwargs):
-        #for plugin in EntryType.get_plugins():
-        #    plugin.create(request)
-        plugin = EntryType.get_model(request.POST.get('plugin')).get_plugin()
+        plugin = EntryPoint.get_model(request.POST.get('plugin')).get_plugin()
         entry = plugin.create(request)
         return redirect(entry.topic)
 

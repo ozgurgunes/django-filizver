@@ -20,3 +20,6 @@ class ThreadInlinePlugin(TopicInline):
     title = 'Thread Inline'
     inline = ThreadInline
 
+class ForumTopic(TopicPoint):
+    name = 'forum-topic'
+    title= 'Forum Topic'

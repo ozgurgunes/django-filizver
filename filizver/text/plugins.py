@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from django.core.urlresolvers import reverse
-from filizver.entry.plugins import EntryType
+from filizver.entry.plugins import EntryPoint
 from forms import TextForm
 
-class TextEntryPlugin(EntryType):
+class TextEntry(EntryPoint):
     name = 'text'
     title = 'Text'
     form_class = TextForm

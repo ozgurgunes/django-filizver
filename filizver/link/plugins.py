@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from django.core.urlresolvers import reverse
-from filizver.entry.plugins import EntryType
+from filizver.entry.plugins import EntryPoint
 from .forms import LinkForm
 
-class LinkEntryPlugin(EntryType):
+class LinkEntryPlugin(EntryPoint):
     name = 'link'
     title = 'Link'
     form_class = LinkForm

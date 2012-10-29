@@ -4,11 +4,12 @@ from django.utils.translation import ugettext_lazy as _
 from django import forms
 from django.contrib.auth.models import User
 
-from filizver.topic.models import Topic
-from filizver.branch.models import Branch
-from filizver.branch.lookups import BranchLookup
-
 from selectable.forms.widgets import SelectableMultiWidget, SelectableMediaMixin
+
+from filizver.topic.models import Topic
+from filizver.entry.forms import EntryForm
+from models import Branch
+from lookups import BranchLookup
 
 
 class AutoCompleteWidget(forms.Textarea, SelectableMediaMixin):
@@ -79,8 +80,8 @@ class AutoCompleteSelectWidget(SelectableMultiWidget, SelectableMediaMixin):
         return value
                 
 
-class BranchForm(forms.ModelForm):
-    topic           = forms.ModelChoiceField(queryset=Topic.objects.all(), widget=forms.HiddenInput)
+class BranchForm(EntryForm):
+    #topic           = forms.ModelChoiceField(queryset=Topic.objects.all(), widget=forms.HiddenInput)
     # source          = forms.ModelChoiceField(queryset=Topic.objects.all(), 
     #                             widget=forms.TextInput(attrs={ 'class': 'branch text' }))
     source          = forms.ModelChoiceField(queryset=Topic.objects.all(), 
@@ -89,5 +90,9 @@ class BranchForm(forms.ModelForm):
 
     class Meta:
         model       = Branch
-        fields     = ['source']
+        #fields     = ['source', 'plugin']
 
+        
+    def __init__(self, *args, **kwargs):
+        super(EntryForm, self).__init__(*args, **kwargs)        
+        self.fields['plugin'].initial = 'branch'

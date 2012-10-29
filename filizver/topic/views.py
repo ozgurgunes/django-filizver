@@ -13,9 +13,9 @@ from django.db.models import Count
 from manifest.accounts.views import LoginRequiredMixin
 from filizver.core.views import ExtraContextMixin
 
-from filizver.topic.models import Topic
-from filizver.topic.forms import TopicForm
-from filizver.entry.plugins import EntryType
+from models import Topic
+from forms import TopicForm
+from plugins import TopicPoint
 
 class TopicList(ListView, ExtraContextMixin):
 
@@ -34,14 +34,26 @@ class TopicDetail(DetailView, ExtraContextMixin):
 
 class TopicCreate(CreateView, LoginRequiredMixin):
 
-    form_class = TopicForm
-    template_name = "topic/topic_create.html"
+    # form_class = TopicForm
+    # template_name = "topic/topic_create.html"
     
-    def form_valid(self, form):
-        instance = form.save(commit=False)
-        instance.user = self.request.user
-        instance.save()
-        return redirect(instance.get_absolute_url())
+    def get_form_class(self):
+        if self.form_class:
+            return self.form_class
+        else:
+            plugin  = TopicPoint.get_model(request.POST.get('plugin')).get_plugin()
+            return plugin.form_class
+
+    def post(self, request, *args, **kwargs):
+        plugin  = TopicPoint.get_model(request.POST.get('plugin')).get_plugin()
+        topic   = plugin.create(request)
+        return redirect(topic)
+    
+    # def form_valid(self, form):
+    #     instance = form.save(commit=False)
+    #     instance.user = self.request.user
+    #     instance.save()
+    #     return redirect(instance.get_absolute_url())
 
 
 class TopicUpdate(UpdateView, LoginRequiredMixin):

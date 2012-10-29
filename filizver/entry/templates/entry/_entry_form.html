@@ -1,14 +1,14 @@
 {% load i18n plugins %}
-<form id="entry_form" action="{% url filizver:entry_create topic.id %}" method="POST" enctype="multipart/form-data">
+<form class="form" id="entry_form" action="{% url filizver:entry_create topic.id %}" method="POST" enctype="multipart/form-data">
     <input type="hidden" name="topic" id="id_topic" value="{{ object.pk }}" />
-    {% get_plugins filizver.entry.plugins.EntryType as plugins %}
+    {% get_plugins filizver.entry.plugins.EntryPoint as plugins %}
     <ul class="nav nav-tabs" id="myTab">
         {% for plugin in plugins %}
         <li><a data-target="#{{ plugin.name }}" data-toggle="tab" href="{{ plugin.link }}">{{ plugin.title }}</a></li>
         {% endfor %}
     </ul>
 
-    {% get_plugins filizver.entry.plugins.EntryType as plugins %}
+    {% get_plugins filizver.entry.plugins.EntryPoint as plugins %}
     <div class="tab-content">
       {% for plugin in plugins %}
       <div class="tab-pane" id="{{ plugin.name }}">{{ plugin.title }}</div>
@@ -32,6 +32,7 @@
         <button type="submit" class="btn start">{% trans "Start upload" %}</button>
         <input type="submit" class="btn submit" value="{% trans "Save" %}" />
     </div>
+	<input type="file" name="source" id="id_source">
 
     <!-- The loading indicator is shown during file processing -->
     <div class="fileupload-loading"></div>
@@ -54,13 +55,13 @@
         $(document).ready(function() {
             $('#entry_form button.start').click($('#entry_form').fileupload('send'));
             
-            function newParameters(query) {
-                query.topic = $('#id_topic').val();
-            }
-            $('#id_body_0').djselectable('option', 'prepareQuery', newParameters);
-            $(':input[name=body_0]').bind('autocompleteselect', function(event, ui) {
-                $(this).parents("form").submit();
-            });
+            // function newParameters(query) {
+            //     query.topic = $('#id_topic').val();
+            // }
+            // $('#id_body_0').djselectable('option', 'prepareQuery', newParameters);
+            // $(':input[name=body_0]').bind('autocompleteselect', function(event, ui) {
+            //     $(this).parents("form").submit();
+            // });
         });
     </script>
 </form>

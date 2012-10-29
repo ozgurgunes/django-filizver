@@ -8,7 +8,7 @@
         "title": "Hello World", 
         "slug": "hello-world",
         "created_date": "2010-10-25 19:18:32",
-        "is_public": true,
+        "active": true,
         "tags": ""
     }
 },
@@ -21,7 +21,7 @@
         "title": "Merhaba Dünya", 
         "slug": "merhaba-dunya",
         "created_date": "2010-10-25 19:18:32",
-        "is_public": true,
+        "active": true,
         "tags": ""
     }
 },
@@ -34,7 +34,7 @@
         "title": "The quick brown fox jumps over the lazy dog", 
         "slug": "the-quick-brown-fox-jumps-over-the-lazy-dog",
         "created_date": "2010-10-25 19:18:32",
-        "is_public": true,
+        "active": true,
         "tags": ""
     }
 },
@@ -47,7 +47,7 @@
         "title": "Hızlı kahverengi tilki tembel köpeğin üzerinden atladı", 
         "slug": "hizli-kahverengi-tilki-tembel-kopegin-uzerinden-atladi",
         "created_date": "2010-10-25 19:18:32",
-        "is_public": true,
+        "active": true,
         "tags": ""
     }
 },
@@ -60,7 +60,7 @@
         "title": "Pijamalı hasta yağız şoföre çabucak güvendi", 
         "slug": "pijamali-hasta-yagiz-sofore-cabucak-guvendi",
         "created_date": "2010-10-25 19:18:32",
-        "is_public": true,
+        "active": true,
         "tags": ""
     }
 },
@@ -73,7 +73,7 @@
         "title": "Lorem ipsum dolor sit amet", 
         "slug": "lorem-ipsum-dolor-sit-amet",
         "created_date": "2010-10-25 19:18:32",
-        "is_public": true,
+        "active": true,
         "tags": ""
     }
 }

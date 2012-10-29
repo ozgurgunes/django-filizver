@@ -12,7 +12,7 @@ class DateMixin(models.Model):
                                         editable=False, blank=True, null=True)
     updated_user            = models.ForeignKey(User, verbose_name=_('Updated user'), 
                                         related_name='updated_%(class)s_set', blank=True, null=True)
-    
+
     class Meta:
         abstract = True
 
@@ -39,3 +39,14 @@ class DeleteMixin(models.Model):
                 self.deleted_user = request.user
             self.save()
         
+
+class UserMixin(DateMixin, DeleteMixin):
+    ip_address      = models.IPAddressField(_('IP Address'), editable=False, 
+                                   blank=True, null=True)
+    api_gateway     = models.IPAddressField(_('API Gateway'), editable=False, 
+                                        blank=True, null=True)
+
+    
+    class Meta:
+        abstract = True
+

@@ -3,7 +3,7 @@ from djangoplugins.point import PluginPoint
 from django.http import HttpResponse
 from django.shortcuts import redirect
 
-class EntryType(PluginPoint):
+class EntryPoint(PluginPoint):
     
     form_class = None
     

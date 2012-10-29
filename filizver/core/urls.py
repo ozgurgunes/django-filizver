@@ -9,6 +9,6 @@ urlpatterns = patterns('',
     url(r'^profile/', include('filizver.profile.urls')),
     url(r'^branch/', include('filizver.branch.urls')),
     url(r'^text/', include('filizver.text.urls')),
-    url(r'^image/', include('filizver.image.urls')),   
+    url(r'^image/', include('filizver.image.urls')),
 
 )

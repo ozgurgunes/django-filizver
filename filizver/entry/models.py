@@ -7,11 +7,11 @@ from django.db.models.signals import post_save, post_delete
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
-from filizver.core.models import DateMixin, DeleteMixin
+from filizver.core.models import UserMixin
 from filizver.topic.models import Topic
 
 
-class Entry(models.Model):
+class Entry(UserMixin):
     """
     Extension class for Topic object
     """
@@ -22,15 +22,9 @@ class Entry(models.Model):
     user                    = models.ForeignKey(User, related_name='entries')
     topic                   = models.ForeignKey(Topic, related_name='entries')
     
-    created_date            = models.DateTimeField(_('Created date'), auto_now_add=True, blank=False, null=False)
     position                = models.PositiveSmallIntegerField(blank=True, null=False, default=0, editable=False);
     
-    #plugins                 = ManyPluginField(EntryType)
-
-    ip_address              = models.IPAddressField(_('IP Address'), editable=False, 
-                                        blank=True, null=True)
-    api_gateway             = models.IPAddressField(_('API Gateway'), editable=False, 
-                                        blank=True, null=True)
+    #plugins                 = ManyPluginField(EntryPoint)
 
     class Meta:
         app_label                = 'filizver'
@@ -70,7 +64,7 @@ class Entry(models.Model):
 
 
 
-class EntryBase(DateMixin, DeleteMixin):
+class EntryBase(UserMixin):
     """Abstract base class for entry contents"""
 
     user            = models.ForeignKey(User, related_name='%(class)s_set', blank=False, null=False)
