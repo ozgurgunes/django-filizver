@@ -1,0 +1,37 @@
+{% extends "project/project_base.html" %}
+{% load pagination_tags %}
+{% block title %}{% trans 'All projects' %} - {{ block.super }}{% endblock title %}
+{% block breadcrumb %}{{ block.super }} &ndash; <a href="{% url 'project:project_list' %}">{% trans "Latest projects" %}</a>{% endblock %}
+
+{% block toolbar %}
+<a class="btn" href="{% url project:project_create %}">{% trans "New project" %}</a>
+{% endblock toolbar %}
+
+{% block main %}
+    {% autopaginate object_list 10 %}
+    <header class="main">
+        <h2>{% trans "Latest Topics" %}</h2>
+        <p>{% trans "Page" %}: <strong>{{ page_obj.number }}</strong> / {{ paginator.num_pages }}</p>
+    </header>
+    <section class="main">
+    {% for object in object_list %}
+        <article class="section row {% cycle odd,even %}">
+		    <a href="{% url accounts_profile_detail object.topic.user %}" class="image span1">
+		        {% thumbnail object.topic.user.get_profile.avatar "48x48" crop="center" as im %}
+		        <img src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" alt="{{ object.topic.user }}" class="pull-left" />
+		        {% endthumbnail %}                    
+		    </a>                     
+		    <div class="offset1"><a href="{{ object.get_absolute_url }}" target="_top" title="{{ object.topic.title }}">{{ object.topic.title }}</a></div>
+		    <div class="meta offset1">
+		        <address class="user pull-left"><a href="{% url accounts_profile_detail object.topic.user %}">{{ object.topic.user }}</a></address>
+		        <time datetime="{{ object.created_date|date:"c" }}">{{ object.created_date|timesince }} {% trans 'ago' %}</time>
+		    </div>
+        </article>
+    {% empty %}
+        <p class="section empty">{% trans 'Not found any record.' %}</p>    
+    {% endfor %}
+    </section>
+    <footer class="main">
+        {% paginate %}
+    </footer>
+{% endblock %}

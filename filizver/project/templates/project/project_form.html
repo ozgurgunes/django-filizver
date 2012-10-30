@@ -1,0 +1,9 @@
+{% extends "project/project_base.html" %}
+{% block main %}
+<form class="form" action="" method="post" accept-charset="utf-8">
+	{% csrf_token %}
+	{{ form|as_bootstrap }}
+
+	<p class="form-actions"><input class="btn btn-primary" type="submit" value="{% trans "Submit" %}"></p>
+</form>
+{% endblock main %}

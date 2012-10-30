@@ -1,5 +1,4 @@
 # coding: utf-8
-
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
@@ -31,7 +30,7 @@ class CategoryInline(admin.StackedInline):
 
 class ThreadInline(admin.StackedInline):
     model = Thread
-    raw_id_fields = ('subscribers',)
+    raw_id_fields = ('subscribers', 'forum', 'last_reply')
 
 
 class CategoryAdmin(BaseModelAdmin):

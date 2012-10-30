@@ -6,6 +6,9 @@ class TopicPoint(PluginPoint):
 
     form_class = None
 
+    def admin(self):
+        return self.admin_inline
+
     def create(self, request):
         form = self.form_class(request.POST, request.FILES)
         if form.is_valid():
@@ -16,8 +19,3 @@ class TopicPoint(PluginPoint):
                 return HttpResponse(serializers.serialize('json', obj))
             return obj
 
-
-class TopicInline(PluginPoint):
-
-    def admin(self):
-        return self.inline

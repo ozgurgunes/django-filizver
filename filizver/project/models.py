@@ -6,8 +6,6 @@ from django.db.models.signals import post_save
 
 from filizver.topic.models import Topic
 
-import defaults
-
 
 class Project(models.Model):
     topic           = models.OneToOneField(Topic, parent_link=True, related_name='projects')
@@ -15,7 +13,7 @@ class Project(models.Model):
     moderators      = models.ManyToManyField(User, blank=True, null=True, verbose_name=_('Moderators'))
 
     class Meta:
-        ordering = ['title']
+        ordering = ['topic__title']
         verbose_name = _('Project')
         verbose_name_plural = _('Projects')
 
@@ -24,5 +22,5 @@ class Project(models.Model):
         
     @models.permalink
     def get_absolute_url(self):
-        return ('project:project', [self.id])
+        return ('project:project_detail', [self.id])
 

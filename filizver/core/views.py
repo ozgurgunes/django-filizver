@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import View, ListView
+from django.http import HttpResponse
+from django.utils import simplejson as json
 
 from filizver.topic.forms import TopicForm
 
@@ -30,6 +32,19 @@ class AjaxResponseMixin(View):
         return super(AjaxResponseMixin, self).dispatch(request, *args, **kwargs)
     
 
+class JSONResponseMixin(object):
+    """
+    A mixin that can be used to render a JSON response.
+    """
+    response_class = HttpResponse
+
+    def render_to_response(self, context, **response_kwargs):
+        """
+        Returns a JSON response, transforming 'context' to make the payload.
+        """
+        response_kwargs['content_type'] = 'application/json'
+        return self.response_class(self.json.dumps(context), **response_kwargs)
+        
 class Timeline(ListView, ExtraContextMixin):
 
     template_name = "topic/topic_list.html"

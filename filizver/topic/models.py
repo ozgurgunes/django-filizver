@@ -10,7 +10,7 @@ from django.contrib.contenttypes import generic
 from tagging.fields import TagField
 from tagging.models import Tag
 from django.template.defaultfilters import slugify
-from filizver.topic.plugins import TopicInline
+from filizver.topic.plugins import TopicPoint
 from filizver.core.models import UserMixin
 
 from djangoplugins.fields import ManyPluginField
@@ -40,7 +40,7 @@ class Topic(UserMixin):
     tags                    = TagField()
     #objects                 = TopicManager()
     
-    plugins                 = ManyPluginField(TopicInline, blank=True, null=True,)
+    plugins                 = ManyPluginField(TopicPoint, blank=True, null=True,)
     
     class Meta:
         app_label               = 'filizver'

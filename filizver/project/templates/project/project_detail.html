@@ -1,0 +1,15 @@
+{% extends "project/project_base.html" %}
+{% load pagination_tags %}
+{% block title %}{% trans 'All projects' %} - {{ block.super }}{% endblock title %}
+{% block breadcrumb %}{{ block.super }} &ndash; <a href="{% url 'project:project_list' %}">{% trans "Latest projects" %}</a>{% endblock %}
+
+{% block toolbar %}
+<a class="btn" href="{% url project:project_update object.pk %}">{% trans "Update project" %}</a>
+{% endblock toolbar %}
+
+{% block main %}
+<h1>{{ object }}</h1>
+<div>
+	{{ object.description }}
+</div>
+{% endblock %}

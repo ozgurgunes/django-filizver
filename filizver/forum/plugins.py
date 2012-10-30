@@ -1,25 +1,19 @@
 # -*- coding: utf-8 -*-
-from filizver.topic.plugins import TopicInline
+from filizver.topic.plugins import TopicPoint
 from .admin import ForumInline, CategoryInline, ThreadInline
 
 
-class ForumInlinePlugin(TopicInline):
-    name = 'forum-inline'
-    title = 'Forum Inline'
-    inline = ForumInline
-
-
-class CategoryInlinePlugin(TopicInline):
+class CategoryTopic(TopicPoint):
     name = 'category-inline'
-    title = 'Category Inline'
-    inline = CategoryInline
+    title = 'Category Topic'
+    admin_inline = CategoryInline
 
-
-class ThreadInlinePlugin(TopicInline):
-    name = 'thread-inline'
-    title = 'Thread Inline'
-    inline = ThreadInline
+class ThreadTopic(TopicPoint):
+    name = 'thread-topic'
+    title = 'Thread Topic'
+    admin_inline = ThreadInline
 
 class ForumTopic(TopicPoint):
     name = 'forum-topic'
     title= 'Forum Topic'
+    admin_inline = ForumInline
