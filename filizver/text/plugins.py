@@ -10,4 +10,4 @@ class TextEntry(EntryPoint):
     link = reverse('filizver:text_create')
         
     def create(self, request):
-        return super(TextEntryPlugin, self).create(request)
+        return super(TextEntry, self).create(request)
