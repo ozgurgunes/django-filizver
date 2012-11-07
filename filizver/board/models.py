@@ -7,20 +7,20 @@ from django.db.models.signals import post_save
 from filizver.topic.models import Topic
 
 
-class Project(models.Model):
-    topic           = models.OneToOneField(Topic, parent_link=True, related_name='projects')
+class Board(models.Model):
+    topic           = models.OneToOneField(Topic, parent_link=True, related_name='boards')
     description     = models.TextField(_('Description'), blank=True, default='')
     moderators      = models.ManyToManyField(User, blank=True, null=True, verbose_name=_('Moderators'))
 
     class Meta:
         ordering = ['topic__title']
-        verbose_name = _('Project')
-        verbose_name_plural = _('Projects')
+        verbose_name = _('Board')
+        verbose_name_plural = _('Boards')
 
     def __unicode__(self):
         return self.topic.title
         
     @models.permalink
     def get_absolute_url(self):
-        return ('project:project_detail', [self.id])
+        return ('board:board_detail', [self.id])
 

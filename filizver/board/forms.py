@@ -5,9 +5,9 @@ from django.contrib.auth.models import User
 from django import forms
 
 from filizver.topic.forms import TopicFormBase
-from models import Project
+from models import Board
 
-class ProjectForm(TopicFormBase):
+class BoardForm(TopicFormBase):
     class Meta:
-        model = Project
+        model = Board
         fields = ['description']

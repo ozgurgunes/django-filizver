@@ -1,10 +1,10 @@
-{% extends "project/project_base.html" %}
+{% extends "board/board_base.html" %}
 {% load pagination_tags %}
-{% block title %}{% trans 'All projects' %} - {{ block.super }}{% endblock title %}
-{% block breadcrumb %}{{ block.super }} &ndash; <a href="{% url 'project:project_list' %}">{% trans "Latest projects" %}</a>{% endblock %}
+{% block title %}{% trans 'All boards' %} - {{ block.super }}{% endblock title %}
+{% block breadcrumb %}{{ block.super }} &ndash; <a href="{% url 'board:board_list' %}">{% trans "Latest boards" %}</a>{% endblock %}
 
 {% block toolbar %}
-<a class="btn" href="{% url project:project_create %}">{% trans "New project" %}</a>
+<a class="btn" href="{% url board:board_create %}">{% trans "New board" %}</a>
 {% endblock toolbar %}
 
 {% block main %}

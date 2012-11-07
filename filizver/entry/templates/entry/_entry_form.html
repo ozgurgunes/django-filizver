@@ -1,5 +1,4 @@
 {% load i18n plugins %}
-<form class="form" id="entry_form" action="{% url filizver:entry_create topic.id %}" method="POST" enctype="multipart/form-data">
     <input type="hidden" name="topic" id="id_topic" value="{{ object.pk }}" />
     {% get_plugins filizver.entry.plugins.EntryPoint as plugins %}
     <ul class="nav nav-tabs" id="myTab">
@@ -64,4 +63,3 @@
             // });
         });
     </script>
-</form>

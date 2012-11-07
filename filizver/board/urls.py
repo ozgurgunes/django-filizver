@@ -6,27 +6,27 @@ import views
 urlpatterns = patterns('',
 
     url(r'^$', 
-        views.ProjectList.as_view(), 
-        name='project_list'),
+        views.BoardList.as_view(), 
+        name='board_list'),
         
     url(r'^(?P<pk>\d+)/$', 
-        views.ProjectDetail.as_view(), 
-        name='project_detail'),
+        views.BoardDetail.as_view(), 
+        name='board_detail'),
         
     url(r'^create/$', 
-        views.ProjectCreate.as_view(), 
-        name='project_create'),    
+        views.BoardCreate.as_view(), 
+        name='board_create'),    
         
     url(r'^update/(?P<pk>\d+)/$',
-        views.ProjectUpdate.as_view(), 
-        name='project_update'),
+        views.BoardUpdate.as_view(), 
+        name='board_update'),
         
     url(r'^delete/(?P<pk>\d+)$', 
-        views.ProjectDelete.as_view(), 
-        name='project_delete'),
+        views.BoardDelete.as_view(), 
+        name='board_delete'),
 
     url(r'^delete/complete/$', 
         TemplateView.as_view(), 
-        name='project_delete_complete'),
+        name='board_delete_complete'),
         
 )

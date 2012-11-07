@@ -1,10 +1,11 @@
-{% extends "project/project_base.html" %}
+{% extends "board/board_base.html" %}
 {% load pagination_tags %}
-{% block title %}{% trans 'All projects' %} - {{ block.super }}{% endblock title %}
-{% block breadcrumb %}{{ block.super }} &ndash; <a href="{% url 'project:project_list' %}">{% trans "Latest projects" %}</a>{% endblock %}
+{% block title %}{% trans 'All boards' %} - {{ block.super }}{% endblock title %}
+{% block breadcrumb %}{{ block.super }} &ndash; <a href="{% url 'board:board_list' %}">{% trans "Latest boards" %}</a>{% endblock %}
 
 {% block toolbar %}
-<a class="btn" href="{% url project:project_update object.pk %}">{% trans "Update project" %}</a>
+<a class="btn" href="{% url board:board_create %}">{% trans "Create board" %}</a>
+<a class="btn" href="{% url board:board_update object.pk %}">{% trans "Update board" %}</a>
 {% endblock toolbar %}
 
 {% block main %}
@@ -23,7 +24,9 @@
         </menu>
     </header>
 	{% with object.topic as topic %}
+	<form class="form" id="entry_form" action="{% url filizver:entry_create topic.id %}" method="POST" enctype="multipart/form-data">
 	{% include "entry/_entry_form.html" %}
+	</form>
     <section id="entries" class="main">
         {% include "topic/_topic_entries.html" %}
     </section>

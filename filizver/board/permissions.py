@@ -1,19 +1,19 @@
 from permission import registry, PermissionHandler
-from models import Project
+from models import Board
 
-class ProjectPermissionHandler(PermissionHandler):
+class BoardPermissionHandler(PermissionHandler):
 
     def has_perm(self, user_obj, perm, obj=None):
         """
-        project.add_project
-        project.view_project
-        project.change_project
-        project.delete_project
-        project.moderate_project
-        project.add_entry
-        project.change_entry
-        project.delete_entry
-        project.add_comment
+        board.add_board
+        board.view_board
+        board.change_board
+        board.delete_board
+        board.moderate_board
+        board.add_entry
+        board.change_entry
+        board.delete_entry
+        board.add_comment
         
         """
         if user_obj.is_authenticated():
@@ -23,19 +23,19 @@ class ProjectPermissionHandler(PermissionHandler):
                 return True
             elif obj and obj.user == user_obj:
                 return True
-            elif obj and perm == 'project.change_project' \
+            elif obj and perm == 'board.change_board' \
                         and user_obj in obj.topic.moderators:
                 return True
-            elif obj and perm == 'project.moderate_project' \
+            elif obj and perm == 'board.moderate_board' \
                         and user_obj in obj.topic.moderators:
                 return True
-            elif obj and perm == 'project.moderate_project' \
+            elif obj and perm == 'board.moderate_board' \
                         and user_obj in obj.topic.moderators:
                 return True
-            elif obj and perm == 'project.add_entry' \
+            elif obj and perm == 'board.add_entry' \
                         and user_obj in obj.topic.followers:
                 return True
         # User doesn't have permission of ``perm``
         return False
 
-registry.register(Project, ProjectPermissionHandler)
+registry.register(Board, BoardPermissionHandler)

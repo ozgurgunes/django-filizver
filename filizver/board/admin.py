@@ -1,15 +1,15 @@
 # coding: utf-8
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
-from models import Project
+from models import Board
 
-class ProjectInline(admin.StackedInline):
-    model = Project
+class BoardInline(admin.StackedInline):
+    model = Board
     raw_id_fields = ('moderators',)
     
 
-class ProjectAdmin(admin.ModelAdmin):
+class BoardAdmin(admin.ModelAdmin):
     list_display = ['topic',]
     raw_id_fields = ['moderators']
 
-admin.site.register(Project, ProjectAdmin)
+admin.site.register(Board, BoardAdmin)

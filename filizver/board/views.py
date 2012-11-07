@@ -14,43 +14,43 @@ from manifest.accounts.views import LoginRequiredMixin
 from filizver.core.views import ExtraContextMixin, JSONResponseMixin
 
 from filizver.topic import views
-from models import Project
-from forms import ProjectForm
-from plugins import ProjectTopic
+from models import Board
+from forms import BoardForm
+from plugins import BoardTopic
 
 
-class ProjectList(views.TopicList):
+class BoardList(views.TopicList):
 
-    queryset = Project.objects.select_related(
+    queryset = Board.objects.select_related(
                     'topic__user__profile'
                 ).all()
-    template_name = "project/project_list.html"
+    template_name = "board/board_list.html"
     
 
-class ProjectDetail(views.TopicDetail):
+class BoardDetail(views.TopicDetail):
 
-    queryset = Project.objects.select_related('topic__user__profile').all()
-    template_name = "project/project_detail.html"
+    queryset = Board.objects.select_related('topic__user__profile').all()
+    template_name = "board/board_detail.html"
     
 
-class ProjectCreate(views.TopicCreate):
+class BoardCreate(views.TopicCreate):
 
-    form_class = ProjectForm
-    template_name = "project/project_form.html"
-    plugin = ProjectTopic
+    form_class = BoardForm
+    template_name = "board/board_form.html"
+    plugin = BoardTopic
     
 
-class ProjectUpdate(views.TopicUpdate):
+class BoardUpdate(views.TopicUpdate):
 
-    model = Project
-    form_class = ProjectForm
-    template_name = "project/project_form.html"
-    plugin = ProjectTopic
+    model = Board
+    form_class = BoardForm
+    template_name = "board/board_form.html"
+    plugin = BoardTopic
 
 
-class ProjectDelete(views.TopicDelete):
+class BoardDelete(views.TopicDelete):
 
-    model = Project
+    model = Board
 
     def get_success_url(self):
-        return reverse('project:project_list')
+        return reverse('board:board_list')
