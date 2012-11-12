@@ -9,7 +9,7 @@ urlpatterns = patterns('',
         views.TopicList.as_view(), 
         name='topic_list'),
         
-    url(r'^(?P<username>[-\w]+)/(?P<slug>[-\w]+)/(?P<id>\d+)/$', 
+    url(r'^(?P<username>[-\w]+)/(?P<slug>[-\w]+)/(?P<pk>\d+)/$', 
         views.TopicDetail.as_view(), 
         name='topic_detail'),
         

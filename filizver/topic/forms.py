@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 from django import forms
 
-from filizver.topic.models import Topic
+from filizver.topic.models import Topic, Moderator
 
 class TopicFormBase(forms.ModelForm):
     
@@ -53,3 +53,10 @@ class TopicForm(forms.ModelForm):
     class Meta:
         model       = Topic
         exclude     = ['user', 'slug', 'branches', 'tags', 'created_date', 'is_public']
+
+
+class ModeratorForm(forms.ModelForm):
+    
+    class Meta:
+        model       = Moderator
+        fields      = ['user','topic']

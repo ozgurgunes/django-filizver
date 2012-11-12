@@ -1,4 +1,4 @@
-{% extends "filizver/filizver_base.html" %}
+{% extends "topic/base_topic.html" %}
 {% load tagging_tags %}
 
 {% block title %}{{ object.title }} - {{ block.super }}{% endblock title %}
@@ -65,3 +65,28 @@
         
     </article>
 {% endblock %}
+
+{% block side %}
+<div>
+	<h3>{% trans "Moderators" %}</h3>
+	{% if moderator_form %}
+	<form action="" method="get" accept-charset="utf-8">
+		{{ moderator_form|as_bootstrap }}
+		<p><input type="submit" value="Continue &rarr;"></p>
+	</form>
+	{% endif %}
+	<ul>
+		{% for moderator in object.moderators.all %}
+		<li>{{ moderator }}</li>
+		{% endfor %}
+	</ul>
+</div>
+<div>
+	<h3>{% trans "Followers" %}</h3>
+	<ul>
+		{% for follower in object.followers.all %}
+		<li>{{ follower }}</li>
+		{% endfor %}
+	</ul>
+</div>
+{% endblock side %}

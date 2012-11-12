@@ -1,0 +1,12 @@
+{% extends "filizver/filizver_base.html" %}
+
+{% block content %}
+<div class="row">
+	<div id="main" class="span8">
+		{% block main %}{% endblock main %}
+	</div>
+	<div id="side" class="span4">
+		{% block side %}{% endblock side %}
+	</div>
+</div>
+{% endblock content %}

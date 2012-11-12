@@ -63,7 +63,7 @@ class Topic(UserMixin):
         return ('filizver:topic_detail', None, {
             'username': self.user.username,
             'slug': self.slug,
-            'id': self.pk
+            'pk': self.pk
             })
 
     def _get_tags(self):
@@ -83,3 +83,24 @@ class Topic(UserMixin):
             obj.save()
         return obj
     
+
+class Follower(models.Model):
+    
+    user            = models.ForeignKey(User)
+    topic           = models.ForeignKey(Topic)
+    
+    class Meta:
+        app_label           = 'filizver'
+        unique_together     = (('user', 'topic'),)
+
+
+class Moderator(models.Model):
+    
+    user            = models.ForeignKey(User)
+    topic           = models.ForeignKey(Topic)
+    
+    class Meta:
+        app_label               = 'filizver'
+        unique_together = (('user', 'topic'),)
+
+

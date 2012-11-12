@@ -14,10 +14,10 @@ from manifest.accounts.views import LoginRequiredMixin
 from filizver.core.views import ExtraContextMixin, JSONResponseMixin
 
 from models import Topic
-from forms import TopicForm
+from forms import TopicForm, ModeratorForm
 from plugins import TopicPoint
 
-class TopicList(ListView, ExtraContextMixin):
+class TopicList(ExtraContextMixin, ListView):
 
     queryset = Topic.objects.select_related(
                     'user__profile'
@@ -26,11 +26,16 @@ class TopicList(ListView, ExtraContextMixin):
     extra_context = { 'topic_form': TopicForm() }
     
 
-class TopicDetail(DetailView, ExtraContextMixin):
+class TopicDetail(ExtraContextMixin, DetailView):
 
-    queryset = Topic.objects.select_related().all()
+    queryset = Topic.objects.select_related(
+                    'user__profile'
+                ).prefetch_related('moderators', 'followers').all()
     template_name = "topic/topic_detail.html"
-    
+    extra_context = {
+        'moderator_form': ModeratorForm()
+    }
+
 
 class TopicCreate(CreateView, LoginRequiredMixin):
 
@@ -81,3 +86,20 @@ class TopicDelete(DeleteView, LoginRequiredMixin):
 
     def get_success_url(self):
         return reverse('filizver:topic_list')
+
+class TopicModerator(FormView, LoginRequiredMixin):
+
+    model = Moderator
+
+    def post(self, request, *args, **kwargs):
+        pass
+        
+        
+class TopicFollower(UpdateView, LoginRequiredMixin):
+
+    model = Topic
+
+    def post(self, request, *args, **kwargs):
+        pass
+        
+        

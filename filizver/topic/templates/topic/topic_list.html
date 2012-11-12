@@ -1,4 +1,4 @@
-{% extends "filizver/filizver_base.html" %}
+{% extends "topic/base_topic.html" %}
 {% load pagination_tags %}
 {% block title %}{% trans 'All topics' %} - {{ block.super }}{% endblock title %}
 {% block breadcrumb %}{{ block.super }} &ndash; <a href="{% url topic.views.topic_list %}">{% trans "Latest topics" %}</a>{% endblock %}
