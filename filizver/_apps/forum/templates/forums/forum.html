@@ -1,0 +1,90 @@
+{% extends 'forums/base.html' %}
+{% load forum_tags %}
+{% load pagination_tags %}
+{% load i18n %}
+
+{% block title %}{{ block.super }} / {{ forum.topic.title }}{% endblock %}
+{% block content %}
+{% autopaginate threads defaults.FORUM_PAGE_SIZE %}
+	{% paginate %}
+		{% if user.is_authenticated %}
+		<p><a class="btn" href="{% url 'forum:add_thread' forum.id %}">{% trans "New thread" %}</a></p>
+		{% endif %}
+		<ul class="breadcrumb">
+		    <li><a href="{% url 'forum:index' %}">{% trans "Forum" %}</a> <span class="divider">/</span></li>
+		    <li>{{ forum.topic.title }}</li>
+		</ul>
+	<h2>
+		<a href="{% url 'forum:forum_forum_feed' forum.id %}"><img src="{{ STATIC_URL }}img/feed-icon-small.png"  alt="[RSS Feed]" title="[RSS Feed]" class="rss" /></a>
+		{{ forum.topic.title }}
+	</h2>
+			<table class="table">
+			<thead>
+				<tr>
+					<th class="tcl" scope="col">{% trans "Thread" %}</th>
+					<th class="tc2" scope="col">{% trans "Replies" %}</th>
+					<th class="tc3" scope="col">{% trans "Views" %}</th>
+					<th class="tcr" scope="col">{% trans "Last reply" %}</th>
+				</tr>
+			</thead>
+			<tbody>
+			{% if threads %}
+				{% for thread in threads %}
+					<tr>
+						<td class="tcl">
+							<div class="intd">
+								<div {% if thread.sticky %}class="sticky"{% else %}{% if thread.closed %}class="closed"{% else %}{% if thread|has_unreads:user %}class="inew"{% else %}class="icon"{% endif %}{% endif %}{% endif %}><div class="nosize"><!-- --></div></div>
+								<div class="tclcon">
+									{% if thread.sticky %}
+										{% trans "Sticky:" %}
+									{% endif %}
+									{% if thread.closed %}
+										{% trans "Closed:" %}
+									{% endif %}
+									{% if thread|has_unreads:user %}
+										<strong>{% link thread %} <span class="byuser">{% trans "by" %} {{ thread.topic.user.username }}</span></strong>
+									{% else %}
+										{% link thread %} <span class="byuser">{% trans "by" %} {{ thread.topic.user.username }}</span>
+									{% endif %}
+								</div>
+							</div>
+						</td>
+						<td class="tc2">{{ thread.reply_count }}</td>
+						<td class="tc3">{{ thread.view_count }}</td>
+						<td class="tcr"><a href="{{ thread.last_reply.get_absolute_url }}">
+						{% if thread.last_update %}
+						  {% forum_time thread.last_update %}
+						{% endif %}</a> <span class="byuser">{% trans "by" %} {{ thread.last_reply.user.username }}</span></td>
+					</tr>
+				{% endfor %}
+			{% else %}
+				<tr><td class="forumscon1" colspan="4">{% trans "Forum is empty." %}</td></tr>
+			{% endif %}
+			</tbody>
+			</table>
+	{% paginate %}
+		{% if user.is_authenticated %}
+			<p><a class="btn" href="{% url 'forum:add_thread' forum.id %}">{% trans "New thread" %}</a></p>
+		{% endif %}
+		<ul class="breadcrumb">
+		    <li><a href="{% url 'forum:index' %}">{% trans "Forum" %}</a> <span class="divider">/</span></li>
+		    <li>{{ forum.topic.title }}</li>
+		</ul>
+
+	<form class="form form-inline" id="qjump" method="get" action="forum">
+		<label>{% trans "Jump to" %}</label>
+		<select name="id" id="forum_id" onchange="window.location=('{% url 'forum:index' %}'+this.options[this.selectedIndex].value)">
+			{% for category in categories %}
+				<optgroup label="{{ category }}">
+					{% for f in category.forums.all %}
+						<option value="{{ f.id }}"{% if f.id == forum.id %} selected{% endif %}>{{ f.topic.title }}</option>
+					{% endfor %}
+				</optgroup>
+			{% endfor %}
+		</select>
+		<input class="btn" type="button" onclick="window.location=('{% url 'forum:index' %}'+getElementById('forum_id').value)" value=" {% trans "Go" %} " accesskey="g" />
+	</form>
+	{% if moderator %}
+		<p id="modcontrols"><a href="{% url 'forum:moderate' forum.id %}">{% trans "Moderate forum" %}</a></p>
+	{% endif %}
+{% endblock %}

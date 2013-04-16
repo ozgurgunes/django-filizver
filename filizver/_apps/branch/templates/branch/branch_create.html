@@ -1,0 +1,17 @@
+{% extends "filizver/filizver_base.html" %}
+
+{% block content %}
+    <heading class="content">
+        <h2>{% trans 'Create branch' %}: {{ object.id }}</h2>
+    </heading>
+
+    {% if created %}
+    <p class="content notice dialogue">{% trans 'Branch created' %}</p>
+    {% endif %}
+
+    {% if form and not created %}
+        {% url 'filizver.views.branch_create' as action %}
+        {% include "branch/_branch_form.html" %}
+    {% endif %}
+
+{% endblock %}

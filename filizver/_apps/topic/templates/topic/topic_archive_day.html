@@ -1,0 +1,23 @@
+{% extends "filizver/filizver_base.html" %}
+{% block title %}{% blocktrans %}Topics on {{ day }}{% endblocktrans %} - {{ block.super }}{% endblock title %}
+{% block breadcrumb %}{{ block.super }} &ndash; {% blocktrans %}Topics on {{ day }}{% endblocktrans %}{% endblock %}
+
+{% block main %}
+    {% autopaginate object_list 10 %}
+    <header class="main">
+        <h2>{% blocktrans %}Topics on {{ day }}{% endblocktrans %}</h2>
+        <p>{% trans "Page" %}: <strong>{{ page_obj.number }}</strong> / {{ paginator.num_pages }}</p>
+    </header>
+    <section class="main">
+    {% for object in object_list %}
+        <article class="section row {% cycle odd,even %}">
+            {% include "topic/_topic_list.html" %}
+        </article>
+    {% empty %}
+        <p class="section empty">{% trans 'Not found any record.' %}</p>    
+    {% endfor %}
+    </section>
+    <footer class="main">
+        {% paginate %}
+    </footer>
+{% endblock %}

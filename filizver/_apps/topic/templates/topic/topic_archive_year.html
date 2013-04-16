@@ -1,0 +1,18 @@
+{% extends "filizver/filizver_base.html" %}
+{% block title %}{% blocktrans %}Topics on {{ year }}{% endblocktrans %} - {{ block.super }}{% endblock title %}
+{% block breadcrumb %}{{ block.super }} &ndash; {% blocktrans %}Topics on {{ year }}{% endblocktrans %}{% endblock %}
+
+{% block main %}
+    {% autopaginate object_list 10 %}
+    <header class="main">
+        <h2>{% blocktrans %}Topics on {{ year }}{% endblocktrans %}</h2>
+        <p>{% trans "Page" %}: <strong>{{ page_obj.number }}</strong> / {{ paginator.num_pages }}</p>
+    </header>
+    <section class="main">
+      	<ul>
+      	{% for month in date_list %}
+            <li class="{% cycle 'odd' 'even' %}"><a href="{{ month|date:"m" }}/">{{ month|date:"F" }}</a></li>
+        {% endfor %}
+        </ul>
+    </section>
+{% endblock %}

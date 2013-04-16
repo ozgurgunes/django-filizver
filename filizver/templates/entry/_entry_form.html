@@ -1,0 +1,52 @@
+{% load i18n %}
+    <input type="hidden" name="topic" id="id_topic" value="{{ object.pk }}" />
+    <script>
+	$(function() {
+		//$("#myTab").tab();
+		$("#myTab").bind("show", function(e) {    
+	    	var contentID  = $(e.target).attr("data-target");
+	    	var contentURL = $(e.target).attr("href");
+	    	$(contentID).load(contentURL, function(){
+				$("#myTab").tab();
+			});
+		});
+		$('#myTab a:first').tab("show");
+	});
+    </script>
+    {{ entry_form.errors }}
+    <div align="right" class="fileupload-buttonbar">
+        <button type="submit" class="btn start">{% trans "Start upload" %}</button>
+        <input type="submit" class="btn submit" value="{% trans "Save" %}" />
+    </div>
+	<input type="file" name="source" id="id_source">
+
+    <!-- The loading indicator is shown during file processing -->
+    <div class="fileupload-loading"></div>
+    <br>
+    <!-- The table listing the files available for upload/download -->
+    <table role="presentation" class="table table-striped"><tbody class="files" data-toggle="modal-gallery" data-target="#modal-gallery"></tbody></table>
+    <script src="{{ STATIC_URL }}js/jquery.iframe-transport.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ STATIC_URL }}js/jquery.fileupload.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ STATIC_URL }}js/jquery.fileupload-fp.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ STATIC_URL }}js/jquery.fileupload-ui.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{{ STATIC_URL }}js/image.upload.js" type="text/javascript" charset="utf-8"></script>
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/jquery.fileupload-ui.css" type="text/css" media="screen" title="no title" charset="utf-8">
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/jquery.fileupload-ui.css" type="text/css" media="screen" title="no title" charset="utf-8">
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/jquery-ui-1.8.16.custom.css" type="text/css" media="screen" title="no title" charset="utf-8">
+
+    {{ entry_form.media }}
+
+    <script type="text/javascript">
+
+        $(document).ready(function() {
+            $('#entry_form button.start').click($('#entry_form').fileupload('send'));
+            
+            // function newParameters(query) {
+            //     query.topic = $('#id_topic').val();
+            // }
+            // $('#id_body_0').djselectable('option', 'prepareQuery', newParameters);
+            // $(':input[name=body_0]').bind('autocompleteselect', function(event, ui) {
+            //     $(this).parents("form").submit();
+            // });
+        });
+    </script>

@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+<form action="{% url 'filizver:text_create' %}" method="post" enctype="multipart/form-data">
+{% include "text/_text_form.html" %}
+</form>
+{% endblock %}

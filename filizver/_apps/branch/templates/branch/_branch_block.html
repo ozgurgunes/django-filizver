@@ -1,0 +1,21 @@
+    <header class="branches">
+        <h3>{% trans 'Branches of this topic' %}</h3>
+    </header>
+    {% for branch in object.branch_set.select_related.all %}
+    <article class="branch row {% cycle odd,even %}">
+        <div class="avatar">
+            <a href="{% url 'accounts_profile_detail' branch.user %}">
+                {% thumbnail branch.user.get_profile.avatar "48x48" as im %}
+                <img src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" alt="{{ branch.user }}" />
+                {% endthumbnail %}
+            </a>                     
+        </div>
+        <h4><a href="{{ branch.source.get_absolute_url }}" target="_top" title="{{ branch.source.title }}">{{ branch.source }}</a></h4>
+        <div class="meta">
+            <address class="user">{% trans "Branch out by" %} <a href="{% url 'accounts_profile_detail' branch.user %}">{{ branch.user }}</a></address>
+            <time datetime="{{ branch.created_date|date:"c" }}">{{ branch.created_date|timesince }} {% trans 'ago' %}</time>
+        </div>
+    </article>
+    {% empty %}
+    <p class="no-record">{% trans "No branches yet" %}</p>
+    {% endfor %}

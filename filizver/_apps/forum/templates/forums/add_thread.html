@@ -1,0 +1,17 @@
+{% extends 'filizver/filizver_base.html' %}
+{% load i18n forum_tags %}
+
+{% block content %}
+	<ul class="breadcrumb">
+		{% if forum %}
+			<li><a href="{% url 'forum:index' %}">{% trans "Forum" %}</a> <span class="divider">/</span></li>
+			<li>{% link forum %}</li>
+		</ul>
+		{% else %}
+		<ul>
+			<li><a href="{% url 'forum:index' %}">{% trans "Forum" %}</a>  <span class="divider">/</span></li>
+			<li>&raquo; {% link thread.forum %}</li><li>&raquo; {{ thread }}</li>
+		{% endif %}
+	</ul>
+{% include "forums/reply_form.html" %}
+{% endblock %}

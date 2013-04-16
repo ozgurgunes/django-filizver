@@ -1,0 +1,8 @@
+{% extends "modal.html" %}
+{% block title %}{% trans "Add entry" %}{% endblock %}
+{% block content %}
+<ul class="modal">
+    <li><a class="{% if module == 'passage' %}active {% endif %}passage" href="{% url 'apps.passages.views.passage_create' topic.id %}">{% trans "Text" %}</a></li>
+    <li><a class="{% if module == 'photo' %}active {% endif %}photo" href="{% url 'apps.photos.views.photo_create' topic.id %}">{% trans "Photo" %}</a></li>    
+</ul>
+{% endblock %}
