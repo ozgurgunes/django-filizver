@@ -65,7 +65,8 @@ class TopicCreate(CreateView, LoginRequiredMixin):
 
 
 class TopicUpdate(TopicCreate, UpdateView):
-    pass
+    model = Topic
+    template_name = "topic/topic_update.html"
 
 
 class TopicDelete(DeleteView, LoginRequiredMixin):

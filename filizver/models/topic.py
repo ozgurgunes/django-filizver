@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 import re
 import datetime
-from django.db import models
-from django.db.models.signals import post_save, post_delete
+from mongoengine import *
+# from django.db import models
+# from django.db.models.signals import post_save, post_delete
 from django.utils.translation import ugettext_lazy as _
 from django.template.defaultfilters import slugify
 from django.contrib.auth import get_user_model
@@ -12,7 +13,7 @@ from django.contrib.contenttypes.models import ContentType
 from tagging.models import Tag
 from tagging.fields import TagField
 
-from filizver.models.core import UserMixin
+from filizver.models.core import ModelBase, UserMixin
 from filizver.managers import TopicManager
 
 
@@ -71,7 +72,7 @@ class Topic(UserMixin):
     tag_list = property(_get_tags, _set_tags)
 
 
-class Follower(models.Model):
+class Follower(ModelBase):
     
     user            = models.ForeignKey(get_user_model())
     topic           = models.ForeignKey(Topic)
@@ -81,7 +82,7 @@ class Follower(models.Model):
         unique_together     = (('user', 'topic'),)
 
 
-class Moderator(models.Model):
+class Moderator(ModelBase):
     
     user            = models.ForeignKey(get_user_model())
     topic           = models.ForeignKey(Topic)
