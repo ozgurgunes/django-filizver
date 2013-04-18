@@ -6,7 +6,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.template.defaultfilters import slugify
 
 from user import User
-from entry import Entry
 from core import UserMixin
 
 
@@ -19,8 +18,6 @@ class Topic(DynamicDocument, UserMixin):
     title                   = StringField(max_length=216, required=True)
     slug                    = StringField(max_length=216, required=True)
     
-    entries                 = ListField(EmbeddedDocumentField(Entry))
-
     active                  = BooleanField(default=True)
     
     followers               = ListField(ReferenceField(User))

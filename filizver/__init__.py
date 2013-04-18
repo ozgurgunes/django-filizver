@@ -2,7 +2,7 @@
 import os
 import datetime
 import subprocess
-
+from app import models
 
 VERSION = (0, 1, 0, 'alpha', 1)
 

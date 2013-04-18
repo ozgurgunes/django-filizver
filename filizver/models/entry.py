@@ -6,15 +6,15 @@ from django.utils.translation import ugettext_lazy as _
 
 from filizver.utils import defaults
 from user import User
-#from topic import Topic
+from topic import Topic
 from core import UserMixin
 
 
-class Entry(DynamicEmbeddedDocument, UserMixin):
-    """
-    Extension class for Topic object
-    """
-    user                    = ReferenceField(User, required=True)    
+class Entry(DynamicDocument, UserMixin):
+
+    user                    = ReferenceField(User, required=True)
+    topic                   = ReferenceField(Topic, required=True)
+
     position                = IntField(required=True);
     
     meta = {

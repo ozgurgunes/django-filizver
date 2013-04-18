@@ -267,6 +267,27 @@ class ActivationMixin(object):
         return deleted_users    
 
 
+class ProfileMixin(object):
+
+    GENDER_CHOICES = (
+        ('F', _(u'Female')),
+        ('M', _(u'Male')),
+    )
+    
+    gender          = StringField(max_length=1, choices=GENDER_CHOICES)
+    birth_date      = DateField()
+    picture         = ImageField()
+    about           = StringField()
+
+    education       = StringField(max_length=128)
+    occupation      = StringField(max_length=64)
+    location        = StringField(max_length=64)
+
+    website         = URLField()
+    mobile          = StringField()
+    country         = StringField()    
+
+
 class User(BaseUser, ActivationMixin):
     timezone = StringField(max_length=100)
     locale = StringField(max_length = 10,

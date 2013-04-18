@@ -6,9 +6,10 @@ from django.db.models import Count
 from django.utils import simplejson
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
-from django.views.generic import (View, ListView, DetailView, FormView, CreateView,
-                                    UpdateView, DeleteView)
 from django.contrib.auth.decorators import login_required
+
+from mongotools.views import (ListView, DetailView, FormView, CreateView,
+                                    UpdateView, DeleteView)
 
 from manifest.accounts.views import LoginRequiredMixin
 from filizver.views.core import ExtraContextMixin, JSONResponseMixin
