@@ -7,8 +7,8 @@ from django.db.models.signals import post_save, post_delete
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
-from filizver.core.models import UserMixin
-from filizver.topic.models import Topic
+from filizver.models.core import UserMixin
+from filizver.models import Topic
 
 
 class Entry(UserMixin):

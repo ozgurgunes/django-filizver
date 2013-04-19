@@ -1,148 +1,142 @@
 # -*- coding: utf-8 -*-
-import re
 import datetime
-from mongoengine import *
+from django.db import models
+from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext_lazy as _
+from django.db.models.signals import post_save, post_delete
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes import generic
 
-from filizver.utils import defaults
-from user import User
-from topic import Topic
-from core import UserMixin
+from filizver.models.core import UserMixin
+from filizver.models.topic import Topic
 
 
-class Entry(DynamicDocument, UserMixin):
+class Entry(UserMixin):
+    """
+    Extension class for Topic object
+    """
+    content_type            = models.ForeignKey(ContentType, related_name='entries')
+    object_id               = models.PositiveIntegerField()
+    content_object          = generic.GenericForeignKey()
 
-    user                    = ReferenceField(User, required=True)
-    topic                   = ReferenceField(Topic, required=True)
-
-    position                = IntField(required=True);
+    user                    = models.ForeignKey(get_user_model(), related_name='entries')
+    topic                   = models.ForeignKey(Topic, related_name='entries')
     
-    meta = {
-        'ordering': ['position', '-created_date',],
-        'allow_inheritance': True,
-        }
-        
-    @property
-    def entry_type(self):
-        return self.__class__.__name__
+    position                = models.PositiveSmallIntegerField(blank=True, null=False, default=0, editable=False);
+    
+    #plugins                 = ManyPluginField(EntryPoint)
+
+    class Meta:
+        app_label                = 'filizver'
+        ordering                = ('position', '-created_date',)
+        verbose_name            = _('Entry')
+        verbose_name_plural     = _('Entries')
+        get_latest_by           = 'created_date'
 
     def __unicode__(self):
-        return u"%s" % self.pk
+        return u"%s" % self.content_object
         
     def save(self, *args, **kwargs):
-        if not self.pk:
+        if not self.id:
             try:
                 self.position = Entry.objects.filter(topic=self.topic).aggregate(models.Max('position'))['position__max'] + 1
             except:
                 self.position = 1
         super(Entry, self).save(*args, **kwargs)
+        
+    @models.permalink
+    def get_absolute_url(self):
+        return ('entry_detail', None, {
+            'entry_pk': self.pk,
+            })
+
+    def list_template(self):
+        try:
+            return self.content_object.entry_template('list')
+        except AttributeError:
+            return u"%s/_%s_entry_list.html" % (self.content_type.app_label, self.content_type.name.lower())
+
+    def detail_template(self):
+        try:
+            return self.content_object.entry_template('detail')
+        except AttributeError:
+            return u"%s/_entry_detail.html" % self.content_type.name.lower()
 
 
-class Branch(Entry):
+
+class EntryBase(UserMixin):
+    """Abstract base class for entry contents"""
+
+    user            = models.ForeignKey(get_user_model(), related_name='%(class)s_set', blank=False, null=False)
+    topic           = models.ForeignKey(Topic, related_name='%(class)s_set', blank=False, null=False)
     
-    source  = ReferenceField(Topic)
+    class Meta:
+        abstract        = True
+        ordering        = ('-created_date',)
+        get_latest_by   = 'created_date'
 
-    def __unicode__(self):
-        return u"%s > %s" % (self.topic, self.source)
-            
+    @models.permalink
+    def get_absolute_url(self):
+        return ('filizver_%s_detail' % self._meta.module_name.lower, None, {'id': self.id })
 
-class Text(Entry):
+    def get_update_url(self):
+        return ('filizver_%s_update' % self._meta.module_name.lower, None, {'id': self.id })
 
-    MARKUP_CHOICES = []
-    try:
-        import markdown
-        MARKUP_CHOICES.append(("markdown", "Markdown"))
-    except ImportError:
-        pass
-    try:
-        import textile
-        MARKUP_CHOICES.append(("textile", "Textile"))
-    except ImportError:
-        pass
-    try:
-        import postmarkup
-        MARKUP_CHOICES.append(('bbcode', 'BBCode'))
-    except ImportError:
-        pass
-    
-    body            = StringField(required=True)
-    html            = StringField()
-    markup          = StringField(max_length=15, choices=MARKUP_CHOICES, default=defaults.DEFAULT_MARKUP)
+    def get_delete_url(self):
+        return ('filizver_%s_delete' % self._meta.module_name.lower, None, {'id': self.id })
 
-    def __unicode__(self):
-        return u"%s" % self.body[:64] + '...' if len(self.body) > 64 else ''
-
-    def save(self, *args, **kwargs):
-        self.html = utils.text_to_html(self.body, self.markup)
-        if defaults.SMILEYS_SUPPORT: #and self.user.profile.smileys:
-            self.html = utils.smileys(self.html)
-        super(Text, self).save(*args, **kwargs)
+    def entry_template(self, template=None):
+        if template == 'list':
+            return u"%s/_entry_list.html" % self._meta.module_name.lower()
+        elif template == 'detail':
+            return u"%s/_entry_detail.html" % self._meta.module_name.lower()
+        else:    
+            return u"%s/_entry.html" % self._meta.module_name.lower()
 
 
-class Image(Entry):
 
-    DISPLAY_CHOICES = (
-        ('L', _('Left')),
-        ('N', _('None')),
-        ('R', _('Right')),
-    )
-    
-    source          = ImageField(required=True)
-    title           = StringField(max_length=128)
-    description     = StringField()
+def add_entry_signal(sender, instance, user=None, topic=None, created_date=None, **kwargs):
+	"""
+	This is a generic singal for adding an object to the Topic.
 
-    display         = StringField(max_length=1, choices=DISPLAY_CHOICES, default='N')
-
-    def __unicode__(self):
-        return u"%s" % self.source
-
-    def delete(self):
-        self.source.delete()
-        super(Image, self).delete()
+	"""
+	ctype = ContentType.objects.get_for_model(instance)
+	obj, created = Entry.objects.get_or_create(
+		content_type=ctype,
+		object_id=instance.id,
+        defaults={
+            'user': instance.user,
+            'topic': instance.topic,
+            'created_date': datetime.datetime.now()
+            })
 
 
-class Link(Entry):
+def delete_entry_signal(sender, instance, **kwargs):
+	"""
+	This is a generic singal to delete related Entry when an object is deleted.
 
-    url             = URLField(required=True)
-    title           = StringField(max_length=216)
-    description     = StringField()
-    
-    def __unicode__(self):
-        return u"%s" % self.url
-
-
-class Document(Entry):
-    """Photo model"""
-
-    source          = FileField(required=True)
-    title           = StringField(max_length=216)
-    description     = StringField()
-
-    def __unicode__(self):
-        return u"%s" % self.source
-
-    def delete(self):
-        self.source.delete()
-        super(Document, self).delete()
+	"""
+	ctype = ContentType.objects.get_for_model(instance)
+	try:
+		entry = Entry.objects.get(content_type=ctype, object_id=instance.id)
+		entry.delete()
+	except Entry.MultipleObjectsReturned:
+		entries = Entry.objects.filter(content_type=ctype, object_id=instance.id)
+		for entry in entries:
+			entry.delete()
+	except Entry.DoesNotExist:
+		pass
 
 
-class Video(Entry):
-    """Photo model"""
+def delete_entry_object_signal(sender, instance, **kwargs):
+	"""
+	This is a generic singal to delete related object when a Entry is deleted.
 
-    source          = FileField()
-    url             = URLField()
-    embed           = StringField()
-    title           = StringField(max_length=216)
-    description     = StringField()
+	"""
+	try:
+	    instance.content_object.delete()
+	except:
+	    pass
 
-    def __unicode__(self):
-        return u"%s" % self.source or self.url or self.embed
 
-    def save(self, *args, **kwargs):
-        if self.source is None and self.url is None and self.embed is None:
-            self.error('At least one field is required.')
-    
-    def delete(self):
-        self.source.delete()
-        super(Video, self).delete()
-
+post_delete.connect(delete_entry_object_signal, sender=Entry)

@@ -1,9 +1,0 @@
-# -*- coding: utf-8 -*-
-from django.conf.urls import patterns, include, url
-
-
-# urlpatterns = patterns('',
-# 
-#     url(r'^$', 'view_name', name='url_name'),
-# 
-# )

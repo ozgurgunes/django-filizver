@@ -3,7 +3,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse, resolve, reverse_lazy
 from django.shortcuts import redirect
 from django.db.models import Count
-from django.utils import simplejson
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import (View, ListView, DetailView, FormView, CreateView,
@@ -13,8 +12,8 @@ from django.contrib.auth.decorators import login_required
 from manifest.accounts.views import LoginRequiredMixin
 from filizver.core.views import ExtraContextMixin, JSONResponseMixin
 
-from models import Topic
-from forms import TopicForm, ModeratorForm
+from filizver.models import Topic
+from filizver.forms import TopicForm, ModeratorForm
 
 class TopicList(ExtraContextMixin, ListView):
 

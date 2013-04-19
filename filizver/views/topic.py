@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
-from django.core.exceptions import ObjectDoesNotExist
-from django.core.urlresolvers import reverse, resolve, reverse_lazy
 from django.shortcuts import redirect
 from django.db.models import Count
-from django.utils import simplejson
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.urlresolvers import reverse, resolve, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.decorators import login_required
-
-from mongotools.views import (ListView, DetailView, FormView, CreateView,
+from django.views.generic import (ListView, DetailView, FormView, CreateView,
                                     UpdateView, DeleteView)
 
 from manifest.accounts.views import LoginRequiredMixin
