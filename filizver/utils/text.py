@@ -14,12 +14,12 @@ try:
 except ImportError:
     pass
 try:
-    import postmarkup
+    import bbcode
 except ImportError:
     pass
 
 
-#compile smileys regexp
+#compile smileys regex
 _SMILEYS = [(re.compile(smiley_re), path) for smiley_re, path in defaults.SMILEYS]
 
 class ExcludeTagsHTMLParser(HTMLParser):
@@ -115,7 +115,7 @@ def smileys(html):
 
 def text_to_html(text, markup):
     if markup == 'bbcode':
-        text = render_bbcode(text)
+        text = bbcode.render_html(text)
     elif markup == 'markdown':
         text = markdown.markdown(text, safe_mode='escape')
     elif markup == 'textile':

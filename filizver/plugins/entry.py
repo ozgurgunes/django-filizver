@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 from djangoplugins.point import PluginPoint
-from django.http import HttpResponse
-from django.shortcuts import redirect
+
 
 class EntryPoint(PluginPoint):
-    
+
     form_class = None
     
     def create(self, request):
@@ -17,4 +16,3 @@ class EntryPoint(PluginPoint):
             if request.is_ajax():
                 return HttpResponse('OK')
             return obj
-
