@@ -12,8 +12,8 @@ from django.views.generic import (ListView, DetailView, FormView, CreateView,
 from manifest.accounts.views import LoginRequiredMixin
 from filizver.views.core import ExtraContextMixin, JSONResponseMixin
 
-from filizver.models import Topic, Moderator
-from filizver.forms import TopicForm, ModeratorForm
+from filizver.models.topic import Topic, Moderator
+from filizver.forms.topic import TopicForm, ModeratorForm
 
 class Index(ExtraContextMixin, ListView):
 

@@ -6,7 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.template.defaultfilters import slugify
 from django.contrib.auth import get_user_model
 
-from djangoplugins.fields import ManyPluginField
+from djangoplugins.fields import PluginField
 
 from tagging.models import Tag
 from tagging.fields import TagField
@@ -14,6 +14,7 @@ from tagging.fields import TagField
 from filizver.managers import TopicManager
 from filizver.models.base import UserMixin
 from filizver.plugins.entry import EntryPoint
+from filizver.utils.core import get_upload_to
 
 
 class TaggingMixin(models.Model):
@@ -34,7 +35,6 @@ class TaggingMixin(models.Model):
 
 class BaseTopic(UserMixin):
 
-    user                    = models.ForeignKey(get_user_model(), related_name='topics')    
     title                   = models.CharField(_('Title'), max_length=216)
     slug                    = models.SlugField(_('Slug'), max_length=216, blank=True, null=False)
     body                    = models.TextField(_('Body'), blank=False, null=False)
@@ -43,25 +43,24 @@ class BaseTopic(UserMixin):
     image                   = models.ImageField(upload_to=get_upload_to, blank=False, null=False, 
                                             width_field='image_width', height_field='image_height')
         
-    parent                  = models.ForeignKey(self, default=0, blank=False, null=False)
-    position                = models.IntegerField(_('Position'), default=1, blank=False, null=False)
-
     image_width             = models.IntegerField(editable=False, null=True)
     image_height            = models.IntegerField(editable=False, null=True)
-    
-    plugin                  = PluginField(point=EntryPoint)
 
-    objects                 = TopicManager()
-    
+    parent                  = models.ForeignKey('self', default=0, blank=False, null=False)
+    position                = models.IntegerField(_('Position'), default=1, blank=False, null=False)
+
     class Meta:
         abstract = True
-        unique_together = ['parent', 'position']
+        verbose_name            = _('topic')
+        verbose_name_plural     = _('topics')
+        ordering                = ('-created_date', 'title')
+        get_latest_by           = 'created_date'
 
     def save(self, *args, **kwargs):
         # Populate slug field
         if not self.id:
             self.slug   = str(slugify(self.title))
-        super(Topic, self).save(*args, **kwargs)
+        super(BaseTopic, self).save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
         # Delete uploaded files first
@@ -80,12 +79,14 @@ class BaseTopic(UserMixin):
             obj.__dict__.update(self.__dict__, **kwargs)
             obj.save()
         return obj
-        
-        
+
+    
 class Topic(BaseTopic, TaggingMixin):
     """
     Topic class for Filizver application
     """
+    user                    = models.ForeignKey(get_user_model(), related_name='topics')    
+
     followers               = models.ManyToManyField(get_user_model(), verbose_name=_('Followers'), 
                                         through='Follower', related_name='following',
                                         blank=True, null=True)
@@ -93,13 +94,12 @@ class Topic(BaseTopic, TaggingMixin):
                                         through='Moderator', related_name='moderating',
                                         blank=True, null=True)
     
+    objects                 = TopicManager()
+
     class Meta:
         app_label               = 'filizver'
-        ordering                = ('-created_date', 'title')
-        verbose_name            = _('topic')
-        verbose_name_plural     = _('topics')
-        get_latest_by           = 'created_date'
 
+        
     def __unicode__(self):
         return u"%s" % self.title
 
@@ -111,7 +111,6 @@ class Topic(BaseTopic, TaggingMixin):
             'pk': self.pk
             })
     
-
 class Follower(models.Model):
     
     user            = models.ForeignKey(get_user_model())

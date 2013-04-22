@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import random
+import hashlib
 from datetime import datetime
 from StringIO import StringIO  
 from PIL import Image
@@ -9,7 +10,6 @@ from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.forms import UserCreationForm
 from django.db.models import Q
 
-from django.utils.hashcompat import sha_constructor
 from django.forms.extras.widgets import SelectDateWidget
 from django.db.transaction import commit_on_success
 
@@ -114,7 +114,7 @@ class RegistrationFormOnlyEmail(RegistrationForm):
         
         """
         while True:
-            username = sha_constructor(str(random.random())).hexdigest()[:5]
+            username = hashlib.sha1(str(random.random())).hexdigest()[:5]
             try:
                 get_user_model().objects.get(username__iexact=username)
             except get_user_model().DoesNotExist: break

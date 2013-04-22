@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import re
 from django.contrib.sites.models import Site
-from django.utils.translation import force_unicode, check_for_language
+from django.utils.translation import check_for_language
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 

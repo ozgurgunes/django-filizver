@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
-from filizver.models import Topic
+from filizver.models.topic import Topic
 
 
 class TopicAdmin(admin.ModelAdmin):
