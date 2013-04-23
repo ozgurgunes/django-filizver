@@ -15,7 +15,7 @@ from filizver.views.core import ExtraContextMixin, JSONResponseMixin
 from filizver.models.topic import Topic, Moderator
 from filizver.forms.topic import TopicForm, ModeratorForm
 
-class Index(ExtraContextMixin, ListView):
+class TopicList(ExtraContextMixin, ListView):
 
     queryset = Topic.objects.select_related(
                     'user__profile'
@@ -24,7 +24,7 @@ class Index(ExtraContextMixin, ListView):
     extra_context = { 'topic_form': TopicForm() }
     
 
-class Topic(ExtraContextMixin, DetailView):
+class TopicDetail(ExtraContextMixin, DetailView):
 
     queryset = Topic.objects.select_related(
                     'user__profile'
@@ -35,7 +35,7 @@ class Topic(ExtraContextMixin, DetailView):
     }
 
 
-class Create(CreateView, LoginRequiredMixin):
+class TopicCreate(CreateView, LoginRequiredMixin):
 
     form_class = TopicForm
     template_name = "topic/topic_create.html"
@@ -63,12 +63,12 @@ class Create(CreateView, LoginRequiredMixin):
         return redirect(topic.get_absolute_url())
 
 
-class Update(TopicCreate, UpdateView):
+class TopicUpdate(TopicCreate, UpdateView):
     model = Topic
     template_name = "topic/topic_update.html"
 
 
-class Delete(DeleteView, LoginRequiredMixin):
+class TopicDelete(DeleteView, LoginRequiredMixin):
 
     model = Topic
 
@@ -77,28 +77,3 @@ class Delete(DeleteView, LoginRequiredMixin):
 
 
 
-class Rating(FormView, LoginRequiredMixin):
-
-    model = Rating
-
-    def post(self, request, *args, **kwargs):
-        pass
-        
-        
-
-class Moderator(FormView, LoginRequiredMixin):
-
-    model = Moderator
-
-    def post(self, request, *args, **kwargs):
-        pass
-        
-        
-
-class Follower(UpdateView, LoginRequiredMixin):
-
-    model = Follower
-
-    def post(self, request, *args, **kwargs):
-        pass
-        
