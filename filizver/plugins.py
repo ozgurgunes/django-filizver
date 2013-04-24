@@ -29,7 +29,7 @@ class TextEntry(EntryPoint):
     title = 'Text'
 
 
-class ImageEntry(EntryPoint):
+class PictureEntry(EntryPoint):
     
     name = 'image'
     title = 'Image'

@@ -3,7 +3,7 @@ from django import forms
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
-from filizver.models import Topic, Moderator, Text, Image, Link, Document, Video, Sound
+from filizver.models import Topic, Moderator, Text, Picture, Link, Document, Video, Sound
 
 
 class TopicFormBase(forms.ModelForm):
@@ -47,10 +47,10 @@ class TextForm(forms.ModelForm):
         model       = Text
         fields      = ['user','topic']
 
-class ImageForm(forms.ModelForm):
+class PictureForm(forms.ModelForm):
     
     class Meta:
-        model       = Image
+        model       = Picture
         fields      = ['user','topic']
 
 class LinkForm(forms.ModelForm):

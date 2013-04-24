@@ -4,7 +4,7 @@ from django.contrib.syndication.feeds import Feed
 from django.utils.feedgenerator import Atom1Feed
 from django.utils.translation import ugettext_lazy as _
 
-from filizver.models.topic import Topic
+from filizver.models import Topic
 
 
 site = Site.objects.get_current()

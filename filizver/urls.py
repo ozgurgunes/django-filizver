@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.conf.urls import patterns, include, url
 from django.views.generic import TemplateView
-from filizver.views import topic as views
+from filizver import views
 
 urlpatterns = patterns('',
 

@@ -10,10 +10,10 @@ from django.views.generic import (ListView, DetailView, FormView, CreateView,
                                     UpdateView, DeleteView)
 
 from manifest.accounts.views import LoginRequiredMixin
-from filizver.views.core import ExtraContextMixin, JSONResponseMixin
+from filizver.utils.views import ExtraContextMixin, JSONResponseMixin
 
-from filizver.models.topic import Topic, Moderator
-from filizver.forms.topic import TopicForm, ModeratorForm
+from filizver.models import Topic, Moderator
+from filizver.forms import TopicForm, ModeratorForm
 
 class TopicList(ExtraContextMixin, ListView):
 
@@ -28,7 +28,7 @@ class TopicDetail(ExtraContextMixin, DetailView):
 
     queryset = Topic.objects.select_related(
                     'user__profile'
-                ).prefetch_related('moderators', 'followers').all()
+                ).all()
     template_name = "topic/topic_detail.html"
     extra_context = {
         'moderator_form': ModeratorForm()

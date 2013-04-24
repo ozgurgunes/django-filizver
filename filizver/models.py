@@ -11,14 +11,17 @@ from djangoplugins.fields import PluginField
 from manifest.accounts.models import BaseUser
 
 from filizver.managers import TopicManager, UserManager
-from filizver.utils.models import UserMixin
-from filizver.plugins import EntryPoint
+from filizver.plugins import EntryPoint, UserEntry
 from filizver.utils import defaults
 from filizver.utils.core import get_upload_to
+from filizver.utils.models import UserMixin
 from filizver.utils.text import MARKUP_CHOICES
 
 
 class BaseTopic(UserMixin):
+    """
+    An abstract base Topic class with basic fields and methods.
+    """
 
     title                   = models.CharField(_('Title'), max_length=216)
     slug                    = models.SlugField(_('Slug'), max_length=216, blank=True)
@@ -72,7 +75,7 @@ class BaseTopic(UserMixin):
     
 class Topic(BaseTopic):
     """
-    Topic class for Filizver application
+    Actual Topic class used by Filizver.
     """
     user                    = models.ForeignKey('User', related_name='topics')    
 
@@ -98,7 +101,9 @@ class Topic(BaseTopic):
 
 
 class Moderator(models.Model):
-    
+    """
+    Topic moderators 
+    """
     user            = models.ForeignKey('User')
     topic           = models.ForeignKey('Topic')
     
@@ -107,7 +112,9 @@ class Moderator(models.Model):
         unique_together = (('user', 'topic'),)
 
 class User(AbstractUser, BaseUser):
-    
+    """
+    Custom user class used by Filizver.
+    """
     topic = models.OneToOneField(Topic, related_name='user_entry', blank=True, null=True)
 
     objects = UserManager()
@@ -127,7 +134,9 @@ class User(AbstractUser, BaseUser):
 
 
 class AbstractEntry(Topic):
-
+    """
+    An abstract base class used to extend Topic.
+    """
     topic = models.OneToOneField(Topic, parent_link=True)
 
     class Meta:
@@ -156,7 +165,9 @@ class AbstractEntry(Topic):
 
 
 class Text(AbstractEntry):
-
+    """
+    Text entry class
+    """
     html            = models.TextField(_('HTML'), blank=True, null=True)
     markup          = models.CharField(_('Markup'), max_length=15, 
                             choices=MARKUP_CHOICES, default=defaults.DEFAULT_MARKUP)
@@ -177,7 +188,7 @@ class Text(AbstractEntry):
 
 class Picture(AbstractEntry):
     """
-    Photo model
+    Picture entry class
     """
 
     DISPLAY_CHOICES = (
@@ -201,7 +212,9 @@ class Picture(AbstractEntry):
 
 
 class Link(AbstractEntry):
-    
+    """
+    Link class
+    """
     class Meta:
         verbose_name            = _('link')
         verbose_name_plural     = _('links')
@@ -211,7 +224,9 @@ class Link(AbstractEntry):
 
 
 class Document(AbstractEntry):
-    """Photo model"""
+    """
+    Document model
+    """
 
     class Meta:
         verbose_name            = _('document')
@@ -221,7 +236,9 @@ class Document(AbstractEntry):
         return u"%s" % self.source
 
 class Video(AbstractEntry):
-
+    """
+    Video model
+    """
     embed           = models.TextField(_('Embed'), blank=True, null=True)
 
     class Meta:
@@ -233,7 +250,9 @@ class Video(AbstractEntry):
 
 
 class Sound(AbstractEntry):
-
+    """
+    Sound model
+    """
     embed           = models.TextField(_('Embed'), blank=True, null=True)
 
     class Meta:

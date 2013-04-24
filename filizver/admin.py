@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
-from filizver.models.topic import Topic
+from filizver.models import Topic
 
 
 class TopicAdmin(admin.ModelAdmin):
-    fields = ('title', 'slug', 'active', 
-                ('user', 'created_date'), 
+    fields = ('title', 'slug', ('user', 'created_date'), 
                 ('updated_date', 'updated_user'), 
                 ('deleted_date', 'deleted_user'))
     readonly_fields = ('user','created_date', 'updated_date', 'deleted_date', 'updated_user', 'deleted_user')
