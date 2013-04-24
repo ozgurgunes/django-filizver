@@ -11,7 +11,7 @@
     {% include entry.detail_template %}
     <div class="meta">
         <a href="{% url 'accounts_profile_detail' entry.user %}" class="image">
-            {% thumbnail entry.user.get_profile.avatar "24x24" crop="center" as im %}
+            {% thumbnail entry.user.avatar "24x24" crop="center" as im %}
             <img src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" alt="{{ entry.user }}" />
             {% endthumbnail %}                    
         </a>                     

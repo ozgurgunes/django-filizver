@@ -4,7 +4,6 @@ import datetime
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.template.defaultfilters import slugify
-from django.contrib.auth import get_user_model
 
 from djangoplugins.fields import PluginField
 
@@ -36,18 +35,20 @@ class TaggingMixin(models.Model):
 class BaseTopic(UserMixin):
 
     title                   = models.CharField(_('Title'), max_length=216)
-    slug                    = models.SlugField(_('Slug'), max_length=216, blank=True, null=False)
-    body                    = models.TextField(_('Body'), blank=False, null=False)
-    url                     = models.URLField(_('URL'), blank=False, null=False)
-    file                    = models.FileField(upload_to=get_upload_to, blank=False, null=False)
-    image                   = models.ImageField(upload_to=get_upload_to, blank=False, null=False, 
+    slug                    = models.SlugField(_('Slug'), max_length=216, blank=True)
+    body                    = models.TextField(_('Body'), blank=True)
+    url                     = models.URLField(_('URL'), blank=True)
+    file                    = models.FileField(upload_to=get_upload_to, blank=True)
+    image                   = models.ImageField(upload_to=get_upload_to, blank=True, 
                                             width_field='image_width', height_field='image_height')
         
-    image_width             = models.IntegerField(editable=False, null=True)
-    image_height            = models.IntegerField(editable=False, null=True)
+    plugin                  = PluginField(EntryPoint)
+    
+    image_width             = models.IntegerField(editable=False, blank=True, null=True)
+    image_height            = models.IntegerField(editable=False, blank=True, null=True)
 
-    parent                  = models.ForeignKey('self', default=0, blank=False, null=False)
-    position                = models.IntegerField(_('Position'), default=1, blank=False, null=False)
+    parent                  = models.ForeignKey('self', blank=True, null=True)
+    position                = models.IntegerField(_('Position'), default=1, blank=True, null=True)
 
     class Meta:
         abstract = True
@@ -60,6 +61,8 @@ class BaseTopic(UserMixin):
         # Populate slug field
         if not self.id:
             self.slug   = str(slugify(self.title))
+        # if not self.parent:
+        #     self.parent = super(BaseTopic, self).objects.get_or_create(pk=0, title='System')
         super(BaseTopic, self).save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
@@ -85,12 +88,9 @@ class Topic(BaseTopic, TaggingMixin):
     """
     Topic class for Filizver application
     """
-    user                    = models.ForeignKey(get_user_model(), related_name='topics')    
+    user                    = models.ForeignKey('filizver.User', related_name='topics')    
 
-    followers               = models.ManyToManyField(get_user_model(), verbose_name=_('Followers'), 
-                                        through='Follower', related_name='following',
-                                        blank=True, null=True)
-    moderators              = models.ManyToManyField(get_user_model(), verbose_name=_('Moderators'), 
+    moderators              = models.ManyToManyField('filizver.User', verbose_name=_('Moderators'), 
                                         through='Moderator', related_name='moderating',
                                         blank=True, null=True)
     
@@ -110,21 +110,12 @@ class Topic(BaseTopic, TaggingMixin):
             'slug': self.slug,
             'pk': self.pk
             })
-    
-class Follower(models.Model):
-    
-    user            = models.ForeignKey(get_user_model())
-    topic           = models.ForeignKey(Topic)
-    
-    class Meta:
-        app_label           = 'filizver'
-        unique_together     = (('user', 'topic'),)
 
 
 class Moderator(models.Model):
     
-    user            = models.ForeignKey(get_user_model())
-    topic           = models.ForeignKey(Topic)
+    user            = models.ForeignKey('filizver.User')
+    topic           = models.ForeignKey('Topic')
     
     class Meta:
         app_label               = 'filizver'

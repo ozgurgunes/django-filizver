@@ -2,7 +2,7 @@
 import datetime
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth import get_user_model
+#from django.contrib.auth import get_user_model
 
 
 class DateMixin(models.Model):
@@ -10,7 +10,7 @@ class DateMixin(models.Model):
                                         editable=False, blank=False, null=False)
     updated_date            = models.DateTimeField(_('Updated date'), auto_now=True, 
                                         editable=False, blank=True, null=True)
-    updated_user            = models.ForeignKey(get_user_model(), verbose_name=_('Updated user'), 
+    updated_user            = models.ForeignKey('filizver.User', verbose_name=_('Updated user'), 
                                         related_name='updated_%(class)s_set', blank=True, null=True)
 
     class Meta:
@@ -21,7 +21,7 @@ class DeleteMixin(models.Model):
     deleted                 = models.BooleanField(_('Deleted'), default=False)
     deleted_date            = models.DateTimeField(_('Deleted date'), 
                                         editable=False, blank=True, null=True)
-    deleted_user            = models.ForeignKey(get_user_model(), verbose_name=_('Deleted user'), 
+    deleted_user            = models.ForeignKey('filizver.User', verbose_name=_('Deleted user'), 
                                         related_name='deleted_%(class)s_set', blank=True, null=True)
     
     class Meta:

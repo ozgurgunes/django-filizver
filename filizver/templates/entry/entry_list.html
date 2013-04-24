@@ -9,7 +9,7 @@
     <article class="section row {% cycle odd,even %}">
     
     <a href="{% url 'accounts_profile_detail' object.user %}" class="image span1">
-        {% thumbnail object.user.get_profile.avatar "48x48" crop="center" as im %}
+        {% thumbnail object.user.avatar "48x48" crop="center" as im %}
         <img src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" alt="{{ object.user }}" class="pull-left" />
         {% endthumbnail %}                    
     </a>

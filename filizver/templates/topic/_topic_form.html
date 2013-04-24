@@ -3,8 +3,10 @@
 	{% if form.errors %}
 	<p class="error">{% trans 'There were errors in form' %}</p>
 	{% endif %}
-    <input type="hidden" name="next" value="{{ next }}" />
-        <label for="id_title"><big>{% trans "Let it topic" %}</big></label><br/>
-    	<textarea name="title" id="id_title" rows="2" class="span6"></textarea>
-    	<button type="submit" class="btn btn-primary">{% trans 'Submit' %}</button>
+	
+	{{ form|as_bootstrap}}
+	
+	<div class="form-actions">
+		<input type="submit" value="{% trans "Submit" %}" id="submit" class="btn btn-primary" />
+	</div>
 </form>

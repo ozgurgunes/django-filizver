@@ -8,7 +8,7 @@
 <div class="meta">
     <div class="avatar">
         <a href="{% url 'accounts_profile_detail' object.user %}">
-            {% thumbnail object.user.get_profile.avatar "32x32" as im %}
+            {% thumbnail object.user.avatar "32x32" as im %}
             <img src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" alt="{{ object.user }}" />
             {% endthumbnail %}                    
         </a>                     

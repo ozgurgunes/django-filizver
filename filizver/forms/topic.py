@@ -14,16 +14,6 @@ class TopicFormBase(forms.ModelForm):
 
     class Meta:
         model = Topic
-        
-    def __init__(self, *args, **kwargs):
-        super(TopicFormBase, self).__init__(*args, **kwargs)
-        new_order = self.fields.keyOrder[:-1]
-        new_order.insert(0, 'title')
-        self.fields.keyOrder = new_order
-        try:
-            self.fields['title'].initial = self.instance.topic.title
-        except:
-            pass
     
     def get_ip_address(self):
         x_forwarded_for = self.request.META.get('HTTP_X_FORWARDED_FOR')
@@ -53,6 +43,7 @@ class TopicForm(forms.ModelForm):
     class Meta:
         model       = Topic
         exclude     = ['user', 'slug', 'branches', 'tags', 'created_date', 'is_public']
+        fields = ['title', 'body', 'image','plugin']
 
 
 class ModeratorForm(forms.ModelForm):
