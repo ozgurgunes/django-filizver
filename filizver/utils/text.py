@@ -5,16 +5,21 @@ import defaults
 
 from django.template.defaultfilters import urlize as django_urlize
 
+
+MARKUP_CHOICES = []
 try:
     import markdown
+    MARKUP_CHOICES.append(("markdown", "Markdown"))
 except ImportError:
     pass
 try:
     import textile
+    MARKUP_CHOICES.append(("textile", "Textile"))
 except ImportError:
     pass
 try:
     import bbcode
+    MARKUP_CHOICES.append(('bbcode', 'BBCode'))
 except ImportError:
     pass
 

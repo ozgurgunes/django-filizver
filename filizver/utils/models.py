@@ -1,11 +1,32 @@
 # -*- coding: utf-8 -*-
 import datetime
+
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 #from django.contrib.auth import get_user_model
+from django.utils.translation import ugettext_lazy as _
+
+from tagging.models import Tag
+from tagging.fields import TagField
+
+
+class TaggingMixin(models.Model):
+
+    tags                    = TagField()
+    
+    class Meta:
+        abstract = True
+
+    def _get_tags(self):
+        return Tag.objects.get_for_object(self)
+
+    def _set_tags(self, tags):
+        Tag.objects.update_tags(self, tags)
+
+    tag_list = property(_get_tags, _set_tags)
 
 
 class DateMixin(models.Model):
+
     created_date            = models.DateTimeField(_('Created date'), auto_now_add=True, 
                                         editable=False, blank=False, null=False)
     updated_date            = models.DateTimeField(_('Updated date'), auto_now=True, 
@@ -18,6 +39,7 @@ class DateMixin(models.Model):
 
         
 class DeleteMixin(models.Model):
+
     deleted                 = models.BooleanField(_('Deleted'), default=False)
     deleted_date            = models.DateTimeField(_('Deleted date'), 
                                         editable=False, blank=True, null=True)
@@ -45,7 +67,6 @@ class UserMixin(DateMixin, DeleteMixin):
                                    blank=True, null=True)
     api_gateway     = models.IPAddressField(_('API Gateway'), editable=False, 
                                         blank=True, null=True)
-
     
     class Meta:
         abstract = True
