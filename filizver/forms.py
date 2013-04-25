@@ -13,7 +13,7 @@ class TopicForm(forms.ModelForm):
     class Meta:
         model       = Topic
         #exclude     = ['user', 'slug', 'branches', 'tags', 'created_date', 'is_public']
-        fields = ['title', 'body', 'url', 'image', 'file', 'plugin']
+        fields = ['title', 'body', 'url', 'image', 'file', 'parent', 'plugin']
 
     def get_ip_address(self):
         x_forwarded_for = self.request.META.get('HTTP_X_FORWARDED_FOR')

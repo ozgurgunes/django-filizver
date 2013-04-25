@@ -35,8 +35,12 @@
         {% if topic.image %}
         {% thumbnail topic.image "48x48" crop="center" as im %}
         <img src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" alt="{{ object.user }}" class="pull-left" />
-        {% endthumbnail %}                    
+        {% endthumbnail %}
         {% endif %}
+        
+        {% for topic in topic.children.all %}
+        {{ topic.plugin }}
+        {% endfor %}
         
         <section id="entries" class="main">
             {% include "topic/_topic_entries.html" %}

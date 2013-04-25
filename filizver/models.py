@@ -7,7 +7,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.template.defaultfilters import slugify
 from django.contrib.auth.models import AbstractUser
 
-from djangoplugins.fields import PluginField
 from manifest.accounts.models import BaseUser
 
 from filizver.managers import TopicManager, UserManager
@@ -22,7 +21,7 @@ class BaseTopic(UserMixin):
     """
     An abstract base Topic class with basic fields and methods.
     """
-
+    
     title                   = models.CharField(_('Title'), max_length=216)
     slug                    = models.SlugField(_('Slug'), max_length=216, blank=True)
     body                    = models.TextField(_('Body'), blank=True)
@@ -34,10 +33,11 @@ class BaseTopic(UserMixin):
     image_width             = models.IntegerField(editable=False, blank=True, null=True)
     image_height            = models.IntegerField(editable=False, blank=True, null=True)
 
-    parent                  = models.ForeignKey('self', blank=True, null=True)
+    parent                  = models.ForeignKey('self', blank=True, null=True, related_name='children')
     position                = models.IntegerField(_('Position'), default=1, blank=True, null=True)
 
-    plugin                  = PluginField(EntryPoint)
+    plugin                  = models.CharField(max_length=32, blank=False, null=False,
+                                choices=[(p.name, p.title) for p in EntryPoint.plugins], default='topic')
     
     class Meta:
         abstract                = True
@@ -124,7 +124,10 @@ class User(AbstractUser, BaseUser):
         # app_label='filizver'
 
     def get_topic(self):
-        topic, created = Topic.objects.get_or_create(user=self, plugin=UserEntry().get_model())
+        topic, created = Topic.objects.get_or_create(user=self, plugin=UserEntry.name)
+        if created:
+            topic.title = self.get_full_name() if self.get_full_name() else self.username
+            topic.save()
         return topic
         
     def save(self, *args, **kwargs):
