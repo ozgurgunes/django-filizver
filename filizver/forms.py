@@ -6,15 +6,15 @@ from django.utils.translation import ugettext_lazy as _
 from filizver.models import Topic, Moderator, Text, Picture, Link, Document, Video, Sound
 
 
-class TopicFormBase(forms.ModelForm):
-    
+class TopicForm(forms.ModelForm):
     title           = forms.CharField(max_length=128, widget=forms.TextInput(
-                                attrs={'class': 'title input', 'placeholder': _('Type your topic title')}
-                                ))
-
+                                attrs={'class': 'title input', 
+                                'placeholder': _('Type your topic title')}))
     class Meta:
-        model = Topic
-    
+        model       = Topic
+        #exclude     = ['user', 'slug', 'branches', 'tags', 'created_date', 'is_public']
+        fields = ['title', 'body', 'url', 'image', 'file', 'plugin']
+
     def get_ip_address(self):
         x_forwarded_for = self.request.META.get('HTTP_X_FORWARDED_FOR')
         if x_forwarded_for:
@@ -22,16 +22,6 @@ class TopicFormBase(forms.ModelForm):
         else:
             ip = self.request.META.get('REMOTE_ADDR')
         return ip
-
-
-class TopicForm(forms.ModelForm):
-    title           = forms.CharField(max_length=128, widget=forms.TextInput(
-                                attrs={'class': 'title input', 'placeholder': _('Type your topic title')}
-                                ))
-    class Meta:
-        model       = Topic
-        exclude     = ['user', 'slug', 'branches', 'tags', 'created_date', 'is_public']
-        fields = ['title', 'body', 'image','plugin']
 
 
 class ModeratorForm(forms.ModelForm):

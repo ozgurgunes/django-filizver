@@ -25,6 +25,19 @@
         {% if perms.topic.can_change or object.user == user %}
         {% include "entry/_entry_form.html" %}
         {% endif %}
+
+        {% if topic.body %}
+        <div>{{ topic.body|escape|linebreaks }}</div>
+        {% endif %}
+        {% if topic.url %}
+        <p><a href="{{ topic.url }}" title="{{ topic.title }}">{{ topic.url }}</a></p>
+        {% endif %}
+        {% if topic.image %}
+        {% thumbnail topic.image "48x48" crop="center" as im %}
+        <img src="{{ im.url }}" width="{{ im.x }}" height="{{ im.y }}" alt="{{ object.user }}" class="pull-left" />
+        {% endthumbnail %}                    
+        {% endif %}
+        
         <section id="entries" class="main">
             {% include "topic/_topic_entries.html" %}
         </section>
