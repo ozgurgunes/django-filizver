@@ -20,7 +20,7 @@ class TopicList(ExtraContextMixin, ListView):
     queryset = Topic.objects.select_related(
                     'user__profile'
                 ).all()
-    template_name = "topic/topic_list.html"
+    template_name = "filizver/topic_list.html"
     extra_context = { 'topic_form': TopicForm() }
     
 
@@ -29,7 +29,7 @@ class TopicDetail(ExtraContextMixin, DetailView):
     queryset = Topic.objects.select_related(
                     'user__profile'
                 ).all()
-    template_name = "topic/topic_detail.html"
+    template_name = "filizver/topic_detail.html"
     extra_context = {
         'moderator_form': ModeratorForm()
     }
@@ -38,7 +38,7 @@ class TopicDetail(ExtraContextMixin, DetailView):
 class TopicCreate(CreateView, LoginRequiredMixin):
 
     form_class = TopicForm
-    template_name = "topic/topic_create.html"
+    template_name = "filizver/topic_create.html"
     
 
     def get_ip_address(self):
@@ -65,7 +65,7 @@ class TopicCreate(CreateView, LoginRequiredMixin):
 
 class TopicUpdate(TopicCreate, UpdateView):
     model = Topic
-    template_name = "topic/topic_update.html"
+    template_name = "filizver/topic_update.html"
 
 
 class TopicDelete(DeleteView, LoginRequiredMixin):

@@ -1,4 +1,4 @@
-{% extends "topic/base_topic.html" %}
+{% extends "filizver/base_topic.html" %}
 {% load tagging_tags %}
 
 {% block title %}{{ object.title }} - {{ block.super }}{% endblock title %}
@@ -21,11 +21,6 @@
         </header>
 
         
-    <!--// Entries -->
-        {% if perms.topic.can_change or object.user == user %}
-        {% include "entry/_entry_form.html" %}
-        {% endif %}
-
         {% if topic.body %}
         <div>{{ topic.body|escape|linebreaks }}</div>
         {% endif %}
@@ -38,13 +33,11 @@
         {% endthumbnail %}
         {% endif %}
         
+        
         {% for topic in topic.children.all %}
-        {{ topic.plugin }}
+        {{ topic.render }}
         {% endfor %}
         
-        <section id="entries" class="main">
-            {% include "topic/_topic_entries.html" %}
-        </section>
     <!--// Details -->    
         {% if object.tag_list %}
         <details id="tags" class="main">

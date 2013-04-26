@@ -17,11 +17,27 @@ from filizver.utils.models import UserMixin
 from filizver.utils.text import MARKUP_CHOICES
 
 
-class BaseTopic(UserMixin):
+class PluginMixin(models.Model):
+    PLUGIN_CHOICES = [(p.name, p.title) for p in EntryPoint.plugins]
+
+    plugin                  = models.CharField(max_length=32, blank=False, null=False,
+                                choices=PLUGIN_CHOICES, default='topic')
+    
+    class Meta:
+        abstract                = True
+
+    def render(self):
+        for p in EntryPoint.plugins:
+            if unicode(p.name) == self.plugin:
+                return p.render({'topic':self})
+
+
+class BaseTopic(models.Model):
     """
     An abstract base Topic class with basic fields and methods.
     """
     
+    user                    = models.ForeignKey('User', related_name='topics')    
     title                   = models.CharField(_('Title'), max_length=216)
     slug                    = models.SlugField(_('Slug'), max_length=216, blank=True)
     body                    = models.TextField(_('Body'), blank=True)
@@ -36,9 +52,6 @@ class BaseTopic(UserMixin):
     parent                  = models.ForeignKey('self', blank=True, null=True, related_name='children')
     position                = models.IntegerField(_('Position'), default=1, blank=True, null=True)
 
-    plugin                  = models.CharField(max_length=32, blank=False, null=False,
-                                choices=[(p.name, p.title) for p in EntryPoint.plugins], default='topic')
-    
     class Meta:
         abstract                = True
         verbose_name            = _('topic')
@@ -48,7 +61,7 @@ class BaseTopic(UserMixin):
 
     def save(self, *args, **kwargs):
         # Populate slug field
-        if not self.id:
+        if not self.slug:
             self.slug   = str(slugify(self.title))
         # if not self.parent:
         #     self.parent = super(BaseTopic, self).objects.get_or_create(pk=0, title='System')
@@ -73,11 +86,10 @@ class BaseTopic(UserMixin):
         return obj
 
     
-class Topic(BaseTopic):
+class Topic(BaseTopic, UserMixin, PluginMixin):
     """
     Actual Topic class used by Filizver.
     """
-    user                    = models.ForeignKey('User', related_name='topics')    
 
     moderators              = models.ManyToManyField('User', verbose_name=_('Moderators'), 
                                         through='Moderator', related_name='moderating',

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+from django.template.loader import select_template, render_to_string
 
 class PluginMount(type):
     def __init__(cls, name, bases, attrs):
@@ -24,8 +24,18 @@ class EntryPoint(PluginPoint):
     name = 'entry'
     title = 'Entry'
 
+    template = None
     form_class = None
     
+    @classmethod
+    def get_template(self):
+        #template = select_template(['filizver/%s_entry.html' % self.name, 'filizver/entry_list.html'])
+        return self.template if self.template else 'filizver/%s_entry.html' % self.name
+        
+    @classmethod
+    def render(self, context):
+        return render_to_string(self.get_template(), context)
+
     def create(self, request):
         form = self.form_class(request.POST, request.FILES)
         if form.is_valid():

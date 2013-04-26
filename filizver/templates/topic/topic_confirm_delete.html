@@ -1,9 +1,0 @@
-{% extends "filizver/filizver_base.html" %}
-{% block main %}
-{% trans "Are you sure?" %}
-<form action="{% url 'filizver:topic_delete' object.id %}" method="post" accept-charset="utf-8">
-    {% csrf_token %}
-
-    <p><input type="submit" class="btn btn-primary" value="Continue &rarr;"></p>
-</form>
-{% endblock %}
