@@ -53,6 +53,7 @@ class UserEntry(EntryPoint):
     title = 'User'
 
 class TextEntry(EntryPoint):
+    
     name = 'text'
     title = 'Text'
 
